@@ -1,4 +1,4 @@
-Cubos (BoxGeometry):
+ Cubos (BoxGeometry):
 width: Ancho del cubo.
 height: Altura del cubo.
 depth: Profundidad del cubo.
