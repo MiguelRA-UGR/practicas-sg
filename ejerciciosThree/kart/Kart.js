@@ -1,19 +1,16 @@
 
 import * as THREE from 'three'
 
-class Grapadora extends THREE.Object3D {
+class Kart extends THREE.Object3D {
   constructor(gui,titleGui) {
     super();
     
-    // Se crea la parte de la interfaz que corresponde a la grapadora
-    // Se crea primero porque otros métodos usan las variables que se definen para la interfaz
     this.createGUI(gui,titleGui);
     
-    // El material se usa desde varios métodos. Por eso se alamacena en un atributo
-    this.material = new THREE.MeshStandardMaterial({color: 0xCF0000});
-    
-    // A la base no se accede desde ningún método. Se almacena en una variable local del constructor
-    var tamano = 0.15;   // 15 cm de largo. Las unidades son metros
+    this.material = new THREE.MeshStandardMaterial({color: 0x9999FF});
+    //this.material = new THREE.MeshNormalMaterial({color: 0x9999FF});
+
+    var tamano = 1;
     var base = this.createBase(tamano);
     // Al nodo que contiene la transformación interactiva que abre y cierra la grapadora se accede desde el método update, se almacena en un atributo.
     this.movil = this.createMovil(tamano);
@@ -66,7 +63,8 @@ class Grapadora extends THREE.Object3D {
     cajaMovil.position.set (-tama*0.45, tama*0.06, 0);
     
     var movil = new THREE.Object3D();
-    // IMPORTANTE: Con independencia del orden en el que se escriban las 2 líneas siguientes, SIEMPRE se aplica primero la rotación y después la traslación. Prueba a intercambiar las dos líneas siguientes y verás que no se produce ningún cambio al ejecutar.    
+    // IMPORTANTE: Con independencia del orden en el que se escriban las 2 líneas siguientes, SIEMPRE se aplica primero la rotación y después 
+    // la traslación. Prueba a intercambiar las dos líneas siguientes y verás que no se produce ningún cambio al ejecutar.    
     movil.rotation.z = this.guiControls.rotacion;
     movil.position.set(tama*0.45,tama*0.2,0);
     movil.add(cajaMovil);
@@ -78,8 +76,8 @@ class Grapadora extends THREE.Object3D {
   }
   
   update () {
-    // No hay nada que actualizar ya que la apertura de la grapadora se ha actualizado desde la interfaz
+
   }
 }
 
-export { Grapadora }
+export { Kart }
