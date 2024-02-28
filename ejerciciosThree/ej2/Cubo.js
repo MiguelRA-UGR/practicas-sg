@@ -12,8 +12,6 @@ class Cubo extends THREE.Object3D {
     var boxGeom = new THREE.BoxGeometry (1,1,1);
     // Como material se crea uno a partir de un color
     var boxMat = new THREE.MeshNormalMaterial({color: 0xCF0000});
-    material.flatShading=true;
-    material.needsUpdate=true;
     
     // Ya podemos construir el Mesh
     var box = new THREE.Mesh (boxGeom, boxMat);
