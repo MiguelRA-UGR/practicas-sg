@@ -1,6 +1,6 @@
 import * as THREE from '../libs/three.module.js';
 
-class Toroide extends THREE.Object3D {
+class Esfera extends THREE.Object3D {
   constructor(gui, titleGui) {
     super();
 
@@ -8,7 +8,7 @@ class Toroide extends THREE.Object3D {
     this.createGUI(gui, titleGui);
 
     // Creamos la geometría del toroide con los valores iniciales
-    this.geometry = new THREE.TorusGeometry(0.1, 0.5, 3, 3); // Radio del tubo, radio del toro, segmentos radiales, segmentos tubulares
+    this.geometry = new THREE.SphereGeometry(0.5, 1, 1); // Radio del tubo, radio del toro, segmentos radiales, segmentos tubulares
 
     // Creamos el material
     var material = new THREE.MeshNormalMaterial({ color: 0xCF0000 });
@@ -25,15 +25,14 @@ class Toroide extends THREE.Object3D {
   createGUI(gui, titleGui) {
     // Controles para el radio del tubo, radio del toro y resolución
     this.guiControls = {
-      tubeRadius: 0.1,
-      torusRadius: 0.5,
-      radialSegments: 3,
-      tubularSegments: 3,
+      radius: 0.5,
+      widthSegments: 1,
+      heightSegments: 1,
       
       // Función para actualizar la geometría del toroide
       updateGeometry: function() {
         this.geometry.dispose(); // Limpiamos la geometría anterior
-        this.geometry = new THREE.TorusGeometry(this.guiControls.torusRadius, this.guiControls.tubeRadius, this.guiControls.radialSegments, this.guiControls.tubularSegments);
+        this.geometry = new THREE.SphereGeometry(this.guiControls.radius, this.guiControls.widthSegments, this.guiControls.heightSegments);
         // Actualizamos la geometría del Mesh
         this.mesh.geometry = this.geometry;
       }.bind(this) // Importante para que this haga referencia a la instancia de la clase Toroide
@@ -43,10 +42,9 @@ class Toroide extends THREE.Object3D {
     var folder = gui.addFolder(titleGui);
 
     // Añadimos controles para el radio del tubo, radio del toro y resolución
-    folder.add(this.guiControls, 'tubeRadius', 0.1, 0.5, 0.01).name('Radio del Tubo').onChange(this.guiControls.updateGeometry);
-    folder.add(this.guiControls, 'torusRadius', 0.5, 2.0, 0.01).name('Radio del Toro').onChange(this.guiControls.updateGeometry);
-    folder.add(this.guiControls, 'radialSegments', 3, 30, 1).name('Resol Radio').onChange(this.guiControls.updateGeometry);
-    folder.add(this.guiControls, 'tubularSegments', 3, 200, 1).name('Resol Tubo').onChange(this.guiControls.updateGeometry);
+    folder.add(this.guiControls, 'radius', 0.25, 0.5, 0.01).name('Radio').onChange(this.guiControls.updateGeometry);
+    folder.add(this.guiControls, 'widthSegments', 1, 30, 0.01).name('Ecuador').onChange(this.guiControls.updateGeometry);
+    folder.add(this.guiControls, 'heightSegments', 1, 30, 1).name('Meridiano').onChange(this.guiControls.updateGeometry);
   }
 
   update () {
@@ -56,13 +54,13 @@ class Toroide extends THREE.Object3D {
     this.rotation.z += 0.01;
 
     // Actualizamos la posición del toroide
-    this.position.set(-1.5, -1.5, 1.5);
+    this.position.set(0, -1.5, 0);
 
     // Actualizamos la geometría del toroide
     this.guiControls.updateGeometry();
   }
 }
 
-export { Toroide };
+export { Esfera };
 
 

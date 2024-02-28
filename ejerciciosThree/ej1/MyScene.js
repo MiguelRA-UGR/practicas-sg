@@ -12,6 +12,8 @@ import { Cubo } from './Cubo.js'
 import { Cono } from './Cono.js'
 import { Cilindro } from './Cilindro.js'
 import { Toroide } from './Toroide.js'
+import { Esfera } from './Esfera.js'
+import { Icosaedro } from './Icosaedro.js'
 
 
 /// La clase fachada del modelo
@@ -55,10 +57,14 @@ class MyScene extends THREE.Scene {
     this.model2 = new Cono(this.gui, "Controles del Cono");
     this.model3 = new Cilindro(this.gui, "Controles del Cilindro");
     this.model4 = new Toroide(this.gui, "Controles del Toroide");
+    this.model5 = new Esfera(this.gui, "Controles de la Esfera");
+    this.model6 = new Icosaedro(this.gui, "Controles del Icosaedro");
     this.add (this.model);
     this.add (this.model2);
     this.add (this.model3);
     this.add (this.model4);
+    this.add (this.model5);
+    this.add (this.model6);
   }
   
   initStats() {
@@ -238,6 +244,8 @@ class MyScene extends THREE.Scene {
     this.model2.update();
     this.model3.update();
     this.model4.update();
+    this.model5.update();
+    this.model6.update();
 
     // Renderizamos la escena
     this.renderer.render(this, this.getCamera());

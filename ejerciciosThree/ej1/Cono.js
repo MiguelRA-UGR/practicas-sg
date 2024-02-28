@@ -10,6 +10,8 @@ class Cono extends THREE.Object3D {
     // Un Mesh se compone de geometría y material
     // Creamos la geometría del cono con los valores iniciales
     this.geometry = new THREE.ConeGeometry(0.25, 0.5, 3, 1); // Radio, altura, resolución
+    material.flatShading=true;
+    material.needsUpdate=true;
 
     // Creamos el material
     var material = new THREE.MeshNormalMaterial({ color: 0xCF0000 });
@@ -53,7 +55,7 @@ class Cono extends THREE.Object3D {
     this.rotation.z += 0.01;
 
     // Actualizamos la posición del cono
-    this.position.set(0, 1, 0);
+    this.position.set(0, 0.5, 0);
 
     // Actualizamos el radio y la altura del cono
     this.guiControls.updateGeometry();
