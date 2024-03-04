@@ -59,7 +59,8 @@ class Extrusion extends THREE.Object3D {
         folder.add(this.guiControls, 'pasos', 3, 100, 1).name('Nº de pasos: ').listen();
     
         folder.add(this.guiControls, 'bisel').name('Bisel').onChange(() => {
-            this.guiControls.bisel != this.guiControls.bisel;
+            
+            this.guiControls.bisel =! !this.guiControls.bisel;
             this.updateGeometry();
         });
     

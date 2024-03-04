@@ -1,0 +1,96 @@
+ Cubos (BoxGeometry):
+width: Ancho del cubo.
+height: Altura del cubo.
+depth: Profundidad del cubo.
+widthSegments: Número de segmentos a lo largo del ancho.
+heightSegments: Número de segmentos a lo largo de la altura.
+depthSegments: Número de segmentos a lo largo de la profundidad.
+
+
+
+Esferas (SphereGeometry):
+radius: Radio de la esfera.
+widthSegments: Número de segmentos horizontales alrededor del ecuador.
+heightSegments: Número de segmentos verticales a lo largo del meridiano.
+
+
+
+Cilindros (CylinderGeometry):
+radiusTop: Radio del cilindro en la parte superior.
+radiusBottom: Radio del cilindro en la parte inferior.
+height: Altura del cilindro.
+radialSegments: Número de segmentos a lo largo del perímetro.
+heightSegments: Número de segmentos a lo largo de la altura.
+openEnded: Indica si el cilindro tiene tapas en ambos extremos o no.
+
+
+
+Conos (ConeGeometry):
+radius: Radio del cono en la base.
+height: Altura del cono.
+radialSegments: Número de segmentos alrededor del perímetro de la base.
+heightSegments: Número de segmentos a lo largo de la altura del cono.
+openEnded: Indica si el cono tiene una base cerrada o no.
+
+
+
+Plano (PlaneGeometry):
+width: Ancho del plano.
+height: Altura del plano.
+widthSegments: Número de segmentos a lo largo del ancho.
+heightSegments: Número de segmentos a lo largo de la altura.
+
+
+
+Toro (TorusGeometry):
+radius: Radio del toro.
+tube: Radio del tubo.
+radialSegments: Número de segmentos alrededor del toro.
+tubularSegments: Número de segmentos a lo largo del tubo
+
+
+
+Tetraedro (TetrahedronGeometry):
+radius: Radio de la esfera circunscrita al tetraedro.
+detail: Nivel de detalle del tetraedro, afecta a la cantidad de subdivisión.
+
+
+
+Octaedro (OctahedronGeometry):
+radius: Radio de la esfera circunscrita al octaedro.
+detail: Nivel de detalle del octaedro, afecta a la cantidad de subdivisión.
+
+
+
+Dodecaedro (DodecahedronGeometry):
+radius: Radio de la esfera circunscrita al dodecaedro.
+detail: Nivel de detalle del dodecaedro, afecta a la cantidad de subdivisión.
+
+
+
+Icosaedro (IcosahedronGeometry):
+radius: Radio de la esfera circunscrita al icosaedro.
+detail: Nivel de detalle del icosaedro, afecta a la cantidad de subdivisión.
+
+
+
+Tubo (TubeGeometry):
+path: Una curva que define la forma del tubo.
+tubularSegments: Número de segmentos a lo largo del tubo.
+radius: Radio del tubo.
+radiusSegments: Número de segmentos alrededor de la circunferencia del tubo.
+closed: Indica si el tubo está cerrado (formando un cilindro) o no.
+
+
+
+Superficies de revolución (LatheGeometry):
+points: Un arreglo de puntos que definen la curva de revolución.
+segments: Número de segmentos alrededor de la revolución.
+phiStart: Ángulo inicial de la revolución.
+phiLength: Ángulo de revolución.
+
+
+
+Extrusiones (ExtrudeGeometry):
+shapes: Una o varias formas bidimensionales a extruir.
+options: Opciones de extrusión que incluyen el número de segmentos, la profundidad, etc.
