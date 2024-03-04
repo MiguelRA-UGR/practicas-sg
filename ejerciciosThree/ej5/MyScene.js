@@ -1,8 +1,6 @@
-import * as THREE from '../libs/three.module.js'
 import { GUI } from '../libs/dat.gui.module.js'
-import { TrackballControls } from '../libs/TrackballControls.js'
 import { Stats } from '../libs/stats.module.js'
-import { CSG } from '../libs/CSG-v2.js';
+import { TrackballControls } from '../libs/TrackballControls.js'
 
 class MyScene extends THREE.Scene {
   constructor (myCanvas) {
@@ -17,30 +15,43 @@ class MyScene extends THREE.Scene {
     this.add (this.axis);
     this.add (this.model);
 
-    const sphereGeometry1 = new THREE.SphereGeometry(0.5, 32, 32);
-    const sphereMaterial1 = new THREE.MeshStandardMaterial({ color: 0xff0000 });
-    sphereMaterial1.flatShading=true;
-    const sphere1 = new THREE.Mesh(sphereGeometry1, sphereMaterial1);
+    var sphereGeometry1 = new THREE.SphereGeometry(0.5, 32, 32);
+    var sphereMaterial1 = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+    sphereMaterial1.flatShading = true;
+    var sphere1 = new THREE.Mesh(sphereGeometry1, sphereMaterial1);
+    sphere1.position.set(-1, 1, 3);
     this.add(sphere1);
-    sphere1.position.x = -1;
-    sphere1.position.y = 1;
-    sphere1.position.z = 3;
 
-    const rectanglegeometry = new THREE.BoxGeometry(0.2,1.5,1.5,1,1,1);
-    const rectanglematerial = new THREE.MeshStandardMaterial({ color: 0x0000ff });
-    rectanglematerial.flatShading=true;
-    const rectangle = new THREE.Mesh(rectanglegeometry, rectanglematerial);
+    var rectanglegeometry = new THREE.BoxGeometry(0.2, 1.5, 1.5);
+    var rectanglematerial = new THREE.MeshStandardMaterial({ color: 0x0000ff });
+    rectanglematerial.flatShading = true;
+    var rectangle = new THREE.Mesh(rectanglegeometry, rectanglematerial);
+    rectangle.position.set(1, 1, 3);
     this.add(rectangle);
-    rectangle.position.x = 1;
-    rectangle.position.y = 1;
-    rectangle.position.z = 3;
 
-    // Realizar la unión entre la esfera y el rectángulo
-    const sphereCSG = CSG.setFromMesh(sphere1);
-    const rectangleCSG = CSG.setFromMesh(rectangle);
-    const unionCSG = sphereCSG.union(rectangleCSG);
-    this.model = unionCSG.toMesh();
-    this.add(this.model);
+    var rectanglebps = new ThreeBSP(rectangle.geometry);
+    var spherebps = new ThreeBSP(sphere1.geometry);
+
+    var agujeromaterial = new THREE.MeshStandardMaterial({ color: 0xff00ff });
+    var agujerobps = rectanglebps.subtract(spherebps);
+    var agujero = agujerobps.toMesh(agujeromaterial);
+
+    agujero.position.set(0,1,0);
+    this.add(agujero);
+
+    agujerobps = rectanglebps.union(spherebps);
+    var agujero = agujerobps.toMesh(agujeromaterial);
+
+    agujero.position.set(-2,1,0);
+    this.add(agujero);
+
+    agujerobps = rectanglebps.intersect(spherebps);
+    var agujero = agujerobps.toMesh(agujeromaterial);
+
+    agujero.position.set(2,1,0);
+    this.add(agujero);
+
+    
 
   }
 
@@ -80,12 +91,12 @@ class MyScene extends THREE.Scene {
   createGUI () {
     var gui = new GUI();
     this.guiControls = {
-      lightPower : 500.0,
+      lightPower : 20.0,
       ambientIntensity : 0.5,
       axisOnOff : true
     }
     var folder = gui.addFolder ('Luz y Ejes');
-    folder.add (this.guiControls, 'lightPower', 0, 1000, 20)
+    folder.add (this.guiControls, 'lightPower', 0, 100, 20)
       .name('Luz puntual : ')
       .onChange ( (value) => this.setLightPower(value) );
     folder.add (this.guiControls, 'ambientIntensity', 0, 1, 0.05)
