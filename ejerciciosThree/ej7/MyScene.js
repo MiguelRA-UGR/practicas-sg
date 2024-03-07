@@ -1,20 +1,17 @@
 
 // Clases de la biblioteca
 
+import * as THREE from '../libs/three.module.js'
 import { GUI } from '../libs/dat.gui.module.js'
 import { TrackballControls } from '../libs/TrackballControls.js'
 import { Stats } from '../libs/stats.module.js'
 
 // Clases de mi proyecto
 
-import { Cubo } from './Cubo.js'
-import { Cono } from './Cono.js'
-import { Cilindro } from './Cilindro.js'
-import { Toroide } from './Toroide.js'
-import { Esfera } from './Esfera.js'
-import { Icosaedro } from './Icosaedro.js'
+import { Escalera } from './Escalera.js'
+import { Tramo } from './Tramo.js'
 
-
+ 
 /// La clase fachada del modelo
 /**
  * Usaremos una clase derivada de la clase Scene de Three.js para llevar el control de la escena y de todo lo que ocurre en ella.
@@ -41,29 +38,21 @@ class MyScene extends THREE.Scene {
     // Tendremos una cámara con un control de movimiento con el ratón
     this.createCamera ();
     
+    // Un suelo 
     //this.createGround ();
-    
-    // Y unos ejes. Imprescindibles para orientarnos sobre dónde están las cosas
-    // Todas las unidades están en metros
-    this.axis = new THREE.AxesHelper (2);
-    this.add (this.axis);
-    
     
     // Por último creamos el modelo.
     // El modelo puede incluir su parte de la interfaz gráfica de usuario. Le pasamos la referencia a 
     // la gui y el texto bajo el que se agruparán los controles de la interfaz que añada el modelo.
-    this.model = new Cubo(this.gui, "Controles del Cubo");
-    this.model2 = new Cono(this.gui, "Controles del Cono");
-    this.model3 = new Cilindro(this.gui, "Controles del Cilindro");
-    this.model4 = new Toroide(this.gui, "Controles del Toroide");
-    this.model5 = new Esfera(this.gui, "Controles de la Esfera");
-    this.model6 = new Icosaedro(this.gui, "Controles del Icosaedro");
-    this.add (this.model);
-    this.add (this.model2);
-    this.add (this.model3);
-    this.add (this.model4);
-    this.add (this.model5);
-    this.add (this.model6);
+    this.escalera = new Escalera(this.gui, "Escalera");
+    this.escalera.scale.set(2,2,2);
+		this.add(this.escalera);
+
+    this.tramo = new Tramo(this.gui, "Tramo");
+    this.tramo.scale.set(2,2,2);
+    this.tramo.position.set(3,0,0);
+		this.add(this.tramo);
+
   }
   
   initStats() {
@@ -200,7 +189,7 @@ class MyScene extends THREE.Scene {
     var renderer = new THREE.WebGLRenderer();
     
     // Se establece un color de fondo en las imágenes que genera el render
-    renderer.setClearColor(new THREE.Color(0xEEEEEE), 1.0);
+    renderer.setClearColor(new THREE.Color(0x000000), 1.0);
     
     // Se establece el tamaño, se aprovecha la totalidad de la ventana del navegador
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -234,24 +223,26 @@ class MyScene extends THREE.Scene {
     this.renderer.setSize (window.innerWidth, window.innerHeight);
   }
 
-  update() {
+  update () {
+    
     if (this.stats) this.stats.update();
-
+    
     // Se actualizan los elementos de la escena para cada frame
+    
+    // Se actualiza la posición de la cámara según su controlador
     this.cameraControl.update();
-    this.model.update();
-    this.model2.update();
-    this.model3.update();
-    this.model4.update();
-    this.model5.update();
-    this.model6.update();
+    
+    // Se actualiza el resto del modelo
+    this.escalera.update();
+    this.tramo.update();
+    
+    // Le decimos al renderizador "visualiza la escena que te indico usando la cámara que te estoy pasando"
+    this.renderer.render (this, this.getCamera());
 
-    // Renderizamos la escena
-    this.renderer.render(this, this.getCamera());
-
-    // Llamamos a requestAnimationFrame para que se llame a sí mismo de forma recursiva
-    // y se ejecute el método update() en cada cuadro de animación
-    requestAnimationFrame(() => this.update());
+    // Este método debe ser llamado cada vez que queramos visualizar la escena de nuevo.
+    // Literalmente le decimos al navegador: "La próxima vez que haya que refrescar la pantalla, llama al método que te indico".
+    // Si no existiera esta línea,  update()  se ejecutaría solo la primera vez.
+    requestAnimationFrame(() => this.update())
   }
 }
 

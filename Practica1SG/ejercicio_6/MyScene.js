@@ -33,6 +33,8 @@ class MyScene extends THREE.Scene {
 		// la gui y el texto bajo el que se agruparán los controles de la interfaz que añada el modelo.
 		this.cargador = new Cargador(this.gui, "Objeto cargado");
 
+		
+
 		this.add(this.cargador);
 	}
 
@@ -51,9 +53,9 @@ class MyScene extends THREE.Scene {
 		this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 5000);
 		// También se indica dónde se coloca
 		// this.camera.position.set(100, 40, 100);
-		this.camera.position.set(300, 200, 300);
+		this.camera.position.set(30, 0, 30);
 		// Y hacia dónde mira
-		var look = new THREE.Vector3(0, 100, 0); //Hacia el origen
+		var look = new THREE.Vector3(0, 0, 0); //Hacia el origen
 		this.camera.lookAt(look);
 		this.add(this.camera);
 
