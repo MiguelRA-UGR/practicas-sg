@@ -7,6 +7,17 @@ class Escorvispa extends THREE.Object3D {
 
         this.createGUI(gui);
 
+        //Variables para animacion
+        this.batirarriba=false;
+        this.velocidadbatida=0.02;
+        this.margenbatida=0.1;
+        this.valorbatida = 0;
+
+        this.movimiento=false;
+        this.velocidadmovimienton=0.0005;
+        this.margenmovimiento=0.01;
+        this.valormovimiento = 0;
+
         this.cuerpoGeom = new THREE.SphereGeometry(0.25, 32, 32);
 
 		this.crearMateriales();
@@ -96,21 +107,74 @@ class Escorvispa extends THREE.Object3D {
     }
     
     createPinzas() {
-        this.parte = new THREE.Mesh(this.cuerpoGeom, this.materialPelo);
-        this.parte.rotateY(THREE.MathUtils.degToRad(50));
-        this.parte.position.set(0.25,0,0.20);
-        this.parte.scale.set(0.5,0.5,0.5);
+        // Primer brazo
+        this.brazo = new THREE.Mesh(this.cuerpoGeom, this.materialPelo);
+        this.brazo.rotateY(THREE.MathUtils.degToRad(50));
+        this.brazo.position.set(0.25,0,0.20);
+        this.brazo.scale.set(0.5,0.5,0.5);
 
-        this.parte1 = this.parte.clone();
+        this.parte1 = this.brazo.clone();
         this.parte1.scale.set(1.2,1.2,1.2);
         this.parte1.rotateY(THREE.MathUtils.degToRad(-40));
         this.parte1.rotateX(THREE.MathUtils.degToRad(40));
-        this.parte1.position.set(0,-0.2,0.4);
+        this.parte1.position.set(0.2,-0.2,0.4);
+        this.brazo.add(this.parte1);
+    
+        this.pinza = new THREE.Mesh(this.cuerpoGeom, this.beepionBlackMat);
+        this.pinza.position.set(-0.2,0,0.4);
+        this.pinza.scale.set(1.2,1.2,1.2);
+        this.pinza.rotateY(THREE.MathUtils.degToRad(-60));
+        
+        this.partir = new THREE.Mesh(this.cuerpoGeom, this.beepionYellowMat);
+        this.partir.position.set(0,0,0.3);
+        this.partir.scale.set(0.75,0.75,0.75);
+    
+        var tajogeom = new THREE.BoxGeometry(1,3.3,1);
+        var tajo = new THREE.Mesh(tajogeom);
+        tajo.position.set(0.5,-0.5,0.5);
+    
+        var pinza1CSG = new CSG();
+        pinza1CSG.subtract([this.partir, tajo]);
+        this.pinza1 = pinza1CSG.toMesh();
+    
+        this.pinza1.position.set(-0.1,0,0);
+        this.pinza2 = this.pinza1.clone();
+        this.pinza2.rotateZ(THREE.MathUtils.degToRad(180));
+        this.pinza2.position.set(0.1,0,0);
+        
+        //Pinchos
+        this.pinchogeom = new THREE.ConeGeometry(0.1,0.3,20,20);
+        this.pincho1 = new THREE.Mesh(this.pinchogeom, this.materialPelo);
+        this.pincho2 = this.pincho1.clone();
+        this.pincho3 = this.pincho1.clone();
+        this.pincho4 = this.pincho1.clone();
+        
+        this.pincho1.position.set(0.1,0.2,0.05);
+        this.pincho1.rotateZ(THREE.MathUtils.degToRad(-10));
+        this.pincho2.position.set(-0.1,0.2,0.05);
+        this.pincho2.rotateZ(THREE.MathUtils.degToRad(10));
+        this.pincho3.position.set(0.1,0.2,-0.1);
+        this.pincho3.rotateZ(THREE.MathUtils.degToRad(-10));
+        this.pincho4.position.set(-0.1,0.2,-0.1);
+        this.pincho4.rotateZ(THREE.MathUtils.degToRad(10));
 
-        this.parte.add(this.parte1);
-
-        this.cuerpo.add(this.parte);
+        this.pinza.add(this.pincho1);
+        this.pinza.add(this.pincho2);
+        this.pinza.add(this.pincho3);
+        this.pinza.add(this.pincho4);
+        this.pinza.add(this.pinza2);
+        this.pinza.add(this.pinza1);
+        this.parte1.add(this.pinza);
+        
+        // Segundo brazo
+        this.brazo2 = this.brazo.clone();
+        this.brazo2.scale.z *= -1;
+        this.brazo2.position.set(-0.25, 0, 0.20);
+        this.brazo2.rotateY(THREE.MathUtils.degToRad(90));
+        this.cuerpo.add(this.brazo2);
+        this.cuerpo.add(this.brazo);
     }
+    
 
 	createCabeza() {
         this.cabeza = new THREE.Mesh(this.cuerpoGeom, this.beepionYellowMat);
@@ -139,7 +203,7 @@ class Escorvispa extends THREE.Object3D {
 		this.tenaza = new THREE.Mesh(this.tenazaGeom, this.beepionBlackMat);
 		this.tenaza.scale.set(0.7,1,0.7);
 		this.tenaza.rotateX(THREE.MathUtils.degToRad(90));
-		this.tenaza.position.set(0,0,0.3);
+		this.tenaza.position.set(0,0,0.1);
 		
 		var boxGeometry = new THREE.BoxGeometry(1, 1, 1);
 		var boxMesh = new THREE.Mesh(boxGeometry);
@@ -156,7 +220,36 @@ class Escorvispa extends THREE.Object3D {
 		this.cabeza.add(this.tenaza2);
 		this.cabeza.add(this.tenaza1);
 
-		// Agregar los ojos a la cabeza
+        //Antenas
+
+        var path = new THREE.CatmullRomCurve3([
+            new THREE.Vector3(0, 0, 0),
+            new THREE.Vector3(0.3, 0.8, 0),
+            new THREE.Vector3(0.5, 0.8, 0),
+        ]);
+
+        var legShape = new THREE.Shape();
+        legShape.moveTo(0.01, 0);
+        legShape.lineTo(0.01, 0.02);
+        legShape.lineTo(-0.01, 0.02);
+        legShape.lineTo(-0.01, 0);
+        legShape.lineTo(0.01, 0);
+
+        var extrudeSettings = {
+            steps: 100,
+            bevelEnabled: false,
+            extrudePath: path
+        };
+
+        var antenageom = new THREE.ExtrudeGeometry(legShape, extrudeSettings);
+        this.antena1 = new THREE.Mesh(antenageom, this.beepionBlackMat);
+        this.antena1.position.set(0.2,0.2,-0.3);
+        this.antena2 = this.antena1.clone();
+        this.antena2.position.set(-0.2,0.2,-0.3);
+        this.antena2.rotateY(THREE.MathUtils.degToRad(180))
+
+        this.cabeza.add(this.antena1);
+        this.cabeza.add(this.antena2);
 		this.cabeza.add(this.ojo1);
 		this.cabeza.add(this.ojo2);
 		this.cuerpo.add(this.cabeza);
@@ -256,6 +349,51 @@ class Escorvispa extends THREE.Object3D {
 	};
 
 	update() {
-		
-	}
+        //Animacion Alas
+        if(this.batirarriba) {
+            this.valorbatida += this.velocidadbatida;
+        } else {
+            this.valorbatida -= this.velocidadbatida;
+        }
+        
+        this.ala1.rotateY(this.valorbatida);
+        this.ala2.rotateY(-this.valorbatida);
+        this.ala3.rotateY(this.valorbatida);
+        this.ala4.rotateY(-this.valorbatida);
+    
+        if(Math.abs(this.valorbatida) >= this.margenbatida) {
+            this.batirarriba = !this.batirarriba;
+        }
+
+        //Animacion cola y pinzas
+        if(this.movimiento) {
+            this.valormovimiento += this.velocidadmovimienton;
+        } else {
+            this.valormovimiento -= this.velocidadmovimienton;
+        }
+        
+        this.cola.rotateX(this.valormovimiento);
+        this.cola2.rotateX(this.valormovimiento);
+        this.cola3.rotateX(this.valormovimiento);
+        this.cabeza.rotateX(-this.valormovimiento);
+
+        this.brazo2.rotateX(this.valormovimiento);
+        this.brazo.rotateX(-this.valormovimiento);
+        this.parte1.rotateX(this.valormovimiento);
+        this.tenaza1.rotateY(this.valormovimiento);
+        this.tenaza2.rotateY(this.valormovimiento);
+
+        this.pata1.rotateZ(this.valormovimiento*0.5);
+        this.pata2.rotateZ(this.valormovimiento*0.5);
+        this.pata3.rotateZ(this.valormovimiento*0.5);
+        this.pata4.rotateZ(this.valormovimiento*0.5);
+        this.pata5.rotateZ(this.valormovimiento*0.5);
+        this.pata6.rotateZ(this.valormovimiento*0.5);
+    
+        if(Math.abs(this.valormovimiento) >= this.margenmovimiento) {
+            this.movimiento = !this.movimiento;
+        } 
+
+    }
+    
 } export { Escorvispa };
