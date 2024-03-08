@@ -9,21 +9,33 @@ class Escorvispa extends THREE.Object3D {
 
         this.cuerpoGeom = new THREE.SphereGeometry(0.25, 32, 32);
 
-		this.crearTexturas();
+		this.crearMateriales();
 
-        this.cuerpoGeom.scale(1, 1, 1.25);
-        this.cuerpo = new THREE.Mesh(this.cuerpoGeom, this.beepionYellowMat);
+        this.cuerpoGeom.scale(1, 1.25,1 );
+        this.cuerpoGeom.rotateX(THREE.MathUtils.degToRad(90))
+        this.cuerpo = new THREE.Mesh(this.cuerpoGeom, this.materialPelo);
 
 		this.createAlas();
         this.createPatas();
 		this.createCabeza();
 		this.createCola();
+        this.createPinzas();
 
         this.add(this.cuerpo);
     };
 
-	crearTexturas(){
-		this.beepionYellowMat = new THREE.MeshPhongMaterial({
+	crearMateriales(){
+		var textureLoader = new THREE.TextureLoader();
+        var texture1 = textureLoader.load('../imgs/rayas.avif');
+
+        this.beepionYellowMat = new THREE.MeshPhongMaterial({
+            color: 0xffe400,
+            specular: 0x222222,
+            shininess: 100,
+        });
+
+        this.materialPelo = new THREE.MeshPhongMaterial({
+            map : texture1,
             color: 0xFFFF00,
             specular: 0x222222,
             shininess: 100,
@@ -37,32 +49,71 @@ class Escorvispa extends THREE.Object3D {
 
 		this.wingmaterial = new THREE.MeshBasicMaterial({ color: 0x80DAEB, transparent: true, opacity: 0.5, side: THREE.DoubleSide });
 
-		var textureLoader = new THREE.TextureLoader();
-		var texture = textureLoader.load('../imgs/ojo.jpg');
-
+		
+		var texture = textureLoader.load('../imgs/ojo2.avif');
 		this.materialOjo = new THREE.MeshBasicMaterial({ map: texture });
 	}
 
-	createCola() {
-		this.cola = new THREE.Mesh(this.cuerpoGeom, this.beepionBlackMat);
-		this.cola.scale.set(0.75,0.75,0.75);
-		this.cola.position.set(0,0,-0.4);
-		this.cola.rotateX(THREE.MathUtils.degToRad(-20));
+    createCola() {
+        this.cola = new THREE.Mesh(this.cuerpoGeom, this.materialPelo);
+        this.cola.scale.set(0.75, 0.75, 0.75);
+        this.cola.position.set(0, 0, -0.4);
+        this.cola.rotateX(THREE.MathUtils.degToRad(-20));
+    
+        this.cola2 = this.cola.clone();
+        this.cola2.position.set(0, 0, -0.4);
+        this.cola2.rotateX(THREE.MathUtils.degToRad(-20));
+    
+        this.cola3 = this.cola2.clone();
+        this.cola3.position.set(0, 0, -0.4);
+    
+        this.cola2.add(this.cola3);
+        this.cola.add(this.cola2);
+        
+    
+        var curve = new THREE.CatmullRomCurve3([
+            new THREE.Vector3(0, 0, 0),
+            new THREE.Vector3(0.3, 0.1, 0),
+            new THREE.Vector3(0.45, 0.5, 0),
+            new THREE.Vector3(0.4, 0.6, 0),
+            new THREE.Vector3(0.3, 0.7, 0),
+            new THREE.Vector3(0.1, 0.9, 0),
+            new THREE.Vector3(0, 1, 0),
+        ]);
+    
+        var points = curve.getPoints(50);
+    
+        var aquijonGeom = new THREE.LatheGeometry(points);
+        this.aguijon = new THREE.Mesh(aquijonGeom, this.beepionBlackMat);
 
-		this.cola2 = this.cola.clone();
-		this.cola2.position.set(0,0,-0.4);
-		this.cola2.rotateX(THREE.MathUtils.degToRad(-20));
+        this.aguijon.rotateX(THREE.MathUtils.degToRad(-90));
+        this.aguijon.position.set(0,0,-0.);
+        this.aguijon.scale.set(1.5,1.5,1.5);
+    
+        this.cola3.add(this.aguijon);
 
-		this.cola3 = this.cola2.clone();
-		this.cola3.position.set(0,0,-0.4);
+        this.cuerpo.add(this.cola);
+    }
+    
+    createPinzas() {
+        this.parte = new THREE.Mesh(this.cuerpoGeom, this.materialPelo);
+        this.parte.rotateY(THREE.MathUtils.degToRad(50));
+        this.parte.position.set(0.25,0,0.20);
+        this.parte.scale.set(0.5,0.5,0.5);
 
-		this.cola2.add(this.cola3);
-		this.cola.add(this.cola2);
-		this.cuerpo.add(this.cola);
+        this.parte1 = this.parte.clone();
+        this.parte1.scale.set(1.2,1.2,1.2);
+        this.parte1.rotateY(THREE.MathUtils.degToRad(-40));
+        this.parte1.rotateX(THREE.MathUtils.degToRad(40));
+        this.parte1.position.set(0,-0.2,0.4);
+
+        this.parte.add(this.parte1);
+
+        this.cuerpo.add(this.parte);
     }
 
 	createCabeza() {
-        this.cabeza = new THREE.Mesh(this.cuerpoGeom, this.beepionBlackMat);
+        this.cabeza = new THREE.Mesh(this.cuerpoGeom, this.beepionYellowMat);
 		this.cabeza2 = this.cabeza.clone();
 		this.cabeza.scale.set(0.5,0.5,0.5);
 		this.cabeza.position.set(0,0,0.4);
@@ -85,7 +136,7 @@ class Escorvispa extends THREE.Object3D {
 		this.ojo2.rotateZ(THREE.MathUtils.degToRad(-35));
 
 		this.tenazaGeom = new THREE.TorusGeometry(0.25, 0.05, 20, 20);
-		this.tenaza = new THREE.Mesh(this.tenazaGeom, this.beepionYellowMat);
+		this.tenaza = new THREE.Mesh(this.tenazaGeom, this.beepionBlackMat);
 		this.tenaza.scale.set(0.7,1,0.7);
 		this.tenaza.rotateX(THREE.MathUtils.degToRad(90));
 		this.tenaza.position.set(0,0,0.3);
@@ -101,6 +152,7 @@ class Escorvispa extends THREE.Object3D {
 		this.tenaza2.rotateZ(THREE.MathUtils.degToRad(180));
 
 		this.tenaza1.position.set(-0.1, 0, 0);
+        this.tenaza2.position.set(0.1, 0, 0);
 		this.cabeza.add(this.tenaza2);
 		this.cabeza.add(this.tenaza1);
 
