@@ -7,6 +7,7 @@ import { Stats } from '../libs/stats.module.js'
 // Clases de mi proyecto
 
 import { Escorvispa } from '../escorvispa/Escorvispa.js'
+import { Coche } from './Coche.js'
 
 class MyScene extends THREE.Scene {
   constructor (myCanvas) {
@@ -38,8 +39,14 @@ class MyScene extends THREE.Scene {
     // la gui y el texto bajo el que se agruparán los controles de la interfaz que añada el modelo.
 
 
-    this.escorvispa = new Escorvispa(this.gui, "Tramo");
+    this.escorvispa = new Escorvispa(this.gui, "Escorvispa");
+    this.coche = new Coche(this.gui, "Coche");
+
+    this.escorvispa.position.set(2.5,0,0);
+    this.escorvispa.scale.set(0.5,0.5,0.5);
+
 		this.add(this.escorvispa);
+    this.add(this.coche);
 
   }
   
