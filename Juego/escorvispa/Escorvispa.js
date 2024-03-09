@@ -9,7 +9,7 @@ class Escorvispa extends THREE.Object3D {
 
         //Variables para animacion
         this.batirarriba=false;
-        this.velocidadbatida=0.02;
+        this.velocidadbatida=0.05;
         this.margenbatida=0.1;
         this.valorbatida = 0;
 
