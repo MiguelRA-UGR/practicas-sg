@@ -3,6 +3,8 @@ import { CSG } from '../libs/CSG-v2.js'
 import { MTLLoader } from '../libs/MTLLoader.js';
 import { OBJLoader } from '../libs/OBJLoader.js';
 
+import { Motor } from './Motor.js';
+
 class Coche extends THREE.Object3D {
     constructor(gui, titleGui) {
         super();
@@ -129,8 +131,11 @@ class Coche extends THREE.Object3D {
 
         this.ejerueda1.position.set(1.4,0,1);
         this.ejerueda2.position.set(1.4,0,-1);
-        this.ejerueda3.position.set(-0.8,0,1);
-        this.ejerueda4.position.set(-0.8,0,-1);
+
+        this.ejerueda3.scale.set(1,1,1.2);
+        this.ejerueda4.scale.set(1,1,1.2);
+        this.ejerueda3.position.set(-0.8,0.5,1.2);
+        this.ejerueda4.position.set(-0.8,0.5,-1.2);
 
         this.base.add(this.ejerueda1);
         this.base.add(this.ejerueda2);
@@ -140,6 +145,12 @@ class Coche extends THREE.Object3D {
 
         this.crearChasis();
 
+        this.motor = new Motor(gui, "Motor");
+
+        this.motor.scale.set(0.4,0.4,0.4);
+        this.motor.position.set(0,0.05,-0.8);
+
+        this.add(this.motor);
         this.add(this.base);
 
     };
@@ -147,15 +158,13 @@ class Coche extends THREE.Object3D {
 	crearMateriales(){
 		this.metalGris = new THREE.MeshStandardMaterial({
             color: 0x808080,
-            metalness: 1,
+            metalness: 0.5,
             roughness: 0.5  
         });
 	}
 
 	createGUI(gui) {
-		this.guiControls = new function () {
 
-		}
 	};
 
 
@@ -177,25 +186,33 @@ class Coche extends THREE.Object3D {
             objLoader.load(objPath, function(rueda) {
                 
                 rueda.scale.set(0.3,0.3,0.3);
-                rueda.position.set(1.4,-0.9,-1.4);
+                rueda.position.set(1.4,-0.9,1.4);
 
                 self.base.add(rueda);
 
                 const rueda2 = rueda.clone();
                 const rueda3 = rueda.clone();
                 const rueda4 = rueda.clone();
+
+                const rueda5 = rueda.clone();
                 
                 rueda2.scale.set(0.3,0.3,0.3);
                 rueda2.rotateY(THREE.MathUtils.degToRad(180));
-                rueda2.position.set(1.4,-0.9,1.4);
-                rueda3.scale.set(0.3,0.3,0.3);
-                rueda3.position.set(-0.8,-0.9,-1.4);
-                rueda4.scale.set(0.3,0.3,0.3);
+                rueda2.position.set(1.4,-0.9,-1.4);
+                rueda3.scale.set(0.5,0.5,0.3);
+                rueda3.position.set(-0.8,-1,1.6);
+                rueda4.scale.set(0.5,0.5,0.3);
                 rueda4.rotateY(THREE.MathUtils.degToRad(180));
-                rueda4.position.set(-0.8,-0.9,1.4);
+                rueda4.position.set(-0.8,-1,-1.6);
+                rueda5.scale.set(0.3,0.3,0.3);
+                rueda5.rotateY(THREE.MathUtils.degToRad(-90));
+                rueda5.rotateX(THREE.MathUtils.degToRad(-40));
+                rueda5.position.set(-2.5,0.0,0);
+
                 self.base.add(rueda2);
                 self.base.add(rueda3);
                 self.base.add(rueda4);
+                self.base.add(rueda5);
 
             });
         });
@@ -261,6 +278,16 @@ class Coche extends THREE.Object3D {
             new THREE.Vector3(-0.4, 0.8, -1.8),
             new THREE.Vector3(0.4, 0.8, -1.8)
         ];
+
+        const pieza11points = [
+            new THREE.Vector3(-0.8, 1.0, 1.2),
+            new THREE.Vector3(0.6, 0, 2)
+        ];
+
+        const pieza12points = [
+            new THREE.Vector3(0.8, 1.0, 1.2),
+            new THREE.Vector3(-0.6, 0, 2)
+        ];
     
         const pathPieza2 = new THREE.CatmullRomCurve3(pieza2points, false, 'catmullrom', 0);
         const pathPieza3 = new THREE.CatmullRomCurve3(pieza3points, false, 'catmullrom', 0);
@@ -271,6 +298,8 @@ class Coche extends THREE.Object3D {
         const pathPieza8 = new THREE.CatmullRomCurve3(pieza8points, false, 'catmullrom', 0);
         const pathPieza9 = new THREE.CatmullRomCurve3(pieza9points, false, 'catmullrom', 0);
         const pathPieza10 = new THREE.CatmullRomCurve3(pieza10points, false, 'catmullrom', 0);
+        const pathPieza11 = new THREE.CatmullRomCurve3(pieza11points, false, 'catmullrom', 0);
+        const pathPieza12 = new THREE.CatmullRomCurve3(pieza12points, false, 'catmullrom', 0);
         
     
         const extrudeSettingsPieza2 = { steps: 100, bevelEnabled: false, extrudePath: pathPieza2 };
@@ -282,6 +311,8 @@ class Coche extends THREE.Object3D {
         const extrudeSettingsPieza8 = { steps: 100, bevelEnabled: false, extrudePath: pathPieza8 };
         const extrudeSettingsPieza9 = { steps: 100, bevelEnabled: false, extrudePath: pathPieza9 };
         const extrudeSettingsPieza10 = { steps: 100, bevelEnabled: false, extrudePath: pathPieza10 };
+        const extrudeSettingsPieza11 = { steps: 100, bevelEnabled: false, extrudePath: pathPieza11 };
+        const extrudeSettingsPieza12 = { steps: 100, bevelEnabled: false, extrudePath: pathPieza12 };
     
         const pieza2Geom = new THREE.ExtrudeGeometry(this.circleShape, extrudeSettingsPieza2);
         const pieza3Geom = new THREE.ExtrudeGeometry(this.circleShape, extrudeSettingsPieza3);
@@ -292,6 +323,8 @@ class Coche extends THREE.Object3D {
         const pieza8Geom = new THREE.ExtrudeGeometry(this.circleShape, extrudeSettingsPieza8);
         const pieza9Geom = new THREE.ExtrudeGeometry(this.circleShape, extrudeSettingsPieza9);
         const pieza10Geom = new THREE.ExtrudeGeometry(this.circleShape, extrudeSettingsPieza10);
+        const pieza11Geom = new THREE.ExtrudeGeometry(this.circleShape, extrudeSettingsPieza11);
+        const pieza12Geom = new THREE.ExtrudeGeometry(this.circleShape, extrudeSettingsPieza12);
     
         pieza2Geom.rotateY(THREE.MathUtils.degToRad(-90));
         pieza3Geom.rotateY(THREE.MathUtils.degToRad(-90));
@@ -302,6 +335,8 @@ class Coche extends THREE.Object3D {
         pieza8Geom.rotateY(THREE.MathUtils.degToRad(-90));
         pieza9Geom.rotateY(THREE.MathUtils.degToRad(-90));
         pieza10Geom.rotateY(THREE.MathUtils.degToRad(-90));
+        pieza11Geom.rotateY(THREE.MathUtils.degToRad(-90));
+        pieza12Geom.rotateY(THREE.MathUtils.degToRad(-90));
     
         this.chasispieza2 = new THREE.Mesh(pieza2Geom, this.metalGris);
         this.chasispieza3 = new THREE.Mesh(pieza3Geom, this.metalGris);
@@ -312,6 +347,8 @@ class Coche extends THREE.Object3D {
         this.chasispieza8 = new THREE.Mesh(pieza8Geom, this.metalGris);
         this.chasispieza9 = new THREE.Mesh(pieza9Geom, this.metalGris);
         this.chasispieza10 = new THREE.Mesh(pieza10Geom, this.metalGris);
+        this.chasispieza11 = new THREE.Mesh(pieza11Geom, this.metalGris);
+        this.chasispieza12 = new THREE.Mesh(pieza12Geom, this.metalGris);
 
         const pathChasisLargo = new THREE.CatmullRomCurve3(chasisLargoPoints,false,'catmullrom',0);
         const pathpieza1 = new THREE.CatmullRomCurve3(pieza1points,false,'catmullrom',0);
@@ -342,12 +379,14 @@ class Coche extends THREE.Object3D {
         this.base.add(this.chasispieza8);
         this.base.add(this.chasispieza9);
         this.base.add(this.chasispieza10);
+        this.base.add(this.chasispieza11);
+        this.base.add(this.chasispieza12);
         this.base.add(this.chasisLargo1);
         this.base.add(this.chasisLargo2);
     }
 
 	update() {
-        
+        this.motor.update()
     }
     
 } export { Coche };

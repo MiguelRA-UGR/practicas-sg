@@ -1,7 +1,7 @@
 # 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
 # File Created: 24.02.2012 14:49:37
 
-mtllib 13474_V6_Engine_Block_v1_l2.mtl
+mtllib motor.mtl
 
 #
 # object Engine_Block_body

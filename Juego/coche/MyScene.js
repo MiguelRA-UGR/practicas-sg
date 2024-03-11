@@ -8,6 +8,7 @@ import { Stats } from '../libs/stats.module.js'
 
 import { Escorvispa } from '../escorvispa/Escorvispa.js'
 import { Coche } from './Coche.js'
+import { Motor } from './Motor.js'
 
 class MyScene extends THREE.Scene {
   constructor (myCanvas) {
@@ -42,11 +43,12 @@ class MyScene extends THREE.Scene {
     this.escorvispa = new Escorvispa(this.gui, "Escorvispa");
     this.coche = new Coche(this.gui, "Coche");
 
-    this.escorvispa.position.set(2.5,0,0);
+    this.escorvispa.position.set(2.8,0,0);
     this.escorvispa.scale.set(0.5,0.5,0.5);
 
 		this.add(this.escorvispa);
     this.add(this.coche);
+    //this.add(this.motor);
 
   }
   
@@ -229,6 +231,7 @@ class MyScene extends THREE.Scene {
     
     // Se actualiza el resto del modelo
     this.escorvispa.update();
+    this.coche.update();
     
     // Le decimos al renderizador "visualiza la escena que te indico usando la cámara que te estoy pasando"
     this.renderer.render (this, this.getCamera());
