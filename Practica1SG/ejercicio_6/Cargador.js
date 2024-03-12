@@ -11,13 +11,13 @@ class Cargador extends THREE.Object3D {
 
 		var that = this;
 		var mtlLoader = new THREE.MTLLoader();
-		mtlLoader.setPath("../models/ironMan/");
-		mtlLoader.load("IronMan.mtl", function(materials) {
+		mtlLoader.setPath("../models/rueda/");
+		mtlLoader.load("firstwheel.mtl", function(materials) {
 			materials.preload();
 			var objLoader = new THREE.OBJLoader();
 			objLoader.setMaterials(materials);
-			objLoader.setPath("../models/ironMan/");
-			objLoader.load("IronMan.obj", function(modelo3D) {
+			objLoader.setPath("../models/rueda/");
+			objLoader.load("firstwheel.obj", function(modelo3D) {
 				
 				that.add(modelo3D);
 				console.log(modelo3D);

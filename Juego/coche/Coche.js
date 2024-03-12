@@ -4,6 +4,7 @@ import { MTLLoader } from '../libs/MTLLoader.js';
 import { OBJLoader } from '../libs/OBJLoader.js';
 
 import { Motor } from './Motor.js';
+import { Minigun } from './Minigun.js';
 
 class Coche extends THREE.Object3D {
     constructor(gui, titleGui) {
@@ -12,6 +13,7 @@ class Coche extends THREE.Object3D {
         this.createGUI(gui);
         this.crearMateriales();
         this.cargarModelos();
+        this.crearFocos();
 
         //Definicion de formas para extrusion
         const radius = 0.05;
@@ -134,8 +136,8 @@ class Coche extends THREE.Object3D {
 
         this.ejerueda3.scale.set(1,1,1.2);
         this.ejerueda4.scale.set(1,1,1.2);
-        this.ejerueda3.position.set(-0.8,0.5,1.2);
-        this.ejerueda4.position.set(-0.8,0.5,-1.2);
+        this.ejerueda3.position.set(-0.8,0.3,1.2);
+        this.ejerueda4.position.set(-0.8,0.3,-1.2);
 
         this.base.add(this.ejerueda1);
         this.base.add(this.ejerueda2);
@@ -145,12 +147,18 @@ class Coche extends THREE.Object3D {
 
         this.crearChasis();
 
+    
         this.motor = new Motor(gui, "Motor");
-
         this.motor.scale.set(0.4,0.4,0.4);
         this.motor.position.set(0,0.05,-0.8);
-
         this.add(this.motor);
+
+        this.minigun = new Minigun(gui, "MInigun");
+        this.minigun.scale.set(0.2,0.2,0.2);
+        this.minigun.position.set(0,1.5,0);
+        this.minigun.rotateX(THREE.MathUtils.degToRad(90));
+        this.add(this.minigun);
+
         this.add(this.base);
 
     };
@@ -161,18 +169,67 @@ class Coche extends THREE.Object3D {
             metalness: 0.5,
             roughness: 0.5  
         });
+
+        this.materialFoco = new THREE.MeshStandardMaterial({ color: 0xFFBF00, transparent: true, opacity: 0.7 });
+	}
+
+    crearFocos(){
+		this.focoIntGeom = new THREE.SphereGeometry(0.1,20,20);
+        this.focoExtGeom = new THREE.SphereGeometry(0.15,20,20);
+        this.cuboGeom = new THREE.BoxGeometry(0.3,0.3,0.3);
+        this.interiorFoco = new THREE.Mesh(this.focoIntGeom, this.materialFoco);
+        this.exteriorFoco = new THREE.Mesh(this.focoExtGeom, this.metalGris);
+        
+        this.cubo= new THREE.Mesh(this.cuboGeom, this.metalGris);
+        this.cubo.position.set(0,0,0.15);
+        this.cubo.rotateX(THREE.MathUtils.degToRad(30))
+
+        var focoCSG = new CSG();
+		focoCSG.subtract([this.exteriorFoco, this.cubo, this.interiorFoco]);
+		this.foco = focoCSG.toMesh();
+        this.foco.add(this.interiorFoco);
+
+        this.luzfoco = new THREE.DirectionalLight(0xffffff,1);
+        
+        const targetPosition = new THREE.Vector3(0, 0, 10);
+        this.luzfoco.position.set(0, 0, -0.2);
+        this.luzfoco.target.position.copy(targetPosition);
+        const helper = new THREE.DirectionalLightHelper( this.luzfoco,5);
+        
+        this.luzfoco2 = this.luzfoco.clone();
+        this.luzfoco2.position.set(0, 0, -0.2);
+        const helper2 = new THREE.DirectionalLightHelper( this.luzfoco2,5);
+
+        
+        this.foco2 = this.foco.clone();
+        this.foco.position.set(-0.5,0.5,2.35);
+        this.foco2.position.set(0.5,0.5,2.35);
+        this.foco.add(this.luzfoco);
+        this.foco2.add(this.luzfoco2);
+
+        this.add(helper);
+        this.add(helper2);
+        this.add(this.foco);
+        this.add(this.foco2);
 	}
 
 	createGUI(gui) {
-
-	};
+        const self = this;
+        this.guiControls = new function() {
+            this.focoEncendido = false;
+        };
+    
+        gui.add(this.guiControls, 'focoEncendido').name('Foco encendido').onChange(function(value) {
+            self.luzfoco.visible = value;
+        });
+    }
 
 
     cargarModelos() {
         const self = this;
     
         const mtlLoader = new MTLLoader();
-        const mtlPath = '../models/rueda/firstwheel.mtl';
+        const mtlPath = '../models/rueda1/disk.mtl';
     
         mtlLoader.load(mtlPath, function(materials) {
             materials.preload();
@@ -181,12 +238,12 @@ class Coche extends THREE.Object3D {
     
             objLoader.setMaterials(materials);
     
-            const objPath = '../models/rueda/firstwheel.obj';
+            const objPath = '../models/rueda1/disk.obj';
     
             objLoader.load(objPath, function(rueda) {
                 
-                rueda.scale.set(0.3,0.3,0.3);
-                rueda.position.set(1.4,-0.9,1.4);
+                rueda.scale.set(0.2,0.2,0.3);
+                rueda.position.set(1.4,0.05,1.4);
 
                 self.base.add(rueda);
 
@@ -196,18 +253,18 @@ class Coche extends THREE.Object3D {
 
                 const rueda5 = rueda.clone();
                 
-                rueda2.scale.set(0.3,0.3,0.3);
+                rueda2.scale.set(0.2,0.2,0.3);
                 rueda2.rotateY(THREE.MathUtils.degToRad(180));
-                rueda2.position.set(1.4,-0.9,-1.4);
-                rueda3.scale.set(0.5,0.5,0.3);
-                rueda3.position.set(-0.8,-1,1.6);
-                rueda4.scale.set(0.5,0.5,0.3);
+                rueda2.position.set(1.4,0.05,-1.4);
+                rueda3.scale.set(0.3,0.3,0.3);
+                rueda3.position.set(-0.8,0.35,1.7);
+                rueda4.scale.set(0.3,0.3,0.3);
                 rueda4.rotateY(THREE.MathUtils.degToRad(180));
-                rueda4.position.set(-0.8,-1,-1.6);
-                rueda5.scale.set(0.3,0.3,0.3);
+                rueda4.position.set(-0.8,0.35,-1.7);
+                rueda5.scale.set(0.2,0.2,0.2);
                 rueda5.rotateY(THREE.MathUtils.degToRad(-90));
                 rueda5.rotateX(THREE.MathUtils.degToRad(-40));
-                rueda5.position.set(-2.5,0.0,0);
+                rueda5.position.set(-1.8,0.9,0);
 
                 self.base.add(rueda2);
                 self.base.add(rueda3);
@@ -387,6 +444,7 @@ class Coche extends THREE.Object3D {
 
 	update() {
         this.motor.update()
+        this.minigun.update()
     }
     
 } export { Coche };
