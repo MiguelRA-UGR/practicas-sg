@@ -116,7 +116,7 @@ class Coche extends THREE.Object3D {
         var baseChasisGeom = new THREE.ExtrudeGeometry(this.circleShape, extrudeSettingsBaseChasis);
         
         var baseGeom = new THREE.ExtrudeGeometry(baseShape, extrudeSettingsBase);
-        this.base = new THREE.Mesh(baseGeom, this.metalGris);
+        this.base = new THREE.Mesh(baseGeom, this.planchaMetal);
         this.baseChasis = new THREE.Mesh(baseChasisGeom, this.metalGris);
        
 
@@ -153,7 +153,7 @@ class Coche extends THREE.Object3D {
         this.motor.position.set(0,0.05,-0.8);
         this.add(this.motor);
 
-        this.minigun = new Minigun(gui, "MInigun");
+        this.minigun = new Minigun(gui, "Minigun");
         this.minigun.scale.set(0.2,0.2,0.2);
         this.minigun.position.set(0,1.5,0);
         this.minigun.rotateX(THREE.MathUtils.degToRad(90));
@@ -164,6 +164,17 @@ class Coche extends THREE.Object3D {
     };
 
 	crearMateriales(){
+
+        var textureLoader = new THREE.TextureLoader();
+        var texture1 = textureLoader.load('../imgs/acero.jpg');
+
+        this.planchaMetal = new THREE.MeshPhongMaterial({
+            map : texture1,
+            color: 0x8a9597,
+            specular: 0x222222,
+            shininess: 100,
+        });
+
 		this.metalGris = new THREE.MeshStandardMaterial({
             color: 0x808080,
             metalness: 0.5,
@@ -430,6 +441,7 @@ class Coche extends THREE.Object3D {
 
         this.chasisLargo2 = this.chasisLargo1.clone();
         this.chasisLargo2.scale.z *= -1;
+        this.chasispieza9.position.set(0,0.1,0);
 
         this.base.add(this.chasispieza6);
         this.base.add(this.chasispieza7);

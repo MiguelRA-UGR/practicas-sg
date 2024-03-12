@@ -66,9 +66,9 @@ class Minigun extends THREE.Object3D {
 
 		this.cargadorGeom = new THREE.BoxGeometry(2,2,2.5);
 		this.cargador = new THREE.Mesh(this.cargadorGeom,this.planchaMetal);
-		this.cargador.position.set(0.25,-0.5,1.5);
+		this.cargador.position.set(0.25,-0.25,1.5);
 		this.cargadorHueco = new THREE.Mesh(this.cargadorGeom,this.metalCromo);
-		this.cargadorHueco.position.set(-1.25,-0.5,3);
+		this.cargadorHueco.position.set(-1.25,-0.25,3);
 		this.cargadorHueco.rotateY(THREE.MathUtils.degToRad(45));
 
 		var cargadorCSG = new CSG();
@@ -92,10 +92,10 @@ class Minigun extends THREE.Object3D {
         });
 		
 		this.metalPlata = new THREE.MeshStandardMaterial({
-            color: 0x8a9597 ,
-            metalness: 0.5, 
-            roughness: 0.2
-        });
+			color: 0x808080,
+			metalness: 0.5,
+			roughness: 0.5  
+		});
 
 		this.metalCromo = new THREE.MeshPhysicalMaterial({
 			color: 0xffffff,
