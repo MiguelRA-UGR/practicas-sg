@@ -2,6 +2,7 @@ import * as THREE from '../libs/three.module.js';
 import { CSG } from '../libs/CSG-v2.js';
 import { MTLLoader } from '../libs/MTLLoader.js';
 import { OBJLoader } from '../libs/OBJLoader.js';
+import { Bala } from './Bala.js'
 
 const TipoOrbe = {
     //Tipos Buenos
@@ -24,13 +25,15 @@ class Orbe extends THREE.Object3D {
             tipo = tipos[Math.floor(Math.random() * tipos.length)];
         }
         
+        this.haymodelo=false;
         this.tipo = tipo;
         this.distanciaUp = 0.25;
         this.crearObjetos();
 
         this.floteDirection = 1;
         this.floteSpeed = 0.005;
-        this.cargarModelo();
+        if(this.haymodelo)
+            this.cargarModelo();
     }
     
     cargarModelo() {
@@ -47,21 +50,25 @@ class Orbe extends THREE.Object3D {
         var factorEscala = 0.5;
         switch (this.tipo) {
             case TipoOrbe.CADENCIA:
+                this.haymodelo=false;
                 pathOBJ = '../models/cadencia';
                 pathMTL = '../models/cadencia';
                 factorEscala=0.5;
                 break;
             case TipoOrbe.DAÑO_AUMENTADO:
+                this.haymodelo=true;
                 pathOBJ = '../models/skull/skull.obj';
                 pathMTL = '../models/skull/skull.mtl';
                 factorEscala=0.0035;
                 break;
             case TipoOrbe.TAMAÑO_AUMENTADO:
+                this.haymodelo=false;
                 pathOBJ = '../models/rueda1/disk.obj';
                 pathMTL = '../models/rueda1/disk.mtl';
                 factorEscala=0.2;
                 break;
             case TipoOrbe.VELOCIDAD_AUMENTADA:
+                this.haymodelo=true;
                 pathOBJ = '../models/cheetah/cheetah.obj';
                 pathMTL = '../models/cheetah/cheetah.mtl';
 
@@ -94,6 +101,12 @@ class Orbe extends THREE.Object3D {
         switch (this.tipo) {
             case TipoOrbe.CADENCIA:
                 this.color = 0xff8000;
+
+                this.bala = new Bala();
+                this.bala.rotateX(THREE.MathUtils.degToRad(45));
+                this.bala.rotateZ(THREE.MathUtils.degToRad(45));
+                this.bala.scale.set(0.75,0.75,0.75);
+                this.add(this.bala);
                 break;
             case TipoOrbe.DAÑO_AUMENTADO:
                 this.color = 0xf52a00;

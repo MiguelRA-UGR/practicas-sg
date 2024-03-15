@@ -16,6 +16,7 @@ class Motor extends THREE.Object3D {
         this.velocidadMaxima = 0.5;
         
         this.velocidad = this.velocidadInicial;
+        this.velocidadPistones = this.velocidadInicial;
 
         this.amplitudVibracion = 0.05;
         this.turnoVibracion=true;
@@ -182,6 +183,13 @@ class Motor extends THREE.Object3D {
             if (this.velocidadPistones > this.velocidadMaximaPiston) {
                 this.velocidadPistones = this.velocidadMaximaPiston;
             }
+        } else {
+            this.velocidadPistones -= 0.0001;
+            if (this.velocidadPistones < 0) {
+                this.velocidadPistones = 0;
+            }
+            this.position.x=0;
+        }
 
             if (this.turnoImpar) {
                 //Impares suben
@@ -224,10 +232,7 @@ class Motor extends THREE.Object3D {
             if (this.piston1.position.x >= 1 || this.piston2.position.x >= 1) {
                 this.turnoImpar = !this.turnoImpar;
             }
-        } else {
-            this.velocidadPistones = 0;
-            this.position.x=0;
-        }
+        
 
         
 

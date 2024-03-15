@@ -8,6 +8,7 @@ import { Coche } from './Coche.js'
 import { Motor } from './Motor.js'
 import { Minigun } from './Minigun.js'
 import { Orbe,TipoOrbe } from './Orbe.js'
+import { Bala } from './Bala.js'
 
 class MyScene extends THREE.Scene {
   constructor (myCanvas) {
@@ -30,11 +31,11 @@ class MyScene extends THREE.Scene {
     this.add(this.escorvispa);
     */
    //////////////////////////////////////////////////////////////////
-    /*
+    ///*
     this.coche = new Coche(this.gui, "Coche");
     this.coche.rotateY(THREE.MathUtils.degToRad(180));
     this.add(this.coche);
-    */
+    //*/
   ////////////////////////////////////////////////////////////////////
     /*
     this.minigun = new Minigun(this.gui, "Minigun")
@@ -49,8 +50,12 @@ class MyScene extends THREE.Scene {
     this.add(this.pared);
     */
   ////////////////////////////////////////////////////////////////////
-    this.orbe1 = new Orbe(TipoOrbe.VELOCIDAD_AUMENTADA);
-    this.add(this.orbe1);
+    this.orbe1 = new Orbe(TipoOrbe.CADENCIA);
+    //this.add(this.orbe1);
+  ////////////////////////////////////////////////////////////////////
+    this.bala = new Bala();
+    this.bala.position.set(2,0,0);
+    //this.add(this.bala);
 
   }
   
@@ -153,7 +158,7 @@ class MyScene extends THREE.Scene {
     if (this.stats) this.stats.update();
     this.cameraControl.update();
     //this.escorvispa.update();
-    //this.coche.update();
+    this.coche.update();
     //this.minigun.update();
 
     this.orbe1.update();
