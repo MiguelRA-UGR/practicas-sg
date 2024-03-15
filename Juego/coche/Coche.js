@@ -159,6 +159,9 @@ class Coche extends THREE.Object3D {
         this.minigun.rotateX(THREE.MathUtils.degToRad(90));
         this.add(this.minigun);
 
+        //this.parachoques=
+        
+
         this.add(this.base);
 
     };
