@@ -33,7 +33,7 @@ class MyScene extends THREE.Scene {
    //////////////////////////////////////////////////////////////////
     ///*
     this.coche = new Coche(this.gui, "Coche");
-    this.coche.rotateY(THREE.MathUtils.degToRad(180));
+    //this.coche.rotateY(THREE.MathUtils.degToRad(180));
     this.add(this.coche);
     //*/
   ////////////////////////////////////////////////////////////////////

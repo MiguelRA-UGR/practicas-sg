@@ -12,9 +12,74 @@ class Coche extends THREE.Object3D {
         
         this.createGUI(gui);
         this.crearMateriales();
+        this.crearBase();
         this.cargarModelos();
         this.crearFocos();
+        this.crearParachoques();
+        this.crearEscapes();
+        this.crearGuardaBarros();
+        this.crearChasis();
+    
+        this.motor = new Motor(gui, "Motor");
+        this.motor.scale.set(0.4,0.4,0.4);
+        this.motor.position.set(0,0.05,-0.8);
+        this.add(this.motor);
 
+        this.minigun = new Minigun(gui, "Minigun");
+        this.minigun.scale.set(0.2,0.2,0.2);
+        this.minigun.position.set(0,1.5,0);
+        this.minigun.rotateX(THREE.MathUtils.degToRad(90));
+        this.add(this.minigun);
+
+        this.add(this.base);
+
+    };
+
+	crearMateriales(){
+
+        var textureLoader = new THREE.TextureLoader();
+        var texture1 = textureLoader.load('../imgs/acero.jpg');
+        
+        this.planchaMetal = new THREE.MeshPhongMaterial({
+            map : texture1,
+            color: 0x8a9597,
+            specular: 0x222222,
+            shininess: 100,
+        });
+
+        var texture2 = textureLoader.load('../imgs/gradient.png');
+
+        this.tuboEscapeMat = new THREE.MeshPhongMaterial({
+            map : texture2,
+            color: 0x8a9597,
+            side: THREE.DoubleSide,
+            specular: 0x222222,
+            shininess: 100,
+        });
+
+        this.escapeMat = new THREE.MeshPhongMaterial({
+            color: 0x767d80,
+            side: THREE.DoubleSide,
+            specular: 0x222222,
+            shininess: 100,
+        });
+
+		this.metalGris = new THREE.MeshStandardMaterial({
+            color: 0x808080,
+            metalness: 0.5,
+            roughness: 0.5  
+        });
+
+        this.metalMorado = new THREE.MeshStandardMaterial({
+            color: 0x800080,
+            metalness: 0.5,
+            roughness: 0.5  
+        });
+
+        this.materialFoco = new THREE.MeshStandardMaterial({ color: 0xFFBF00, transparent: true, opacity: 0.7 });
+	}
+
+    crearBase(){
         //Definicion de formas para extrusion
         const radius = 0.05;
         const segments = 32;
@@ -118,7 +183,7 @@ class Coche extends THREE.Object3D {
         var baseGeom = new THREE.ExtrudeGeometry(baseShape, extrudeSettingsBase);
         this.base = new THREE.Mesh(baseGeom, this.planchaMetal);
         this.baseChasis = new THREE.Mesh(baseChasisGeom, this.metalGris);
-       
+    
 
         this.baseChasis.rotateY(THREE.MathUtils.degToRad(-90));
         this.base.rotateY(THREE.MathUtils.degToRad(-90));
@@ -145,47 +210,148 @@ class Coche extends THREE.Object3D {
         this.base.add(this.ejerueda4);
         this.base.add(this.baseChasis);
 
-        this.crearChasis();
+        this.add(this.base);
+    }
 
-    
-        this.motor = new Motor(gui, "Motor");
-        this.motor.scale.set(0.4,0.4,0.4);
-        this.motor.position.set(0,0.05,-0.8);
-        this.add(this.motor);
+    crearGuardaBarros(){
 
-        this.minigun = new Minigun(gui, "Minigun");
-        this.minigun.scale.set(0.2,0.2,0.2);
-        this.minigun.position.set(0,1.5,0);
-        this.minigun.rotateX(THREE.MathUtils.degToRad(90));
-        this.add(this.minigun);
+    }
 
-        //this.parachoques=
+    crearEscapes(){
+
+        const radius2 = 0.15;
+        const segments2 = 20;
+        var circleShape2 = new THREE.Shape();
+        circleShape2.moveTo(radius2, 0);
+        for (let i = 1; i <= segments2; i++) {
+            const theta = (i / segments2) * Math.PI * 2;
+            const x = radius2 * Math.cos(theta);
+            const y = radius2 * Math.sin(theta);
+            circleShape2.lineTo(x, y);
+        }
+
+        var escape1Points = [
+            new THREE.Vector3(0.1, 0.1, -0.5),
+            new THREE.Vector3(0.3, 0.1, -0.5),
+            new THREE.Vector3(0.3, 0.1, -1),
+            new THREE.Vector3(0.5, 0.2, -1.2),
+            new THREE.Vector3(0.9, 0.4, -1.6),
+            new THREE.Vector3(0.9, 0.8, -2.5),
+
+        ];
+
+
+        const escape1path = new THREE.CatmullRomCurve3(escape1Points,false,'catmullrom',0);
+        var extrudeSettingsescape1 = {
+            steps: 100,
+            bevelEnabled: true,
+            extrudePath: escape1path
+        };
+
+
+        this.escape1Geom = new THREE.ExtrudeGeometry(circleShape2, extrudeSettingsescape1);
+        this.escape1 = new THREE.Mesh(this.escape1Geom,this.escapeMat);
+
+        this.finEscapeGeom = new THREE.CylinderGeometry(0.16,0.16,0.4,30,30,true);
+        this.finEscape = new THREE.Mesh(this.finEscapeGeom,this.tuboEscapeMat);
+        
+        this.huecoEscapeGeom = new THREE.CylinderGeometry(0.15,0.15,0.4,30,30);
+        this.huecoEscape = new THREE.Mesh(this.huecoEscapeGeom,this.escapeMat);
         
 
-        this.add(this.base);
+        this.finEscape2 = this.finEscape.clone();
+        this.finEscape.rotateX(THREE.MathUtils.degToRad(-65));
+        this.finEscape.position.set(0.9,0.8,-2.5);
+        this.huecoEscape.rotateX(THREE.MathUtils.degToRad(-65));
+        this.huecoEscape.position.set(0.9,0.8,-2.5);
 
-    };
+        this.escapeCSG = new CSG();
+        this.escapeCSG.subtract([this.escape1, this.huecoEscape]);
+        this.escape1=this.escapeCSG.toMesh();
 
-	crearMateriales(){
+        this.escape1.add(this.finEscape);
 
-        var textureLoader = new THREE.TextureLoader();
-        var texture1 = textureLoader.load('../imgs/acero.jpg');
+        this.escape1a = this.escape1.clone();
+        this.escape2 = this.escape1.clone();
+        this.escape2a = this.escape1.clone();
+        this.escape2.scale.set(0.85,0.65,1);
+        this.escape2a.scale.set(0.85,0.65,1);
 
-        this.planchaMetal = new THREE.MeshPhongMaterial({
-            map : texture1,
-            color: 0x8a9597,
-            specular: 0x222222,
-            shininess: 100,
-        });
+        this.escape1a.scale.x*=-1;
+        this.escape2a.scale.x*=-1;
 
-		this.metalGris = new THREE.MeshStandardMaterial({
-            color: 0x808080,
-            metalness: 0.5,
-            roughness: 0.5  
-        });
 
-        this.materialFoco = new THREE.MeshStandardMaterial({ color: 0xFFBF00, transparent: true, opacity: 0.7 });
-	}
+        this.add(this.escape1);
+        this.add(this.escape1a);
+        this.add(this.escape2);
+        this.add(this.escape2a);
+    }
+
+    crearParachoques(){
+        this.parachoquesShape = new THREE.Shape();
+        this.parachoquesShape.moveTo(0.0, 0.0);
+        this.parachoquesShape.lineTo(-0.25, 0.0);
+        this.parachoquesShape.quadraticCurveTo(-0.3,0.15,-0.2,0.2);
+        this.parachoquesShape.quadraticCurveTo(-0.1,0.2,-0.05,0.3);
+        this.parachoquesShape.quadraticCurveTo(0.0,0.4,0.05,0.4);
+        this.parachoquesShape.lineTo(0.0, 0.0);
+
+        this.parachoquesShape1 = new THREE.Shape();
+        this.parachoquesShape1.moveTo(0.0, 0.0);
+        this.parachoquesShape1.lineTo(-0.2, 0.0);
+        this.parachoquesShape1.lineTo(-0.2, 0.1);
+        this.parachoquesShape1.quadraticCurveTo(-0.175, 0.2, -0.15, 0.2);
+        this.parachoquesShape1.lineTo(-0.1, 0.2);
+        this.parachoquesShape1.quadraticCurveTo(-0.075, 0.2, -0.05, 0.1);
+        this.parachoquesShape1.lineTo(-0.05, 0.2);
+        this.parachoquesShape1.quadraticCurveTo(0.0, 0.3, 0.05, 0.2);
+        this.parachoquesShape1.lineTo(0.05, -0.1);
+        this.parachoquesShape1.lineTo(0.0, -0.1);
+        this.parachoquesShape1.lineTo(0.0, 0.0);
+
+        var parachoquesPoints = [
+            new THREE.Vector3(1.2, -0.1, 2.2),
+            new THREE.Vector3(1, -0.1, 2.6),
+            new THREE.Vector3(0.6, -0.1, 2.6),
+            new THREE.Vector3(0.4, -0.1, 2.8),
+            new THREE.Vector3(-0.4, -0.1, 2.8),
+            new THREE.Vector3(-0.6, -0.1, 2.6),
+            new THREE.Vector3(-1, -0.1, 2.6),
+            new THREE.Vector3(-1.2, -0.1, 2.2)
+        ];
+
+        var parachoquesPoints1 = [
+            new THREE.Vector3(-1.2, 0.0, -1.8),
+            new THREE.Vector3(-1.2, 0.0, -2),
+            new THREE.Vector3(-0.8, 0.0, -2.4),
+            new THREE.Vector3(0.0, 0.0, -2.4),
+            new THREE.Vector3(0.8, 0.0, -2.4),
+            new THREE.Vector3(1.2, 0.0, -2),
+            new THREE.Vector3(1.2, 0.0, -1.8),
+        ];
+
+        const pathParachoques = new THREE.CatmullRomCurve3(parachoquesPoints,false,'catmullrom',0);
+        const pathParachoques1 = new THREE.CatmullRomCurve3(parachoquesPoints1,false,'catmullrom',0);
+
+        var extrudeSettingsParachoques = {
+            steps: 100,
+            bevelEnabled: false,
+            extrudePath: pathParachoques
+        };
+        var extrudeSettingsParachoques1 = {
+            steps: 100,
+            bevelEnabled: false,
+            extrudePath: pathParachoques1
+        };
+
+        this.parachoquesGeom = new THREE.ExtrudeGeometry(this.parachoquesShape, extrudeSettingsParachoques);
+        this.parachoques = new THREE.Mesh(this.parachoquesGeom,this.metalMorado);
+        this.parachoquesGeom1 = new THREE.ExtrudeGeometry(this.parachoquesShape1, extrudeSettingsParachoques1);
+        this.parachoques1 = new THREE.Mesh(this.parachoquesGeom1,this.metalMorado);
+
+        this.add(this.parachoques);
+        this.add(this.parachoques1);
+    }
 
     crearFocos(){
 		this.focoIntGeom = new THREE.SphereGeometry(0.1,20,20);
