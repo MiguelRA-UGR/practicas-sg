@@ -31,11 +31,11 @@ class MyScene extends THREE.Scene {
     this.add(this.escorvispa);
     */
    //////////////////////////////////////////////////////////////////
-    ///*
+    /*
     this.coche = new Coche(this.gui, "Coche");
     //this.coche.rotateY(THREE.MathUtils.degToRad(180));
     this.add(this.coche);
-    //*/
+    */
   ////////////////////////////////////////////////////////////////////
     /*
     this.minigun = new Minigun(this.gui, "Minigun")
@@ -50,8 +50,10 @@ class MyScene extends THREE.Scene {
     this.add(this.pared);
     */
   ////////////////////////////////////////////////////////////////////
-    this.orbe1 = new Orbe(TipoOrbe.CADENCIA);
-    //this.add(this.orbe1);
+    this.orbe1 = new Orbe(TipoOrbe.TIEMPO_RALENTIZADO);
+    //this.orbe1.scale.set(0.7,0.7,0.7);
+    //this.orbe1.position.set(3,0,0);
+    this.add(this.orbe1);
   ////////////////////////////////////////////////////////////////////
     this.bala = new Bala();
     this.bala.position.set(2,0,0);
@@ -134,7 +136,7 @@ class MyScene extends THREE.Scene {
   
   createRenderer (myCanvas) {
     var renderer = new THREE.WebGLRenderer();
-    renderer.setClearColor(new THREE.Color(0xffffff), 1.0);
+    renderer.setClearColor(new THREE.Color(0x000000), 1.0);
     renderer.setSize(window.innerWidth, window.innerHeight);
     $(myCanvas).append(renderer.domElement);
     return renderer;  
@@ -158,7 +160,7 @@ class MyScene extends THREE.Scene {
     if (this.stats) this.stats.update();
     this.cameraControl.update();
     //this.escorvispa.update();
-    this.coche.update();
+    //this.coche.update();
     //this.minigun.update();
 
     this.orbe1.update();

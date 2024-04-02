@@ -71,8 +71,8 @@ class Coche extends THREE.Object3D {
             roughness: 0.5  
         });
 
-        this.metalMorado = new THREE.MeshStandardMaterial({
-            color: 0x800080,
+        this.metalPrimario = new THREE.MeshStandardMaterial({
+            color: 0x6262dd,
             metalness: 0.5,
             roughness: 0.5,
             side: THREE.DoubleSide  
@@ -224,13 +224,13 @@ class Coche extends THREE.Object3D {
 
     crearGuardaBarros(){
         this.piezaGuardaBarrosGeom = new THREE.TorusGeometry(0.7,0.4,20,20);
-        this.piezaGuardaBarros = new THREE.Mesh(this.piezaGuardaBarrosGeom, this.metalMorado);
+        this.piezaGuardaBarros = new THREE.Mesh(this.piezaGuardaBarrosGeom, this.metalPrimario);
 
         this.piezaGuardaBarrosHuecoGeom = new THREE.TorusGeometry(0.55,0.5,20,20);
-        this.piezaGuardaBarrosHueco = new THREE.Mesh(this.piezaGuardaBarrosHuecoGeom, this.metalMorado);
+        this.piezaGuardaBarrosHueco = new THREE.Mesh(this.piezaGuardaBarrosHuecoGeom, this.metalPrimario);
 
         this.cuboHuecoGeom = new THREE.BoxGeometry(3,1.1,2);
-        this.cuboHueco = new THREE.Mesh(this.cuboHuecoGeom,this.metalMorado);
+        this.cuboHueco = new THREE.Mesh(this.cuboHuecoGeom,this.metalPrimario);
         this.cuboHueco.position.set(0,-0.6,0);
 
         this.piezaGuardaBarrosCSG = new CSG();
@@ -238,7 +238,7 @@ class Coche extends THREE.Object3D {
         this.piezaGuardaBarros=this.piezaGuardaBarrosCSG.toMesh();
 
         this.interiorGuardaBarrosGeom = new THREE.CylinderGeometry(0.95,0.2,0.5,20,20);
-        this.interiorGuardaBarros = new THREE.Mesh(this.interiorGuardaBarrosGeom, this.metalMorado);
+        this.interiorGuardaBarros = new THREE.Mesh(this.interiorGuardaBarrosGeom, this.metalPrimario);
         this.interiorGuardaBarros.rotateZ(THREE.MathUtils.degToRad(-90));
 
         this.interiorGuardaBarrosCSG = new CSG();
@@ -274,7 +274,7 @@ class Coche extends THREE.Object3D {
         this.interiorGuardaBarros3.position.set(-0.85,0,1.4);
         
         this.escalonGeom = new THREE.BoxGeometry(0.3,0.15,0.75);
-        this.escalon = new THREE.Mesh(this.escalonGeom,this.metalMorado);
+        this.escalon = new THREE.Mesh(this.escalonGeom,this.metalPrimario);
         this.escalon2 = this.escalon.clone();
         this.escalon.position.set(1.4,0.1,0.45);
         this.escalon2.position.set(-1.4,0.1,0.45);
@@ -287,8 +287,6 @@ class Coche extends THREE.Object3D {
         this.add(this.piezaGuardaBarros3);
         this.add(this.interiorGuardaBarros2);
         this.add(this.interiorGuardaBarros3);
-
-        
     }
 
     crearEscapes(){
@@ -428,9 +426,9 @@ class Coche extends THREE.Object3D {
         };
 
         this.parachoquesGeom = new THREE.ExtrudeGeometry(this.parachoquesShape, extrudeSettingsParachoques);
-        this.parachoques = new THREE.Mesh(this.parachoquesGeom,this.metalMorado);
+        this.parachoques = new THREE.Mesh(this.parachoquesGeom,this.metalPrimario);
         this.parachoquesGeom1 = new THREE.ExtrudeGeometry(this.parachoquesShape1, extrudeSettingsParachoques1);
-        this.parachoques1 = new THREE.Mesh(this.parachoquesGeom1,this.metalMorado);
+        this.parachoques1 = new THREE.Mesh(this.parachoquesGeom1,this.metalPrimario);
 
         this.add(this.parachoques);
         this.add(this.parachoques1);
@@ -441,7 +439,7 @@ class Coche extends THREE.Object3D {
         this.focoExtGeom = new THREE.SphereGeometry(0.15,20,20);
         this.cuboGeom = new THREE.BoxGeometry(0.3,0.3,0.3);
         this.interiorFoco = new THREE.Mesh(this.focoIntGeom, this.materialFoco);
-        this.exteriorFoco = new THREE.Mesh(this.focoExtGeom, this.metalMorado);
+        this.exteriorFoco = new THREE.Mesh(this.focoExtGeom, this.metalPrimario);
         
         this.cubo= new THREE.Mesh(this.cuboGeom, this.metalGris);
         this.cubo.position.set(0,0,0.15);
@@ -496,7 +494,7 @@ class Coche extends THREE.Object3D {
         this.add(this.ejeVolante);
         
         this.volanteGeom =  new THREE.BoxGeometry(0.3,0.2,0.1);
-        this.volante = new THREE.Mesh(this.volanteGeom,this.metalMorado);
+        this.volante = new THREE.Mesh(this.volanteGeom,this.metalPrimario);
         this.volante.position.set(0,0.6,0.8);
         this.add(this.volante);
 
