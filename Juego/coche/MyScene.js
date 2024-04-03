@@ -9,6 +9,7 @@ import { Motor } from './Motor.js'
 import { Minigun } from './Minigun.js'
 import { Orbe,TipoOrbe } from './Orbe.js'
 import { Bala } from './Bala.js'
+import { Babosa } from './Babosa.js'
 
 class MyScene extends THREE.Scene {
   constructor (myCanvas) {
@@ -50,14 +51,17 @@ class MyScene extends THREE.Scene {
     this.add(this.pared);
     */
   ////////////////////////////////////////////////////////////////////
-    this.orbe1 = new Orbe(TipoOrbe.TIEMPO_RALENTIZADO);
+    //this.orbe1 = new Orbe(TipoOrbe.TIEMPO_RALENTIZADO);
     //this.orbe1.scale.set(0.7,0.7,0.7);
     //this.orbe1.position.set(3,0,0);
-    this.add(this.orbe1);
+    //this.add(this.orbe1);
   ////////////////////////////////////////////////////////////////////
     this.bala = new Bala();
     this.bala.position.set(2,0,0);
     //this.add(this.bala);
+
+    this.babosa = new Babosa();
+    this.add(this.babosa);
 
   }
   
@@ -163,7 +167,8 @@ class MyScene extends THREE.Scene {
     //this.coche.update();
     //this.minigun.update();
 
-    this.orbe1.update();
+   //this.orbe1.update();
+   this.babosa.update();
 
     this.renderer.render (this, this.getCamera());
     requestAnimationFrame(() => this.update())
