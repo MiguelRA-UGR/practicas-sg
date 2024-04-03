@@ -27,7 +27,7 @@ class Orbe extends THREE.Object3D {
             tipo = tipos[Math.floor(Math.random() * tipos.length)];
         }
         
-        this.haymodelo=false;
+        this.haymodelo=true;
         this.tipo = tipo;
         this.distanciaUp = 0.25;
         this.crearObjetos();

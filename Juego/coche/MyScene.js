@@ -24,12 +24,12 @@ class MyScene extends THREE.Scene {
 
     //Modelos
   ////////////////////////////////////////////////////////////////////
-    /*
-    this.escorvispa = new Escorvispa(this.gui, "Escorvispa");
-    this.escorvispa.position.set(2.8,0,0);
-    this.escorvispa.scale.set(0.5,0.5,0.5);
-    this.add(this.escorvispa);
-    */
+    ///*
+    //this.escorvispa = new Escorvispa(this.gui, "Escorvispa");
+    //this.escorvispa.position.set(2.8,0,0);
+    //this.escorvispa.scale.set(0.5,0.5,0.5);
+    //this.add(this.escorvispa);
+    //*/
    //////////////////////////////////////////////////////////////////
     /*
     this.coche = new Coche(this.gui, "Coche");
@@ -136,7 +136,7 @@ class MyScene extends THREE.Scene {
   
   createRenderer (myCanvas) {
     var renderer = new THREE.WebGLRenderer();
-    renderer.setClearColor(new THREE.Color(0x000000), 1.0);
+    renderer.setClearColor(new THREE.Color(0xFFFFFF), 1.0);
     renderer.setSize(window.innerWidth, window.innerHeight);
     $(myCanvas).append(renderer.domElement);
     return renderer;  
