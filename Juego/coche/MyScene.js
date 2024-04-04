@@ -3,7 +3,7 @@ import { GUI } from '../libs/dat.gui.module.js'
 import { TrackballControls } from '../libs/TrackballControls.js'
 import { Stats } from '../libs/stats.module.js'
 
-import { Escorvispa } from '../escorvispa/Escorvispa.js'
+import { Escorvispa,TipoEscorvispa } from '../escorvispa/Escorvispa.js'
 import { Coche } from './Coche.js'
 import { Motor } from './Motor.js'
 import { Minigun } from './Minigun.js'
@@ -25,18 +25,18 @@ class MyScene extends THREE.Scene {
 
     //Modelos
   ////////////////////////////////////////////////////////////////////
-    ///*
-    //this.escorvispa = new Escorvispa(this.gui, "Escorvispa");
+    /*
+    this.escorvispa = new Escorvispa(this.gui, "Escorvispa",TipoEscorvispa.REINA);
     //this.escorvispa.position.set(2.8,0,0);
     //this.escorvispa.scale.set(0.5,0.5,0.5);
-    //this.add(this.escorvispa);
-    //*/
+    this.add(this.escorvispa);
+    */
    //////////////////////////////////////////////////////////////////
-    /*
+    ///*
     this.coche = new Coche(this.gui, "Coche");
     //this.coche.rotateY(THREE.MathUtils.degToRad(180));
     this.add(this.coche);
-    */
+    //*/
   ////////////////////////////////////////////////////////////////////
     /*
     this.minigun = new Minigun(this.gui, "Minigun")
@@ -56,12 +56,12 @@ class MyScene extends THREE.Scene {
     //this.orbe1.position.set(3,0,0);
     //this.add(this.orbe1);
   ////////////////////////////////////////////////////////////////////
-    this.bala = new Bala();
-    this.bala.position.set(2,0,0);
+    //this.bala = new Bala();
+    //this.bala.position.set(2,0,0);
     //this.add(this.bala);
 
-    this.babosa = new Babosa();
-    this.add(this.babosa);
+    //this.babosa = new Babosa();
+    //this.add(this.babosa);
 
   }
   
@@ -164,11 +164,11 @@ class MyScene extends THREE.Scene {
     if (this.stats) this.stats.update();
     this.cameraControl.update();
     //this.escorvispa.update();
-    //this.coche.update();
+    this.coche.update();
     //this.minigun.update();
 
    //this.orbe1.update();
-   this.babosa.update();
+   //this.babosa.update();
 
     this.renderer.render (this, this.getCamera());
     requestAnimationFrame(() => this.update())
