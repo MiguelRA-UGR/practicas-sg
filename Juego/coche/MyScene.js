@@ -2,6 +2,7 @@ import * as THREE from '../libs/three.module.js'
 import { GUI } from '../libs/dat.gui.module.js'
 import { TrackballControls } from '../libs/TrackballControls.js'
 import { Stats } from '../libs/stats.module.js'
+import { TWEEN } from '../libs/Tween.js'
 
 import { Escorvispa,TipoEscorvispa } from '../escorvispa/Escorvispa.js'
 import { Coche } from './Coche.js'
@@ -22,6 +23,8 @@ class MyScene extends THREE.Scene {
     this.createLights ();
     this.createCamera ();
     this.createCircuito();
+    
+    this.initKeyboardEvents();
 
     //Modelos
   ////////////////////////////////////////////////////////////////////
@@ -35,7 +38,7 @@ class MyScene extends THREE.Scene {
     
     this.coche = new Coche(this.gui, "Coche");
     this.add(this.coche);
-    
+    this.createFixedCamera();
   ////////////////////////////////////////////////////////////////////
     /*
     this.minigun = new Minigun(this.gui, "Minigun")
@@ -63,6 +66,24 @@ class MyScene extends THREE.Scene {
 
   }
   
+  initKeyboardEvents() {
+    // Manejar los eventos del teclado para alternar entre las cámaras
+    window.addEventListener("keydown", (event) => {
+        if (event.code === "Space") {
+            this.toggleCamera();
+        }
+    });
+  }
+
+  toggleCamera() {
+    if (this.camera === this.cameraControl.object) {
+        this.camera = this.fixedCamera;
+    } else {
+        this.camera = this.cameraControl.object;
+    }
+    this.cameraControl.enabled = !this.cameraControl.enabled;
+}
+
   getPathFromTorusKnot (torusKnot) {
     // La codificación de este método está basado
     //   en el código fuente de la página oficial de Three.js
@@ -114,6 +135,30 @@ class MyScene extends THREE.Scene {
     var material = new THREE.LineBasicMaterial({color : 0xff0000 , linewidth : 2} ) ;
     var visibleSpline = new THREE.Line( geometryLine , material);
 
+    this.segmentos = 100;
+    this.binormales = spline.computeFrenetFrames(this.segmentos,true).binormals ;
+
+    var origen = { t : 0} ;
+    var fin = { t : 1} ;
+    var tiempoDeRecorrido = 40000;
+
+    this.animacion = new TWEEN.Tween(origen)
+    .to(fin, tiempoDeRecorrido)
+    .onUpdate(() => {
+        var posicion = spline.getPointAt(origen.t);
+        this.coche.position.copy(posicion);
+        var tangente = spline.getTangentAt(origen.t);
+        posicion.add(tangente);
+        this.coche.up = this.binormales[Math.floor(origen.t * this.segmentos)];
+        this.coche.lookAt(posicion);
+      })
+      .repeat(Infinity)
+      .yoyo(true)
+      .start( ) ;
+        
+    ;
+
+    
     this.add(visibleSpline);
     //this.add(this.circuitoKnot);
   }
@@ -128,7 +173,30 @@ class MyScene extends THREE.Scene {
     this.stats = stats;
   }
   
- 
+  createFixedCamera() {
+    this.fixedCamera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    this.fixedCamera.position.set(20, 0, 0);
+    this.fixedCamera.lookAt(this.coche.position);
+    this.add(this.fixedCamera);
+  }
+
+  updateFixedCamera() {
+    const forwardDirection = new THREE.Vector3();
+    this.coche.getWorldDirection(forwardDirection);
+
+    const offsetDistance = 10;
+
+    const offset = forwardDirection.clone().multiplyScalar(-offsetDistance);
+    const position = this.coche.position.clone().add(offset);
+    position.y -= 5;
+    this.fixedCamera.position.copy(position);
+
+    const angle = Math.atan2(forwardDirection.x, forwardDirection.z);
+
+    this.fixedCamera.rotation.y = angle;
+
+    this.fixedCamera.lookAt(this.coche.position);
+}
 
   createCamera () {
     this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -148,8 +216,18 @@ class MyScene extends THREE.Scene {
     this.guiControls = {
       lightPower : 500.0,
       ambientIntensity : 0.5,   
-      axisOnOff : true
+      axisOnOff : true,
+      toggleAnimation: function() {
+          if (this.scene.animacion) {
+              if (this.scene.animacion.isPlaying()) {
+                  this.scene.animacion.pause();
+              } else {
+                  this.scene.animacion.resume();
+              }
+          }
+      }
     }
+
     var folder = gui.addFolder ('Luz y Ejes');
     folder.add (this.guiControls, 'lightPower', 0, 1000, 20)
       .name('Luz puntual : ')
@@ -160,8 +238,12 @@ class MyScene extends THREE.Scene {
     folder.add (this.guiControls, 'axisOnOff')
       .name ('Mostrar ejes : ')
       .onChange ( (value) => this.setAxisVisible (value) );
+
+    var animationFolder = gui.addFolder('Animación');
+    animationFolder.add(this.guiControls, 'toggleAnimation').name('Pausar/Reanudar Animación');
+
     return gui;
-  }
+}
   
   createLights () {
     this.ambientLight = new THREE.AmbientLight('white', this.guiControls.ambientIntensity);
@@ -210,9 +292,13 @@ class MyScene extends THREE.Scene {
     if (this.stats) this.stats.update();
     this.cameraControl.update();
     //this.escorvispa.update();
-    //this.coche.update();
-    //this.minigun.update();
+    this.coche.update();
+    
+    TWEEN.update();
 
+    this.updateFixedCamera();
+
+    //this.minigun.update();
    //this.orbe1.update();
    //this.babosa.update();
 

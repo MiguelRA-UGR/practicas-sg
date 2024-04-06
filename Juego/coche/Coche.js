@@ -777,7 +777,7 @@ class Coche extends THREE.Object3D {
             });
         });
 
-        mtlPath = '../models/conductor/conductor.mtl';
+        mtlPath = '../models/conductor/cool.mtl';
     
         mtlLoader.load(mtlPath, function(materials) {
             materials.preload();
@@ -786,11 +786,11 @@ class Coche extends THREE.Object3D {
     
             objLoader.setMaterials(materials);
     
-            const objPath = '../models/conductor/conductor.obj';
+            const objPath = '../models/conductor/cool.obj';
     
             objLoader.load(objPath, function(conductor) {
-                conductor.scale.set(0.3,0.3,0.3);
-                conductor.position.set(0,0.2,0.1);
+                conductor.scale.set(1.1,1.1,1.1);
+                conductor.position.set(0,-0.1,0.35);
 
                 self.add(conductor);
             });
@@ -966,8 +966,8 @@ class Coche extends THREE.Object3D {
     }
 
 	update() {
-        //this.motor.update()
-        //this.minigun.update()
+        this.motor.update()
+        this.minigun.update()
     }
     
 } export { Coche };
