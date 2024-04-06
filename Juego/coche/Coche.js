@@ -2,6 +2,7 @@ import * as THREE from '../libs/three.module.js'
 import { CSG } from '../libs/CSG-v2.js'
 import { MTLLoader } from '../libs/MTLLoader.js';
 import { OBJLoader } from '../libs/OBJLoader.js';
+import { FBXLoader } from '../libs/FBXLoader.js'
 
 import { Motor } from './Motor.js';
 import { Minigun } from './Minigun.js';
@@ -13,15 +14,24 @@ class Coche extends THREE.Object3D {
         this.createGUI(gui);
         this.crearMateriales();
         this.crearBase();
-        //this.cargarModelos();
+        this.cargarModelos();
         this.crearFocos();
         this.crearParachoques();
         this.crearEscapes();
         this.crearGuardaBarros();
         this.crearChasis();
         this.crearVolante();
-    
         
+        this.motor = new Motor(gui, "Motor");
+        this.motor.scale.set(0.4,0.4,0.4);
+        this.motor.position.set(0,0.05,-0.8);
+        this.add(this.motor);
+
+        this.minigun = new Minigun(gui, "Minigun");
+        this.minigun.scale.set(0.2,0.2,0.2);
+        this.minigun.position.set(0,1.5,0);
+        this.minigun.rotateX(THREE.MathUtils.degToRad(90));
+        this.add(this.minigun);
 
         this.add(this.base);
 
@@ -41,7 +51,7 @@ class Coche extends THREE.Object3D {
 
         var texture2 = textureLoader.load('../imgs/gradient.png');
 
-        this.tuboEscapeMat = new THREE.MeshPhongMaterial({
+        this.tuboEscapeMat = new THREE.MeshStandardMaterial({
             map : texture2,
             color: 0x8a9597,
             side: THREE.DoubleSide,
@@ -49,7 +59,7 @@ class Coche extends THREE.Object3D {
             roughness: 0.5  
         });
 
-        this.escapeMat = new THREE.MeshPhongMaterial({
+        this.escapeMat = new THREE.MeshStandardMaterial({
             color: 0x767d80,
             side: THREE.DoubleSide,
             metalness: 0.5,
@@ -718,22 +728,11 @@ class Coche extends THREE.Object3D {
     }
 
     cargarModelos() {
-
-        this.motor = new Motor(gui, "Motor");
-        this.motor.scale.set(0.4,0.4,0.4);
-        this.motor.position.set(0,0.05,-0.8);
-        this.add(this.motor);
-
-        this.minigun = new Minigun(gui, "Minigun");
-        this.minigun.scale.set(0.2,0.2,0.2);
-        this.minigun.position.set(0,1.5,0);
-        this.minigun.rotateX(THREE.MathUtils.degToRad(90));
-        this.add(this.minigun);
-
+        
         const self = this;
-    
+
         const mtlLoader = new MTLLoader();
-        const mtlPath = '../models/rueda1/disk.mtl';
+        var mtlPath = '../models/rueda1/disk.mtl';
     
         mtlLoader.load(mtlPath, function(materials) {
             materials.preload();
@@ -775,6 +774,25 @@ class Coche extends THREE.Object3D {
                 self.base.add(rueda4);
                 self.base.add(rueda5);
 
+            });
+        });
+
+        mtlPath = '../models/conductor/conductor.mtl';
+    
+        mtlLoader.load(mtlPath, function(materials) {
+            materials.preload();
+    
+            const objLoader = new OBJLoader();
+    
+            objLoader.setMaterials(materials);
+    
+            const objPath = '../models/conductor/conductor.obj';
+    
+            objLoader.load(objPath, function(conductor) {
+                conductor.scale.set(0.3,0.3,0.3);
+                conductor.position.set(0,0.2,0.1);
+
+                self.add(conductor);
             });
         });
     }
@@ -948,8 +966,8 @@ class Coche extends THREE.Object3D {
     }
 
 	update() {
-        this.motor.update()
-        this.minigun.update()
+        //this.motor.update()
+        //this.minigun.update()
     }
     
 } export { Coche };

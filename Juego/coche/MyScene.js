@@ -63,32 +63,6 @@ class MyScene extends THREE.Scene {
 
   }
   
-  createCircuito(){
-    var textureLoader = new THREE.TextureLoader();
-    var texture = textureLoader.load('../imgs/colmena.jpg');
-		this.materialColmena = new THREE.MeshBasicMaterial({ map: texture});
-
-    var material = new THREE.MeshStandardMaterial( {
-      normalMap: texture, // Asigna la textura normal
-      // Puedes ajustar la intensidad del relieve si lo deseas
-      normalScale: new THREE.Vector2( 1, 1 ) // Ajusta según tu preferencia
-  } );
-
-    this.circuitoGeom = new THREE.TorusKnotGeometry(20,4,50,20,2,3);
-    this.circuitoKnot = new THREE.Mesh(this.circuitoGeom,material);
-    this.add(this.circuitoKnot);
-  }
-
-  initStats() {
-    var stats = new Stats();
-    stats.setMode(0);
-    stats.domElement.style.position = 'absolute';
-    stats.domElement.style.left = '0px';
-    stats.domElement.style.top = '0px';
-    $("#Stats-output").append( stats.domElement );
-    this.stats = stats;
-  }
-  
   getPathFromTorusKnot (torusKnot) {
     // La codificación de este método está basado
     //   en el código fuente de la página oficial de Three.js
@@ -118,8 +92,46 @@ class MyScene extends THREE.Scene {
     return new THREE.CatmullRomCurve3 (points, true);
   }
 
+  createCircuito(){
+    var textureLoader = new THREE.TextureLoader();
+    var texture = textureLoader.load('../imgs/colmena.jpg');
+		this.materialColmena = new THREE.MeshBasicMaterial({ map: texture});
+
+    var material = new THREE.MeshStandardMaterial( {
+      normalMap: texture, // Asigna la textura normal
+      // Puedes ajustar la intensidad del relieve si lo deseas
+      normalScale: new THREE.Vector2( 1, 1 ) // Ajusta según tu preferencia
+  } );
+
+    this.circuitoGeom = new THREE.TorusKnotGeometry(20,4,50,20,2,3);
+    this.circuitoKnot = new THREE.Mesh(this.circuitoGeom,material);
+
+    var spline = this.getPathFromTorusKnot(this.circuitoGeom);
+
+    var geometryLine = new THREE.BufferGeometry();
+
+    geometryLine.setFromPoints (spline.getPoints(100));
+    var material = new THREE.LineBasicMaterial({color : 0xff0000 , linewidth : 2} ) ;
+    var visibleSpline = new THREE.Line( geometryLine , material);
+
+    this.add(visibleSpline);
+    //this.add(this.circuitoKnot);
+  }
+
+  initStats() {
+    var stats = new Stats();
+    stats.setMode(0);
+    stats.domElement.style.position = 'absolute';
+    stats.domElement.style.left = '0px';
+    stats.domElement.style.top = '0px';
+    $("#Stats-output").append( stats.domElement );
+    this.stats = stats;
+  }
+  
+ 
+
   createCamera () {
-    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
     this.camera.position.set (4, 2, 4);
     var look = new THREE.Vector3 (0,0,0);
     this.camera.lookAt(look);
@@ -174,7 +186,7 @@ class MyScene extends THREE.Scene {
   
   createRenderer (myCanvas) {
     var renderer = new THREE.WebGLRenderer();
-    renderer.setClearColor(new THREE.Color(0x000000), 1.0);
+    renderer.setClearColor(new THREE.Color(0xffffff), 1.0);
     renderer.setSize(window.innerWidth, window.innerHeight);
     $(myCanvas).append(renderer.domElement);
     return renderer;  
@@ -198,7 +210,7 @@ class MyScene extends THREE.Scene {
     if (this.stats) this.stats.update();
     this.cameraControl.update();
     //this.escorvispa.update();
-    this.coche.update();
+    //this.coche.update();
     //this.minigun.update();
 
    //this.orbe1.update();
