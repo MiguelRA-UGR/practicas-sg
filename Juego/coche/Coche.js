@@ -13,7 +13,7 @@ class Coche extends THREE.Object3D {
         this.createGUI(gui);
         this.crearMateriales();
         this.crearBase();
-        this.cargarModelos();
+        //this.cargarModelos();
         this.crearFocos();
         this.crearParachoques();
         this.crearEscapes();
@@ -21,16 +21,7 @@ class Coche extends THREE.Object3D {
         this.crearChasis();
         this.crearVolante();
     
-        this.motor = new Motor(gui, "Motor");
-        this.motor.scale.set(0.4,0.4,0.4);
-        this.motor.position.set(0,0.05,-0.8);
-        this.add(this.motor);
-
-        this.minigun = new Minigun(gui, "Minigun");
-        this.minigun.scale.set(0.2,0.2,0.2);
-        this.minigun.position.set(0,1.5,0);
-        this.minigun.rotateX(THREE.MathUtils.degToRad(90));
-        this.add(this.minigun);
+        
 
         this.add(this.base);
 
@@ -324,10 +315,10 @@ class Coche extends THREE.Object3D {
         this.escape1Geom = new THREE.ExtrudeGeometry(circleShape2, extrudeSettingsescape1);
         this.escape1 = new THREE.Mesh(this.escape1Geom,this.escapeMat);
 
-        this.finEscapeGeom = new THREE.CylinderGeometry(0.16,0.16,0.4,30,30,true);
+        this.finEscapeGeom = new THREE.CylinderGeometry(0.16,0.16,0.4,15,15,true);
         this.finEscape = new THREE.Mesh(this.finEscapeGeom,this.tuboEscapeMat);
         
-        this.huecoEscapeGeom = new THREE.CylinderGeometry(0.15,0.15,0.4,30,30);
+        this.huecoEscapeGeom = new THREE.CylinderGeometry(0.15,0.15,0.4,20,20);
         this.huecoEscape = new THREE.Mesh(this.huecoEscapeGeom,this.escapeMat);
         
 
@@ -450,15 +441,15 @@ class Coche extends THREE.Object3D {
 		this.foco = focoCSG.toMesh();
         this.foco.add(this.interiorFoco);
 
-        this.luzfoco = new THREE.DirectionalLight(0xffffff,1);
+        this.luzfoco = new THREE.SpotLight(0xffff00,50);
         
         const targetPosition = new THREE.Vector3(0, 0, 10);
-        this.luzfoco.position.set(0, 0, -0.2);
+        this.luzfoco.position.set(0, 0, 0.05);
         this.luzfoco.target.position.copy(targetPosition);
         const helper = new THREE.DirectionalLightHelper( this.luzfoco,5);
         
         this.luzfoco2 = this.luzfoco.clone();
-        this.luzfoco2.position.set(0, 0, -0.2);
+        this.luzfoco2.position.set(0, 0, 0.05);
         const helper2 = new THREE.DirectionalLightHelper( this.luzfoco2,5);
 
         
@@ -468,8 +459,8 @@ class Coche extends THREE.Object3D {
         this.foco.add(this.luzfoco);
         this.foco2.add(this.luzfoco2);
 
-        this.add(helper);
-        this.add(helper2);
+        //this.add(helper);
+        //this.add(helper2);
         this.add(this.foco);
         this.add(this.foco2);
 	}
@@ -717,15 +708,28 @@ class Coche extends THREE.Object3D {
 	createGUI(gui) {
         const self = this;
         this.guiControls = new function() {
-            this.focoEncendido = false;
+            this.focoEncendido = true;
         };
     
         gui.add(this.guiControls, 'focoEncendido').name('Foco encendido').onChange(function(value) {
             self.luzfoco.visible = value;
+            self.luzfoco2.visible = value;
         });
     }
 
     cargarModelos() {
+
+        this.motor = new Motor(gui, "Motor");
+        this.motor.scale.set(0.4,0.4,0.4);
+        this.motor.position.set(0,0.05,-0.8);
+        this.add(this.motor);
+
+        this.minigun = new Minigun(gui, "Minigun");
+        this.minigun.scale.set(0.2,0.2,0.2);
+        this.minigun.position.set(0,1.5,0);
+        this.minigun.rotateX(THREE.MathUtils.degToRad(90));
+        this.add(this.minigun);
+
         const self = this;
     
         const mtlLoader = new MTLLoader();

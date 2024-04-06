@@ -23,17 +23,17 @@ class Motor extends THREE.Object3D {
         this.motorEncendido = false;
         this.turnoImpar=true;
 
-        this.cilindroGeom = new THREE.CylinderGeometry(0.25,0.25,1,32,32);
+        this.cilindroGeom = new THREE.CylinderGeometry(0.25,0.25,1,20,20);
         this.piston1 = new THREE.Mesh(this.cilindroGeom,this.metalPlata);
         this.tubo = new THREE.Mesh(this.cilindroGeom,this.metalPlata);
         this.plato1 = new THREE.Mesh(this.cilindroGeom,this.metalPlata);
 
-        this.toroGeom = new THREE.TorusGeometry(0.25,0.025,32,32);
+        this.toroGeom = new THREE.TorusGeometry(0.25,0.025,20,20);
         this.toro = new THREE.Mesh(this.toroGeom,this.metalPlata);
         this.toro.rotateX(THREE.MathUtils.degToRad(90));
         this.toro.position.set(0,0.43,0);
 
-        this.esferaGeom = new THREE.SphereGeometry(0.05,32,32);
+        this.esferaGeom = new THREE.SphereGeometry(0.05,20,20);
         this.esfera = new THREE.Mesh(this.esferaGeom,this.metalPlata);
         this.esfera.position.set(0,0.5,0);
 
