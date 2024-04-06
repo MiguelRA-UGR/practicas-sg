@@ -315,7 +315,7 @@ class Coche extends THREE.Object3D {
         this.escape1Geom = new THREE.ExtrudeGeometry(circleShape2, extrudeSettingsescape1);
         this.escape1 = new THREE.Mesh(this.escape1Geom,this.escapeMat);
 
-        this.finEscapeGeom = new THREE.CylinderGeometry(0.16,0.16,0.4,20,20,true);
+        this.finEscapeGeom = new THREE.CylinderGeometry(0.16,0.16,0.4,15,15,true);
         this.finEscape = new THREE.Mesh(this.finEscapeGeom,this.tuboEscapeMat);
         
         this.huecoEscapeGeom = new THREE.CylinderGeometry(0.15,0.15,0.4,20,20);
