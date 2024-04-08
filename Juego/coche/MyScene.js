@@ -141,7 +141,7 @@ class MyScene extends THREE.Scene {
     var origen = { t : 0} ;
     var fin = { t : 1} ;
     var tiempoDeRecorrido = 40000;
-
+  /*
     this.animacion = new TWEEN.Tween(origen)
     .to(fin, tiempoDeRecorrido)
     .onUpdate(() => {
@@ -157,7 +157,7 @@ class MyScene extends THREE.Scene {
       .start( ) ;
         
     ;
-
+*/
     
     this.add(visibleSpline);
     //this.add(this.circuitoKnot);
