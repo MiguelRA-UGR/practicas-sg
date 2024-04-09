@@ -4,13 +4,15 @@ import { CSG } from "../libs/CSG-v2.js";
 class ObjetoExamen extends THREE.Object3D {
   constructor() {
     super();
-    this.crearMateriales();
 
-    const shape1 = new THREE.Shape();
-    shape1.moveTo(0, 0);
-    shape1.moveTo(0, 5);
-    shape1.quadraticCurveTo(6, 6, 5, 0);
-    shape1.lineTo(0, 0);
+// CSG-v2.js presenta errores en los siguientes casos:
+// Con figuras por revolución que tocan el eje Y
+// ⋆ Evitad tocar el eje Y, aunque os acerquéis mucho (X=0.001)
+// Con los conos
+// ⋆ Usad cilindros con un radio pequeño (>0) en uno de sus extremos
+// Con figuras que incluyan un Shape con absarc o absellipse
+
+    const material = new THREE.MeshNormalMaterial();
 
     const extrudeSettings1 = {
       steps: 1,
@@ -22,7 +24,44 @@ class ObjetoExamen extends THREE.Object3D {
       bevelSegments: 20,
     };
 
-    const material = new THREE.MeshNormalMaterial();
+    const points = [];
+    points.push(new THREE.Vector2(-10, 0.01));
+    points.push(new THREE.Vector2(-5, 10));
+    points.push(new THREE.Vector2(0.01, 5));
+    points.push(new THREE.Vector2(10, 5));
+
+    //Hacer shape a partir de un spline
+    var spline = new THREE.SplineCurve(points);
+    var shape = new THREE.Shape(spline.getPoints(50));
+    var shapeCircle = new THREE.Shape();
+
+    //Hacer agujeros en un shape con absarc y absellipse
+    const radius = 2;
+    const startAngle = 0;
+    const endAngle = Math.PI * 2;
+
+    //shapeCircle.absarc(-4,5, radius, startAngle, endAngle, false);
+    shapeCircle.absellipse(-4 ,6,2 ,3 ,0, Math.PI* 2);
+    var geometryCircle = new THREE.ShapeGeometry(shapeCircle);
+    this.circle = new THREE.Mesh(geometryCircle, material);
+    //this.add(this.circle);
+
+    shape.holes.push(shapeCircle);
+
+    var shapeGeom = new THREE.ExtrudeGeometry(shape, extrudeSettings1);
+    this.objeto4 = new THREE.Mesh(shapeGeom, material);
+
+    //this.add(this.objeto4);
+
+    //*******************************************
+
+    const shape1 = new THREE.Shape();
+    shape1.moveTo(0, 0);
+    shape1.moveTo(0, 5);
+    //shape1.splineThru([new THREE.Vector2(0,5),new THREE.Vector2(4,4),new THREE.Vector2(5 , 0) ] ) ;
+    shape1.quadraticCurveTo(6, 6, 5, 0);
+    shape1.lineTo(0, 0);
+
 
     var geom1 = new THREE.ExtrudeGeometry(shape1, extrudeSettings1);
     geom1.center();
@@ -61,6 +100,14 @@ class ObjetoExamen extends THREE.Object3D {
 
   update() {}
 
+  rotateShape(aShape , angle , res = 6 , center = new THREE. Vector2 (0 ,0) ) {
+    var points = aShape . extractPoints(res).shape ; // Extraemos los puntos 2D del shape
+    points.forEach((p) => {
+    p.rotateAround(center,angle ) ; //Los giramos
+    } );
+    return new THREE.Shape(points) ; // Construimos y devolvemos un nuevo shape
+  }
+
   createBoxWithRoundedEdges(width, height, depth, radius0, smoothness) {
     let shape = new THREE.Shape();
     let eps = 0.00001;
@@ -90,7 +137,5 @@ class ObjetoExamen extends THREE.Object3D {
 
     return geometry;
   }
-
-  crearMateriales() {}
 }
 export { ObjetoExamen };
