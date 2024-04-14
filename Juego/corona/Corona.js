@@ -63,25 +63,46 @@ class Corona extends THREE.Object3D {
         this.add(picos)
         */
 
+        var base = new THREE.Mesh (new THREE.CylinderGeometry(0.8, 1, 0.2), this.material_verde)
+
         var segmentos = []
         var segmentosMesh = []
         var resolucion = 500
         var radio = 1
         var ancho = 2*Math.PI*radio/resolucion
-        var grosor = 0.01
-        const altura = 0.75
+        var grosor = 0.2
+        const altura = 0.6
         var alpha, largo
         var incremento=2*Math.PI/resolucion
+        var x = 0.05
+
+        var alto = altura*2
+        var grueso = grosor/4
+
+        var base = new THREE.Mesh (new THREE.CylinderGeometry(radio, radio, alto), material)
+        var agujero = new THREE.Mesh (new THREE.CylinderGeometry(radio-grueso, radio-grueso, alto*2), material)
+
+        var csg = new CSG()
+        csg.union ([base])
+        csg.subtract([agujero])
 
         for (let i=0; i<resolucion; i++) {
             alpha = i*incremento
-            largo = altura+0.2*altura*Math.sin(8*alpha)
+            //largo = altura+0.2*altura*Math.sin(8*alpha)
+            largo = - altura * Math.abs(Math.sin(x))
+            x += 0.05
             segmentos.push(new THREE.BoxGeometry(ancho, largo, grosor))
-            segmentos[i].translate(0,largo/2,radio)
+            segmentos[i].translate(0,largo/2+altura+0.01,radio)
             segmentos[i].rotateY(THREE.MathUtils.degToRad(i*(360/resolucion)))
             segmentosMesh[i] = new THREE.Mesh( segmentos[i], material )
             this.add(segmentosMesh[i])
         }
+
+        //this.add(base)
+        //this.add(agujero)
+
+        var resultadoMesh = csg.toMesh()
+        this.add(resultadoMesh)
     }
 
     createGUI (gui, titleGui) {
