@@ -75,7 +75,7 @@ class Corona extends THREE.Object3D {
 
         for (let i=0; i<resolucion; i++) {
             alpha = i*incremento
-            largo = altura + 0.2 * altura * Math.sin(4 * alpha)
+            largo = altura+0.2*altura*Math.sin(8*alpha)
             segmentos.push(new THREE.BoxGeometry(ancho, largo, grosor))
             segmentos[i].translate(0,largo/2,radio)
             segmentos[i].rotateY(THREE.MathUtils.degToRad(i*(360/resolucion)))
