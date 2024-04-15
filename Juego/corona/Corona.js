@@ -29,7 +29,7 @@ class Corona extends THREE.Object3D {
         for (let i=0 ; i<360/picos; i++)
         {
             posiciones[i] =  new THREE.CylinderGeometry(radio, radio, alto/2)
-            posiciones[i].scale(radio/10*picos,1,1)
+            posiciones[i].scale(radio/8*picos,1,1)
             posiciones[i].rotateX(THREE.MathUtils.degToRad(90))
             posiciones[i].translate(0,radio,radio/1.5)
             posiciones[i].rotateY(THREE.MathUtils.degToRad(i*360/picos))
