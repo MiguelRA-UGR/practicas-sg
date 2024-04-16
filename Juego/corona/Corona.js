@@ -1,11 +1,9 @@
 import * as THREE from 'three'
 import { CSG } from '../libs/CSG-v2.js'
-import { CylinderGeometry } from '../libs/three.module.js';
 
 class Corona extends THREE.Object3D {
-    constructor (gui, titleGui) {
+    constructor () {
         super()
-        this.createGUI(gui, titleGui)
         var material = new THREE.MeshStandardMaterial({
             color: 0xF0de44,
             roughness: 0.2,
@@ -16,8 +14,8 @@ class Corona extends THREE.Object3D {
         var radio = 0.5
         var grueso = radio/10
         var alto = radio*1.5
-        var base = new THREE.Mesh (new THREE.CylinderGeometry(radio, radio, alto), material)
-        var agujero = new THREE.Mesh (new THREE.CylinderGeometry(radio-grueso, radio-grueso, alto*2), material)
+        var base = new THREE.Mesh (new THREE.CylinderGeometry(radio, radio, alto, 15, 15), material)
+        var agujero = new THREE.Mesh (new THREE.CylinderGeometry(radio-grueso, radio-grueso, alto*2, 15, 15), material)
         var posiciones = []
         var formaMesh = []
         var picos=8
@@ -42,13 +40,9 @@ class Corona extends THREE.Object3D {
         this.add(resultadoMesh)
     }
 
-    createGUI (gui, titleGui) {
-
-    }
-
     update () {
 
     }
 }
 
-export {Corona}
+export { Corona }

@@ -1,6 +1,6 @@
 import * as THREE from '../libs/three.module.js'
 import { CSG } from '../libs/CSG-v2.js'
-import { Corona } from './Corona.js'
+import { Corona } from '../corona/Corona.js'
 
 const TipoEscorvispa = {
     ESBIRRO: 'esbirro',
@@ -63,10 +63,11 @@ class Escorvispa extends THREE.Object3D {
 
         this.cabeza.scale.set(0.7,0.7,0.7);
 
-        this.corona.scale.set(0.3,0.3,0.3);
-        this.corona.position.set(0,0.25,0.3);
+        this.corona.scale.set(0.45,0.45,0.45);
+        this.corona.rotateX(THREE.MathUtils.degToRad(-65));
+        this.corona.position.set(0,0.1,-0.45);
 
-        this.add(this.corona);
+        this.cabeza.add(this.corona);
     }
 
 	crearMateriales(){

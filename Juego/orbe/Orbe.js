@@ -2,8 +2,8 @@ import * as THREE from '../libs/three.module.js';
 import { CSG } from '../libs/CSG-v2.js';
 import { MTLLoader } from '../libs/MTLLoader.js';
 import { OBJLoader } from '../libs/OBJLoader.js';
-import { Bala } from './Bala.js'
-import { Llave } from './Llave.js'
+import { Bala } from '../bala/Bala.js'
+import { Llave } from '../llave/Llave.js'
 
 const TipoOrbe = {
     //Tipos Buenos
@@ -66,9 +66,7 @@ class Orbe extends THREE.Object3D {
                 break;
             case TipoOrbe.TAMAÑO_AUMENTADO:
                 this.haymodelo=false;
-                pathOBJ = '../models/rueda1/disk.obj';
-                pathMTL = '../models/rueda1/disk.mtl';
-                factorEscala=0.2;
+                
                 break;
             case TipoOrbe.VELOCIDAD_AUMENTADA:
                 this.haymodelo=true;
