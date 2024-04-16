@@ -28,17 +28,18 @@ class MyScene extends THREE.Scene {
 
     //Modelos
   ////////////////////////////////////////////////////////////////////
-    /*
+    ///*
     this.escorvispa = new Escorvispa(this.gui, "Escorvispa",TipoEscorvispa.REINA);
     //this.escorvispa.position.set(2.8,0,0);
     //this.escorvispa.scale.set(0.5,0.5,0.5);
     this.add(this.escorvispa);
-    */
+    //*/
    //////////////////////////////////////////////////////////////////
-    
+    /*
     this.coche = new Coche(this.gui, "Coche");
     this.add(this.coche);
     this.createFixedCamera();
+    /*
   ////////////////////////////////////////////////////////////////////
     /*
     this.minigun = new Minigun(this.gui, "Minigun")
@@ -54,10 +55,15 @@ class MyScene extends THREE.Scene {
     */
   ////////////////////////////////////////////////////////////////////
     /*
-    this.orbe1 = new Orbe(TipoOrbe.DAÑO_AUMENTADO);
+    this.orbe1 = new Orbe(TipoOrbe.REPARAR);
     this.orbe1.scale.set(3,3,3);
     //this.orbe1.position.set(3,0,0);
     this.add(this.orbe1);
+
+    this.orbe = new Orbe(TipoOrbe.DAÑO_AUMENTADO);
+    this.orbe.scale.set(3,3,3);
+    this.orbe.position.set(3,0,0);
+    this.add(this.orbe);
     */
   ////////////////////////////////////////////////////////////////////
 
@@ -180,23 +186,23 @@ class MyScene extends THREE.Scene {
     this.add(this.fixedCamera);
   }
 
-  updateFixedCamera() {
-    const forwardDirection = new THREE.Vector3();
-    this.coche.getWorldDirection(forwardDirection);
+//   updateFixedCamera() {
+//     const forwardDirection = new THREE.Vector3();
+//     this.coche.getWorldDirection(forwardDirection);
 
-    const offsetDistance = 10;
+//     const offsetDistance = 10;
 
-    const offset = forwardDirection.clone().multiplyScalar(-offsetDistance);
-    const position = this.coche.position.clone().add(offset);
-    position.y -= 5;
-    this.fixedCamera.position.copy(position);
+//     const offset = forwardDirection.clone().multiplyScalar(-offsetDistance);
+//     const position = this.coche.position.clone().add(offset);
+//     position.y -= 5;
+//     this.fixedCamera.position.copy(position);
 
-    const angle = Math.atan2(forwardDirection.x, forwardDirection.z);
+//     const angle = Math.atan2(forwardDirection.x, forwardDirection.z);
 
-    this.fixedCamera.rotation.y = angle;
+//     this.fixedCamera.rotation.y = angle;
 
-    this.fixedCamera.lookAt(this.coche.position);
-}
+//     this.fixedCamera.lookAt(this.coche.position);
+// }
 
   createCamera () {
     this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -292,11 +298,11 @@ class MyScene extends THREE.Scene {
     if (this.stats) this.stats.update();
     this.cameraControl.update();
     //this.escorvispa.update();
-    this.coche.update();
+    //this.coche.update();
     
     TWEEN.update();
 
-    this.updateFixedCamera();
+    //this.updateFixedCamera();
 
     //this.minigun.update();
    //this.orbe1.update();

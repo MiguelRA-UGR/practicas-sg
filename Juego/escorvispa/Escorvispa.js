@@ -1,5 +1,6 @@
 import * as THREE from '../libs/three.module.js'
 import { CSG } from '../libs/CSG-v2.js'
+import { Corona } from './Corona.js'
 
 const TipoEscorvispa = {
     ESBIRRO: 'esbirro',
@@ -58,7 +59,14 @@ class Escorvispa extends THREE.Object3D {
     };
 
     añadirCorona(){
+        this.corona = new Corona();
 
+        this.cabeza.scale.set(0.7,0.7,0.7);
+
+        this.corona.scale.set(0.3,0.3,0.3);
+        this.corona.position.set(0,0.25,0.3);
+
+        this.add(this.corona);
     }
 
 	crearMateriales(){
@@ -70,10 +78,10 @@ class Escorvispa extends THREE.Object3D {
                 this.colorPrincipal = 0xffe400;
                 break;
             case TipoEscorvispa.SOLDADO:
-                this.colorPrincipal = 0xfa560b;
+                this.colorPrincipal = 0x63340b; 
                 break;
             case TipoEscorvispa.REINA:
-                this.colorPrincipal = 0xb81414;
+                this.colorPrincipal = 0x683475;
                 break;
 
         }

@@ -3,6 +3,7 @@ import { CSG } from '../libs/CSG-v2.js';
 import { MTLLoader } from '../libs/MTLLoader.js';
 import { OBJLoader } from '../libs/OBJLoader.js';
 import { Bala } from './Bala.js'
+import { Llave } from './Llave.js'
 
 const TipoOrbe = {
     //Tipos Buenos
@@ -224,6 +225,13 @@ class Orbe extends THREE.Object3D {
                 break;
             
             case TipoOrbe.REPARAR:
+
+                this.llave = new Llave();
+                this.llave.rotateZ(THREE.MathUtils.degToRad(-30))
+
+                this.llave.scale.set(0.4,0.4,0.4);
+                this.add(this.llave);
+
                 this.color = 0x000000;
                 break;
         }

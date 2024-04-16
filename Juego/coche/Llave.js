@@ -1,11 +1,9 @@
 import * as THREE from 'three'
 import { CSG } from '../libs/CSG-v2.js'
-import { CylinderGeometry } from '../libs/three.module.js';
 
 class Llave extends THREE.Object3D {
-    constructor (gui, titleGui) {
+    constructor () {
         super()
-        this.createGUI(gui, titleGui);
         var material = new THREE.MeshStandardMaterial({
             color: 0xC7C7C7,
             roughness: 0.2,
@@ -66,14 +64,10 @@ class Llave extends THREE.Object3D {
 
     }
 
-    createGUI (gui,titleGui) {
-
-    }
-
     update () {
 
     }
 
 }
 
-export {Llave}
+export { Llave }
