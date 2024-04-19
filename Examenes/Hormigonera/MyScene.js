@@ -3,7 +3,7 @@ import { GUI } from '../libs/dat.gui.module.js'
 import { TrackballControls } from '../libs/TrackballControls.js'
 import { Stats } from '../libs/stats.module.js'
 
-import { Tuerca } from './Tuerca.js'
+import { Hormiginera } from './Hormiginera.js'
 
 
 class MyScene extends THREE.Scene {
@@ -16,7 +16,9 @@ class MyScene extends THREE.Scene {
     this.add (this.axis);
     this.createLights ();
     this.createCamera ();
-    this.objeto = new Tuerca();
+
+
+    this.objeto = new Hormiginera();
     this.add(this.objeto);
 
   }
@@ -34,7 +36,7 @@ class MyScene extends THREE.Scene {
 
   createCamera () {
     this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
-    this.camera.position.set (8, 4, 8);
+    this.camera.position.set (10, 10, 10);
     var look = new THREE.Vector3 (0,0,0);
     this.camera.lookAt(look);
     this.add (this.camera);
@@ -111,6 +113,8 @@ class MyScene extends THREE.Scene {
   update () {
     if (this.stats) this.stats.update();
     this.cameraControl.update();
+
+    this.objeto.update();
 
     this.renderer.render (this, this.getCamera());
     requestAnimationFrame(() => this.update())
