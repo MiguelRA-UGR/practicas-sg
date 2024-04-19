@@ -4,8 +4,8 @@ import { MTLLoader } from "../libs/MTLLoader.js";
 import { OBJLoader } from "../libs/OBJLoader.js";
 import { FBXLoader } from "../libs/FBXLoader.js";
 
-import { Motor } from "./Motor.js";
-import { Minigun } from "./Minigun.js";
+import { Motor } from "../motor/Motor.js";
+import { Minigun } from "../minigun/Minigun.js";
 
 class Coche extends THREE.Object3D {
   constructor(gui, titleGui) {
