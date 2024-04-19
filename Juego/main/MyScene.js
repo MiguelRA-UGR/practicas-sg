@@ -4,13 +4,13 @@ import { TrackballControls } from '../libs/TrackballControls.js'
 import { Stats } from '../libs/stats.module.js'
 import { TWEEN } from '../libs/Tween.js'
 
-import { Escorvispa,TipoEscorvispa } from '../escorvispa/Escorvispa.js'
-import { Coche } from '../coche/Coche.js'
-import { Motor } from '../motor/Motor.js'
-import { Minigun } from '../minigun/Minigun.js'
-import { Orbe,TipoOrbe } from '../orbe/Orbe.js'
-import { Bala } from '../bala/Bala.js'
-import { Babosa } from '../babosa/Babosa.js'
+import { Escorvispa,TipoEscorvispa } from '../objetos/escorvispa/Escorvispa.js'
+import { Coche } from '../objetos/coche/Coche.js'
+import { Motor } from '../objetos/motor/Motor.js'
+import { Minigun } from '../objetos/minigun/Minigun.js'
+import { Orbe,TipoOrbe } from '../objetos/orbe/Orbe.js'
+import { Bala } from '../objetos/bala/Bala.js'
+import { Babosa } from '../objetos/babosa/Babosa.js'
 
 class MyScene extends THREE.Scene {
   constructor (myCanvas) {
