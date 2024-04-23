@@ -3,7 +3,7 @@ import { GUI } from '../libs/dat.gui.module.js'
 import { TrackballControls } from '../libs/TrackballControls.js'
 import { Stats } from '../libs/stats.module.js'
 
-import { Tuerca } from './Tuerca.js'
+import { Grua } from './Grua.js'
 
 
 class MyScene extends THREE.Scene {
@@ -16,7 +16,7 @@ class MyScene extends THREE.Scene {
     this.add (this.axis);
     this.createLights ();
     this.createCamera ();
-    this.objeto = new Tuerca();
+    this.objeto = new Grua();
 
     this.add(this.objeto);
 
@@ -112,7 +112,7 @@ class MyScene extends THREE.Scene {
   update () {
     if (this.stats) this.stats.update();
     this.cameraControl.update();
-
+    this.objeto.update();
     this.renderer.render (this, this.getCamera());
     requestAnimationFrame(() => this.update())
   }

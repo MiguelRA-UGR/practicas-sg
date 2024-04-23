@@ -1,5 +1,6 @@
 import * as THREE from '../../Juego/libs/three.module.js';
 import { CSG } from '../../Juego/libs/CSG-v2.js';
+import { Mesh, TorusGeometry } from '../libs/three.module.js';
 
 class Tuerca extends THREE.Object3D {
     constructor(tipo) {
