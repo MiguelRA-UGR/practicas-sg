@@ -23,22 +23,21 @@ class MyScene extends THREE.Scene {
     this.createLights ();
     this.createCamera ();
     this.createCircuito();
-    
+    this.cameraIndex = 1;
     this.initKeyboardEvents();
+
 
     //Modelos
   ////////////////////////////////////////////////////////////////////
     ///*
     this.escorvispa = new Escorvispa(this.gui, "Escorvispa",TipoEscorvispa.REINA);
-    //this.escorvispa.position.set(2.8,0,0);
-    //this.escorvispa.scale.set(0.5,0.5,0.5);
+
     this.add(this.escorvispa);
-    // */
+    //*/
    //////////////////////////////////////////////////////////////////
     /*
     this.coche = new Coche(this.gui, "Coche");
     this.add(this.coche);
-    this.createFixedCamera();
     /*
   ////////////////////////////////////////////////////////////////////
     /*
@@ -70,25 +69,10 @@ class MyScene extends THREE.Scene {
     //this.babosa = new Babosa();
     //this.add(this.babosa);
 
+    this.createThirdPersonCamera();
+
   }
   
-  initKeyboardEvents() {
-    // Manejar los eventos del teclado para alternar entre las cámaras
-    window.addEventListener("keydown", (event) => {
-        if (event.code === "Space") {
-            this.toggleCamera();
-        }
-    });
-  }
-
-  toggleCamera() {
-    if (this.camera === this.cameraControl.object) {
-        this.camera = this.fixedCamera;
-    } else {
-        this.camera = this.cameraControl.object;
-    }
-    this.cameraControl.enabled = !this.cameraControl.enabled;
-}
 
   getPathFromTorusKnot (torusKnot) {
     // La codificación de este método está basado
@@ -119,6 +103,37 @@ class MyScene extends THREE.Scene {
     return new THREE.CatmullRomCurve3 (points, true);
   }
 
+  initKeyboardEvents() {
+    window.addEventListener("keydown", (event) => {
+        if (event.code === "Space") {
+            this.toggleCamera();
+        }
+    });
+  }
+
+  toggleCamera() {
+    if (this.cameraIndex === 0) {
+      this.cameraIndex = 1;
+    } else {
+      this.cameraIndex = 0;
+    }
+  }
+
+  updateCamera() {
+    if (this.cameraIndex === 0) {
+      
+      const posicion = this.spline.getPointAt(this.origen.t);
+      this.camera.position.copy(posicion);
+      const tangente = this.spline.getTangentAt(this.origen.t);
+      posicion.add(tangente);
+      this.camera.up = this.binormales[Math.floor(this.origen.t * this.segmentos)];
+      this.camera.lookAt(posicion);
+    } else {
+      this.secondaryCamera.position.copy(this.escorvispa.position.clone().add(new THREE.Vector3(0, 10, 20)));
+      this.secondaryCamera.lookAt(this.escorvispa.position);
+    }
+  }
+
   createCircuito(){
     var textureLoader = new THREE.TextureLoader();
     var texture = textureLoader.load('../imgs/colmena.jpg');
@@ -127,47 +142,44 @@ class MyScene extends THREE.Scene {
     var material = new THREE.MeshStandardMaterial( {
       normalMap: texture, 
       normalScale: new THREE.Vector2( 1, 1 )
-  } );
+    } );
 
     this.circuitoTorusGeom = new THREE.TorusKnotGeometry(20,4,50,20,2,3);
     
 
-    var spline = this.getPathFromTorusKnot(this.circuitoTorusGeom);
+    this.spline = this.getPathFromTorusKnot(this.circuitoTorusGeom);
 
     var geometryLine = new THREE.BufferGeometry();
 
-    this.circuitoGeom = new THREE.TubeGeometry(spline, 100,5,20);
+    this.circuitoGeom = new THREE.TubeGeometry(this.spline, 100,5,20);
     this.circuito = new THREE.Mesh(this.circuitoGeom, this.materialColmena);
 
-    this.add(this.circuito);
+    //this.add(this.circuito);
 
-    geometryLine.setFromPoints (spline.getPoints(100));
+    geometryLine.setFromPoints (this.spline.getPoints(100));
     var material = new THREE.LineBasicMaterial({color : 0xff0000 , linewidth : 2} ) ;
     var visibleSpline = new THREE.Line( geometryLine , material);
 
     this.segmentos = 100;
-    this.binormales = spline.computeFrenetFrames(this.segmentos,true).binormals ;
+    this.binormales = this.spline.computeFrenetFrames(this.segmentos,true).binormals ;
 
-    var origen = { t : 0} ;
+    this.origen = { t : 0} ;
     var fin = { t : 1} ;
     var tiempoDeRecorrido = 40000;
-  /*
-    this.animacion = new TWEEN.Tween(origen)
+  
+    this.animacion = new TWEEN.Tween(this.origen)
     .to(fin, tiempoDeRecorrido)
     .onUpdate(() => {
-        var posicion = spline.getPointAt(origen.t);
-        this.coche.position.copy(posicion);
-        var tangente = spline.getTangentAt(origen.t);
-        posicion.add(tangente);
-        this.coche.up = this.binormales[Math.floor(origen.t * this.segmentos)];
-        this.coche.lookAt(posicion);
+        this.posicionAnimacion = this.spline.getPointAt(this.origen.t);
+        this.posicionAnimacion.y-=1;
+        this.escorvispa.position.copy(this.posicionAnimacion);
+        var tangente = this.spline.getTangentAt(this.origen.t);
+        this.posicionAnimacion.add(tangente);
+        this.escorvispa.up = this.binormales[Math.floor(this.origen.t * this.segmentos)];
+        this.escorvispa.lookAt(this.posicionAnimacion);
       })
       .repeat(Infinity)
-      .yoyo(true)
       .start( ) ;
-        
-    ;
-*/
     
     this.add(visibleSpline);
   }
@@ -182,31 +194,6 @@ class MyScene extends THREE.Scene {
     this.stats = stats;
   }
   
-  createFixedCamera() {
-    this.fixedCamera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-    this.fixedCamera.position.set(20, 0, 0);
-    this.fixedCamera.lookAt(this.coche.position);
-    this.add(this.fixedCamera);
-  }
-
-//   updateFixedCamera() {
-//     const forwardDirection = new THREE.Vector3();
-//     this.coche.getWorldDirection(forwardDirection);
-
-//     const offsetDistance = 10;
-
-//     const offset = forwardDirection.clone().multiplyScalar(-offsetDistance);
-//     const position = this.coche.position.clone().add(offset);
-//     position.y -= 5;
-//     this.fixedCamera.position.copy(position);
-
-//     const angle = Math.atan2(forwardDirection.x, forwardDirection.z);
-
-//     this.fixedCamera.rotation.y = angle;
-
-//     this.fixedCamera.lookAt(this.coche.position);
-// }
-
   createCamera () {
     this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
     this.camera.position.set (4, 2, 4);
@@ -218,6 +205,25 @@ class MyScene extends THREE.Scene {
     this.cameraControl.zoomSpeed = -2;
     this.cameraControl.panSpeed = 0.5;
     this.cameraControl.target = look;
+  }
+
+  createThirdPersonCamera() {
+    this.secondaryCamera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+  
+    const distanciaDetras = 20;
+    const altura = 10;
+  
+    const posicion = this.escorvispa.position.clone();
+    const direccion = this.spline.getTangentAt(0); 
+    const offset = new THREE.Vector3().copy(direccion).multiplyScalar(-distanciaDetras); 
+    posicion.y += altura;
+  
+    this.secondaryCamera.position.copy(posicion);
+    this.secondaryCamera.lookAt(this.escorvispa.position);
+  
+    this.add(this.secondaryCamera);
+  
+    this.cameraIndex = 0;
   }
   
   createGUI () {
@@ -259,7 +265,7 @@ class MyScene extends THREE.Scene {
     this.add (this.ambientLight);
     this.pointLight = new THREE.PointLight( 0xffffff );
     this.pointLight.power = this.guiControls.lightPower;
-    this.pointLight.position.set( 2, 3, 1 );
+    this.pointLight.position.set( 0,5, 0 );
     this.add (this.pointLight);
   }
   
@@ -300,12 +306,11 @@ class MyScene extends THREE.Scene {
   update () {
     if (this.stats) this.stats.update();
     this.cameraControl.update();
-    this.escorvispa.update();
+    //this.escorvispa.update();
     //this.coche.update();
     
     TWEEN.update();
-
-    //this.updateFixedCamera();
+    this.updateCamera();
 
     //this.minigun.update();
    //this.orbe1.update();

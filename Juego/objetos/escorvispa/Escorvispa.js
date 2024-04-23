@@ -72,7 +72,7 @@ class Escorvispa extends THREE.Object3D {
 
 	crearMateriales(){
 		var textureLoader = new THREE.TextureLoader();
-        var texture1 = textureLoader.load('../../imgs/rayas.avif');
+        var texture1 = textureLoader.load('../imgs/rayas.avif');
 
         switch (this.tipo){
             case TipoEscorvispa.ESBIRRO:
@@ -109,7 +109,7 @@ class Escorvispa extends THREE.Object3D {
 		this.wingmaterial = new THREE.MeshBasicMaterial({ color: 0x80DAEB, transparent: true, opacity: 0.5, side: THREE.DoubleSide });
 
 		
-		var texture = textureLoader.load('../../imgs/ojo2.avif');
+		var texture = textureLoader.load('../imgs/ojo2.avif');
 		this.materialOjo = new THREE.MeshBasicMaterial({ map: texture });
 	}
 

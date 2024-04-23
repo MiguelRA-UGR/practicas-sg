@@ -7,8 +7,9 @@ class Oruga extends THREE.Object3D {
 
 		this.crearMateriales();
 
-		this.crearCabeza();
+		
 		this.crearSeccion();
+		this.crearCabeza();
 
 		this.seccion2 = this.seccion.clone();
 		this.seccion3 = this.seccion.clone();
@@ -81,7 +82,6 @@ class Oruga extends THREE.Object3D {
 
 		this.seccionAbajo.add(this.pata);
 		this.seccionAbajo.add(this.pata2);
-
 		this.seccion.add(this.seccionAbajo);
 		this.add(this.seccion);
 	}
@@ -108,15 +108,58 @@ class Oruga extends THREE.Object3D {
             specular: 0x222222,
             shininess: 100,
         });
+
+		this.materialCara = new THREE.MeshPhongMaterial({
+			color: 0x4b3029,
+            specular: 0x222222,
+        });
 	}
 
     
 	crearCabeza() {
-       
+       	this.cabeza = this.seccion.clone();
+
+	   	this.cabeza.scale.set(0.75,0.5,0.9);
+		this.cabeza.position.set(0,-0.05,0.65);
+		this.cabeza.rotateX(THREE.MathUtils.degToRad(45));
+
+		this.caraGeom = new THREE.SphereGeometry();
+		this.cara = new THREE.Mesh(this.caraGeom,this.materialCara);
+
+		this.cara.scale.set(0.7,0.5,0.3);
+		this.cara.position.set(0,0.25,0.65);
+		this.cabeza.add(this.cara)
+
+	   	this.seccion.add(this.cabeza);
+
     }
 
 	update() {
+		const tiempo = Date.now();
+		const escala = 0.1;
+		const velocidad = 0.005;
+		const frecuencia = 0.5;
+		const alturaMaxima = 0.5;
+		const alturaMinima = -0.5;
+	
+		const altura1 = Math.sin(velocidad * tiempo * frecuencia) * escala;
+		const altura2 = Math.sin(velocidad * tiempo * frecuencia + Math.PI) * escala;
+		const altura3 = Math.sin(velocidad * tiempo * frecuencia * 1.5) * escala;
+		const altura4 = Math.sin(velocidad * tiempo * frecuencia * 1.5 + Math.PI) * escala;
+		const altura5 = Math.sin(velocidad * tiempo * frecuencia * 2) * escala;
+		const altura6 = Math.sin(velocidad * tiempo * frecuencia * 2 + Math.PI) * escala;
+	
+		this.seccion2.position.y = alturaMaxima * altura1;
+		this.seccion3.position.y = alturaMaxima * altura2;
+		this.seccion4.position.y = alturaMaxima * altura3;
+		this.seccion5.position.y = alturaMaxima * altura4;
+		this.seccion6.position.y = alturaMaxima * altura5;
+		this.seccion7.position.y = alturaMaxima * altura6;
 
-    }
+		this.seccion.position.y = alturaMaxima * altura1;
+	
+	}
+	
+	
     
 } export { Oruga };

@@ -38,7 +38,7 @@ class Coche extends THREE.Object3D {
 
   crearMateriales() {
     var textureLoader = new THREE.TextureLoader();
-    var texture1 = textureLoader.load("../imgs/acero.jpg");
+    var texture1 = textureLoader.load("../../imgs/acero.jpg");
 
     this.planchaMetal = new THREE.MeshPhongMaterial({
       map: texture1,
@@ -47,7 +47,7 @@ class Coche extends THREE.Object3D {
       shininess: 100,
     });
 
-    var texture2 = textureLoader.load("../imgs/gradient.png");
+    var texture2 = textureLoader.load("../../imgs/gradient.png");
 
     this.tuboEscapeMat = new THREE.MeshStandardMaterial({
       map: texture2,
@@ -811,7 +811,7 @@ class Coche extends THREE.Object3D {
     const self = this;
 
     const mtlLoader = new MTLLoader();
-    var mtlPath = "../models/rueda1/disk.mtl";
+    var mtlPath = "../../models/rueda1/disk.mtl";
 
     mtlLoader.load(mtlPath, function (materials) {
       materials.preload();
@@ -820,7 +820,7 @@ class Coche extends THREE.Object3D {
 
       objLoader.setMaterials(materials);
 
-      const objPath = "../models/rueda1/disk.obj";
+      const objPath = "../../models/rueda1/disk.obj";
 
       objLoader.load(objPath, function (rueda) {
         rueda.scale.set(0.2, 0.2, 0.3);
@@ -854,7 +854,7 @@ class Coche extends THREE.Object3D {
       });
     });
 
-    mtlPath = "../models/conductor/cool.mtl";
+    mtlPath = "../../models/conductor/cool.mtl";
 
     mtlLoader.load(mtlPath, function (materials) {
       materials.preload();
@@ -863,7 +863,7 @@ class Coche extends THREE.Object3D {
 
       objLoader.setMaterials(materials);
 
-      const objPath = "../models/conductor/cool.obj";
+      const objPath = "../../models/conductor/cool.obj";
 
       objLoader.load(objPath, function (conductor) {
         conductor.scale.set(1.1, 1.1, 1.1);
