@@ -38,7 +38,7 @@ class Coche extends THREE.Object3D {
 
   crearMateriales() {
     var textureLoader = new THREE.TextureLoader();
-    var texture1 = textureLoader.load("../../imgs/acero.jpg");
+    var texture1 = textureLoader.load("../imgs/acero.jpg");
 
     this.planchaMetal = new THREE.MeshPhongMaterial({
       map: texture1,
@@ -47,7 +47,7 @@ class Coche extends THREE.Object3D {
       shininess: 100,
     });
 
-    var texture2 = textureLoader.load("../../imgs/gradient.png");
+    var texture2 = textureLoader.load("../imgs/gradient.png");
 
     this.tuboEscapeMat = new THREE.MeshStandardMaterial({
       map: texture2,
@@ -489,8 +489,8 @@ class Coche extends THREE.Object3D {
     this.foco.add(this.luzfoco);
     this.foco2.add(this.luzfoco2);
 
-    //this.add(helper);
-    //this.add(helper2);
+    this.add(helper);
+    this.add(helper2);
     this.add(this.foco);
     this.add(this.foco2);
   }
@@ -811,7 +811,7 @@ class Coche extends THREE.Object3D {
     const self = this;
 
     const mtlLoader = new MTLLoader();
-    var mtlPath = "../../models/rueda1/disk.mtl";
+    var mtlPath = "../models/rueda1/disk.mtl";
 
     mtlLoader.load(mtlPath, function (materials) {
       materials.preload();
@@ -820,7 +820,7 @@ class Coche extends THREE.Object3D {
 
       objLoader.setMaterials(materials);
 
-      const objPath = "../../models/rueda1/disk.obj";
+      const objPath = "../models/rueda1/disk.obj";
 
       objLoader.load(objPath, function (rueda) {
         rueda.scale.set(0.2, 0.2, 0.3);
@@ -832,8 +832,6 @@ class Coche extends THREE.Object3D {
         const rueda3 = rueda.clone();
         const rueda4 = rueda.clone();
 
-        const rueda5 = rueda.clone();
-
         rueda2.scale.set(0.2, 0.2, 0.3);
         rueda2.rotateY(THREE.MathUtils.degToRad(180));
         rueda2.position.set(1.4, 0.05, -1.4);
@@ -842,19 +840,21 @@ class Coche extends THREE.Object3D {
         rueda4.scale.set(0.3, 0.3, 0.3);
         rueda4.rotateY(THREE.MathUtils.degToRad(180));
         rueda4.position.set(-0.8, 0.35, -1.7);
-        rueda5.scale.set(0.2, 0.2, 0.2);
-        rueda5.rotateY(THREE.MathUtils.degToRad(-90));
-        rueda5.rotateX(THREE.MathUtils.degToRad(-40));
-        rueda5.position.set(-1.8, 0.9, 0);
+
+        // const rueda5 = rueda.clone();
+        // rueda5.scale.set(0.2, 0.2, 0.2);
+        // rueda5.rotateX(THREE.MathUtils.degToRad(-90));
+        // rueda5.position.set(-1.8, 0.9, 0);
+        // self.base.add(rueda5);
 
         self.base.add(rueda2);
         self.base.add(rueda3);
         self.base.add(rueda4);
-        self.base.add(rueda5);
+        
       });
     });
 
-    mtlPath = "../../models/conductor/cool.mtl";
+    mtlPath = "../models/conductor/cool.mtl";
 
     mtlLoader.load(mtlPath, function (materials) {
       materials.preload();
@@ -863,7 +863,7 @@ class Coche extends THREE.Object3D {
 
       objLoader.setMaterials(materials);
 
-      const objPath = "../../models/conductor/cool.obj";
+      const objPath = "../models/conductor/cool.obj";
 
       objLoader.load(objPath, function (conductor) {
         conductor.scale.set(1.1, 1.1, 1.1);

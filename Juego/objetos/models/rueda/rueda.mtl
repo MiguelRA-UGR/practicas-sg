@@ -1,0 +1,46 @@
+# Blender MTL File: 'wheel_Zil_CGTraber.blend'
+# Material Count: 4
+
+newmtl gold_mat
+Ns 385.586779
+Ka 0.522727 0.522727 0.522727
+Kd 0.800000 0.800000 0.800000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 3
+map_Bump textures\\Normal_map.png
+
+newmtl rim_mat
+Ns 178.586771
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.300000 0.300000 0.300000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Bump textures\\Normal_map.png
+
+newmtl stal_mat
+Ns 550.115681
+Ka 0.731818 0.731818 0.731818
+Kd 0.800000 0.800000 0.800000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 3
+map_Bump textures\\Normal_map.png
+
+newmtl tire_mat
+Ns 32.801652
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.395455 0.395455 0.395455
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Bump textures\\Normal_map.png

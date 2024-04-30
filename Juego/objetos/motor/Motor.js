@@ -129,7 +129,7 @@ class Motor extends THREE.Object3D {
         const self = this;
     
         const mtlLoader = new MTLLoader();
-        const mtlPath = '../../models/motor/motor.mtl';
+        const mtlPath = '../models/motor/motor.mtl';
     
         mtlLoader.load(mtlPath, function(materials) {
             materials.preload();
@@ -138,7 +138,7 @@ class Motor extends THREE.Object3D {
     
             objLoader.setMaterials(materials);
     
-            const objPath = '../../models/motor/motor.obj';
+            const objPath = '../models/motor/motor.obj';
     
             objLoader.load(objPath, function(motor) {
                 

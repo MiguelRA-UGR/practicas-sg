@@ -12,7 +12,8 @@ class MyScene extends THREE.Scene {
     this.createCamera();
     this.axis = new THREE.AxesHelper(3);
     this.add(this.axis);
-    this.model = new Minigun(this.gui, "Controles Minigun la Llave");
+    this.model = new Minigun(this.gui, "Controles Minigun");
+    this.model.scale.set(0.3,0.3,0.3);
     this.add(this.model);
   }
   
