@@ -104,7 +104,7 @@ class MyScene extends THREE.Scene {
     // Que no se nos olvide añadirlo a la escena, que en este caso es  this
     this.add (ground);
   }
-  
+
   createGUI () {
     // Se crea la interfaz gráfica de usuario
     var gui = new GUI();
@@ -116,7 +116,8 @@ class MyScene extends THREE.Scene {
       // En el contexto de una función   this   alude a la función
       lightPower : 500.0,  // La potencia de esta fuente de luz se mide en lúmenes
       ambientIntensity : 0.5,   
-      axisOnOff : true
+      axisOnOff : true,
+      tipoEscorvispa: TipoEscorvispa.ESBIRRO 
     }
 
     // Se crea una sección para los controles de esta clase
@@ -136,9 +137,21 @@ class MyScene extends THREE.Scene {
     folder.add (this.guiControls, 'axisOnOff')
       .name ('Mostrar ejes : ')
       .onChange ( (value) => this.setAxisVisible (value) );
+
+    var folder2 = gui.addFolder('Tipo de Escorvispa')
+    folder2.add(this.guiControls, 'tipoEscorvispa', Object.values(TipoEscorvispa))
+      .name('Cambiar tipo')
+      .onChange((value) => this.changeEscorvispaType(value));
     
     return gui;
   }
+
+  changeEscorvispaType(tipo) {
+    this.remove(this.escorvispa);
+    this.escorvispa = new Escorvispa(tipo);
+    
+    this.add(this.escorvispa);
+}
   
   createLights () {
     // Se crea una luz ambiental, evita que se vean complentamente negras las zonas donde no incide de manera directa una fuente de luz

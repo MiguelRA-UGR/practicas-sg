@@ -824,7 +824,7 @@ class Coche extends THREE.Object3D {
 
       objLoader.load(objPath, function (rueda) {
         rueda.scale.set(0.2, 0.2, 0.3);
-        rueda.position.set(1.4, 0.05, 1.4);
+        //rueda.position.set(1.4, 0.05, 1.4);
 
         self.base.add(rueda);
 
@@ -834,12 +834,9 @@ class Coche extends THREE.Object3D {
 
         rueda2.scale.set(0.2, 0.2, 0.3);
         rueda2.rotateY(THREE.MathUtils.degToRad(180));
-        rueda2.position.set(1.4, 0.05, -1.4);
         rueda3.scale.set(0.3, 0.3, 0.3);
-        rueda3.position.set(-0.8, 0.35, 1.7);
         rueda4.scale.set(0.3, 0.3, 0.3);
         rueda4.rotateY(THREE.MathUtils.degToRad(180));
-        rueda4.position.set(-0.8, 0.35, -1.7);
 
         // const rueda5 = rueda.clone();
         // rueda5.scale.set(0.2, 0.2, 0.2);
@@ -847,9 +844,24 @@ class Coche extends THREE.Object3D {
         // rueda5.position.set(-1.8, 0.9, 0);
         // self.base.add(rueda5);
 
+        //rueda2.position.set(1.4, 0.05, -1.4);
+        //rueda3.position.set(-0.8, 0.35, 1.7);
+        //rueda4.position.set(-0.8, 0.35, -1.7);
+
+        rueda.position.set(0, 0.03, 0.4);
+        rueda2.position.set(0, 0.03, -0.4);
+        rueda3.position.set(0, 0.05, 0.4);
+        rueda4.position.set(0, 0.05, -0.4);
+
+        self.base.add(rueda);
         self.base.add(rueda2);
         self.base.add(rueda3);
         self.base.add(rueda4);
+
+        self.ejerueda1.add(rueda);
+        self.ejerueda2.add(rueda2);
+        self.ejerueda3.add(rueda3);
+        self.ejerueda4.add(rueda4);
         
       });
     });
@@ -875,6 +887,12 @@ class Coche extends THREE.Object3D {
   }
 
   update() {
+
+    this.ejerueda1.rotateZ(THREE.MathUtils.degToRad(-10));
+    this.ejerueda2.rotateZ(THREE.MathUtils.degToRad(-10));
+    this.ejerueda3.rotateZ(THREE.MathUtils.degToRad(-10));
+    this.ejerueda4.rotateZ(THREE.MathUtils.degToRad(-10));
+
     this.motor.update();
     this.minigun.update();
   }

@@ -9,7 +9,7 @@ const TipoEscorvispa = {
 };
 
 class Escorvispa extends THREE.Object3D {
-    constructor(gui, titleGui,tipo) {
+    constructor(tipo) {
         super();
 
         const tipos = Object.values(TipoEscorvispa);
@@ -18,8 +18,6 @@ class Escorvispa extends THREE.Object3D {
             
             tipo = TipoEscorvispa.ESBIRRO;
         }
-
-        this.createGUI(gui);
 
         //Variables para animacion
         this.tipo = tipo;
@@ -49,6 +47,7 @@ class Escorvispa extends THREE.Object3D {
 
         if (this.tipo == TipoEscorvispa.REINA){
             this.añadirCorona();
+            this.aguijon.scale.set(1.5,1.5,1.5);
             this.scale.set(2,2,2);
         }
         if (this.tipo == TipoEscorvispa.SOLDADO){
@@ -82,7 +81,7 @@ class Escorvispa extends THREE.Object3D {
                 this.colorPrincipal = 0x63340b; 
                 break;
             case TipoEscorvispa.REINA:
-                this.colorPrincipal = 0x683475;
+                this.colorPrincipal = 0x800080;
                 break;
 
         }
@@ -147,7 +146,7 @@ class Escorvispa extends THREE.Object3D {
 
         this.aguijon.rotateX(THREE.MathUtils.degToRad(-90));
         this.aguijon.position.set(0,0,-0.);
-        this.aguijon.scale.set(1.5,1.5,1.5);
+
     
         this.cola3.add(this.aguijon);
 
@@ -394,13 +393,6 @@ class Escorvispa extends THREE.Object3D {
         this.cuerpo.add(this.pata5);
         this.cuerpo.add(this.pata6);
     }
-
-
-	createGUI(gui) {
-		this.guiControls = new function () {
-
-		}
-	};
 
 	update() {
         //Animacion Alas

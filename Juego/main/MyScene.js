@@ -103,7 +103,7 @@ class MyScene extends THREE.Scene {
     this.circuitoGeom = new THREE.TubeGeometry(this.spline, 100, 5, 20);
     this.circuito = new THREE.Mesh(this.circuitoGeom, this.materialColmena);
 
-    this.add(this.circuito);
+       this.add(this.circuito);
 
     geometryLine.setFromPoints(this.spline.getPoints(100));
     var material = new THREE.LineBasicMaterial({
@@ -187,7 +187,16 @@ class MyScene extends THREE.Scene {
     this.thirdPersonCamera.lookAt(target);
     this.add(this.thirdPersonCamera);
 
-    const helper = new THREE.CameraHelper( this.thirdPersonCamera ); this.add( helper );
+    const helper = new THREE.CameraHelper( this.thirdPersonCamera ); 
+
+    const handleResize = () => {
+      this.thirdPersonCamera.aspect = window.innerWidth / window.innerHeight;
+      this.thirdPersonCamera.updateProjectionMatrix();
+    };
+
+  window.addEventListener('resize', handleResize);
+
+    this.add( helper );
   }
 
   createGUI() {
