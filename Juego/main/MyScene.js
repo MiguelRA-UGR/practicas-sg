@@ -284,6 +284,7 @@ class MyScene extends THREE.Scene {
     
     this.modelo.update();
     TWEEN.update();
+    this.modelo.translateY(this.circuitoGeom.parameters.radius+0.4)
   
     requestAnimationFrame(() => this.update());
   }
