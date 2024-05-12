@@ -15,7 +15,11 @@ class MyScene extends THREE.Scene {
     this.createLights();
     this.createCamera();
     this.orbe = new Orbe();
+
+
     this.add(this.orbe);
+
+    this.createGround ();
   }
   
   initStats() {
@@ -43,7 +47,7 @@ class MyScene extends THREE.Scene {
   
   createGround() {
     var geometryGround = new THREE.BoxGeometry(10,0.2,10);
-    var texture = new THREE.TextureLoader().load('../../imgs/wood.jpg');
+    var texture = new THREE.TextureLoader().load('../imgs/wood.jpg');
     var materialGround = new THREE.MeshStandardMaterial({map: texture});
     var ground = new THREE.Mesh(geometryGround, materialGround);
     ground.position.y = -0.1;

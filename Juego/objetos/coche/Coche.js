@@ -34,6 +34,8 @@ class Coche extends THREE.Object3D {
     this.add(this.minigun);
 
     this.add(this.base);
+
+    this.translateY(0.53);
   }
 
   crearMateriales() {
@@ -472,25 +474,25 @@ class Coche extends THREE.Object3D {
     this.foco = focoCSG.toMesh();
     this.foco.add(this.interiorFoco);
 
-    this.luzfoco = new THREE.SpotLight(0xffff00, 50);
+    // this.luzfoco = new THREE.SpotLight(0xffff00, 50);
 
-    const targetPosition = new THREE.Vector3(0, 0, 10);
-    this.luzfoco.position.set(0, 0, 0.05);
-    this.luzfoco.target.position.copy(targetPosition);
-    const helper = new THREE.DirectionalLightHelper(this.luzfoco, 5);
+    // const targetPosition = new THREE.Vector3(0, 0, 10);
+    // this.luzfoco.position.set(0, 0, 0.05);
+    // this.luzfoco.target.position.copy(targetPosition);
+    // const helper = new THREE.DirectionalLightHelper(this.luzfoco, 5);
 
-    this.luzfoco2 = this.luzfoco.clone();
-    this.luzfoco2.position.set(0, 0, 0.05);
-    const helper2 = new THREE.DirectionalLightHelper(this.luzfoco2, 5);
+    // this.luzfoco2 = this.luzfoco.clone();
+    // this.luzfoco2.position.set(0, 0, 0.05);
+    // const helper2 = new THREE.DirectionalLightHelper(this.luzfoco2, 5);
+    // this.foco.add(this.luzfoco);
+    // this.foco2.add(this.luzfoco2);
+    // this.add(helper);
+    // this.add(helper2);
 
     this.foco2 = this.foco.clone();
     this.foco.position.set(-0.5, 0.5, 2.35);
     this.foco2.position.set(0.5, 0.5, 2.35);
-    this.foco.add(this.luzfoco);
-    this.foco2.add(this.luzfoco2);
-
-    this.add(helper);
-    this.add(helper2);
+    
     this.add(this.foco);
     this.add(this.foco2);
   }

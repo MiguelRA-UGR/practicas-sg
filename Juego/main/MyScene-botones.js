@@ -75,10 +75,10 @@ class MyScene extends THREE.Scene {
           this.atras = true;
           break;
         case "ArrowLeft":
-          this.izquierda = true;
+          this.derecha = true;
           break;
         case "ArrowRight":
-          this.derecha = true;
+          this.izquierda = true;
           break;
         case "Space":
           console.log("Cámara cambiada");
@@ -96,10 +96,10 @@ class MyScene extends THREE.Scene {
           this.atras = false;
           break;
         case "ArrowLeft":
-          this.izquierda = false;
+          this.derecha = false;
           break;
         case "ArrowRight":
-          this.derecha = false;
+          this.izquierda = false;
           break;
       }
     });
@@ -123,13 +123,13 @@ class MyScene extends THREE.Scene {
       normalScale: new THREE.Vector2(1, 1),
     });
 
-    this.circuitoTorusGeom = new THREE.TorusKnotGeometry(20, 4, 50, 20, 2, 3);
+    this.circuitoTorusGeom = new THREE.TorusKnotGeometry(100, 4, 50, 20, 2, 3);
 
     this.spline = this.getPathFromTorusKnot(this.circuitoTorusGeom);
 
     var geometryLine = new THREE.BufferGeometry();
 
-    this.circuitoGeom = new THREE.TubeGeometry(this.spline, 100, 5, 20);
+    this.circuitoGeom = new THREE.TubeGeometry(this.spline, 100, 20, 20);
     this.circuito = new THREE.Mesh(this.circuitoGeom, this.materialColmena);
 
        this.add(this.circuito);

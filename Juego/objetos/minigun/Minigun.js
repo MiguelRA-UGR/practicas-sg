@@ -82,7 +82,7 @@ class Minigun extends THREE.Object3D {
 
 	crearMateriales(){
 		var textureLoader = new THREE.TextureLoader();
-        var texture1 = textureLoader.load('../../imgs/metal.jpg');
+        var texture1 = textureLoader.load('../imgs/metal.jpg');
 
         this.planchaMetal = new THREE.MeshPhongMaterial({
             map : texture1,

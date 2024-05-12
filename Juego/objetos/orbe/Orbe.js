@@ -31,12 +31,18 @@ class Orbe extends THREE.Object3D {
         this.haymodelo=true;
         this.tipo = tipo;
         this.distanciaUp = 0.25;
+        this.positionYInicial = 0.75;
+        
         this.crearObjetos();
 
         this.floteDirection = 1;
         this.floteSpeed = 0.005;
         if(this.haymodelo)
             this.cargarModelo();
+
+        this.createLight();
+
+        this.translateY(this.positionYInicial);
     }
     
     cargarModelo() {
@@ -108,7 +114,7 @@ class Orbe extends THREE.Object3D {
 
         switch (this.tipo) {
             case TipoOrbe.CADENCIA:
-                this.color = 0xff8000;
+                this.color = 0xff9300;
 
                 this.bala = new Bala();
                 this.bala.rotateX(THREE.MathUtils.degToRad(45));
@@ -121,6 +127,7 @@ class Orbe extends THREE.Object3D {
                 break;
 
             case TipoOrbe.TIEMPO_RALENTIZADO:
+                this.color = 0x3a9d23;
                 this.metalOro = new THREE.MeshStandardMaterial({
                     color: 0xe8ca3f,
                     metalness: 0.5,
@@ -176,6 +183,7 @@ class Orbe extends THREE.Object3D {
             break;
 
             case TipoOrbe.TAMAÑO_AUMENTADO:
+                this.color = 0xa212a2;
                 
                 var texture = textureLoader.load('../../imgs/pocima.avif');
 
@@ -219,10 +227,11 @@ class Orbe extends THREE.Object3D {
                 this.add(bottle);
                 break;
             case TipoOrbe.VELOCIDAD_AUMENTADA:
-                this.color = 0x6eabff;
+                this.color = 0x81d8d0;
                 break;
             
             case TipoOrbe.REPARAR:
+                this.color = 0xffff00;
 
                 this.llave = new Llave();
                 this.llave.rotateZ(THREE.MathUtils.degToRad(-30))
@@ -230,17 +239,22 @@ class Orbe extends THREE.Object3D {
                 this.llave.scale.set(0.4,0.4,0.4);
                 this.add(this.llave);
 
-                this.color = 0x000000;
                 break;
         }
 
         this.add(this.esfera);
     }
+
+    createLight() {
+        this.light = new THREE.PointLight(this.color, 8,2);
+        this.light.position.set(0, 0, 0);
+        this.add(this.light);
+    }
     
     update() {
         this.position.y += this.floteSpeed * this.floteDirection;
 
-        if (Math.abs(this.position.y) >= this.distanciaUp || Math.abs(this.position.y) <= 0) {
+        if (this.position.y >= this.distanciaUp + this.positionYInicial || this.position.y <= this.positionYInicial-this.distanciaUp) {
             this.floteDirection *= -1;
         }
     }
