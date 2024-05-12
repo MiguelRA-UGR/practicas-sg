@@ -28,7 +28,8 @@ class Orbe extends THREE.Object3D {
             tipo = tipos[Math.floor(Math.random() * tipos.length)];
         }
         
-        this.haymodelo=true;
+        this.haymodelo=false;
+        this.desplazamiento=0;
         this.tipo = tipo;
         this.distanciaUp = 0.25;
         this.positionYInicial = 0.75;
@@ -36,18 +37,19 @@ class Orbe extends THREE.Object3D {
         this.crearObjetos();
 
         this.floteDirection = 1;
-        this.floteSpeed = 0.005;
-        if(this.haymodelo)
-            this.cargarModelo();
+        this.floteSpeed = 0.0025;
+
+        this.cargarModelo();
 
         this.createLight();
 
         this.translateY(this.positionYInicial);
+        this.scale.set(1.25,1.25,1.25);
     }
     
     cargarModelo() {
-        let pathOBJ = '';
-        let pathMTL = '';
+        let pathOBJ = "";
+        let pathMTL = "";
 
         this.materialObjetos = new THREE.MeshStandardMaterial({
             color: 0xffffff,
@@ -58,49 +60,39 @@ class Orbe extends THREE.Object3D {
 
         var factorEscala = 0.5;
         switch (this.tipo) {
-            case TipoOrbe.CADENCIA:
-                this.haymodelo=false;
-                pathOBJ = '../../models/cadencia';
-                pathMTL = '../../models/cadencia';
-                factorEscala=0.5;
-                break;
             case TipoOrbe.DAÑO_AUMENTADO:
                 this.haymodelo=true;
-                pathOBJ = '../../models/skull/skull.obj';
-                pathMTL = '../../models/skull/skull.mtl';
+                pathOBJ = '../models/skull/skull.obj';
+                pathMTL = '../models/skull/skull.mtl';
                 factorEscala=0.0035;
-                break;
-            case TipoOrbe.TAMAÑO_AUMENTADO:
-                this.haymodelo=false;
-                
                 break;
             case TipoOrbe.VELOCIDAD_AUMENTADA:
                 this.haymodelo=true;
-                pathOBJ = '../../models/cheetah/cheetah.obj';
-                pathMTL = '../../models/cheetah/cheetah.mtl';
-
+                pathOBJ = '../models/cheetah/cheetah.obj';
+                pathMTL = '../models/cheetah/cheetah.mtl';
                 factorEscala=0.045;
                 break;
-            
         }
 
-        const mtlLoader = new MTLLoader();
-        mtlLoader.load(pathMTL, (materials) => {
-            materials.preload();
-            const objLoader = new OBJLoader();
-            objLoader.setMaterials(materials);
-            objLoader.load(pathOBJ, (object) => {
+        if(this.haymodelo){
+            const mtlLoader = new MTLLoader();
+            mtlLoader.load(pathMTL, (materials) => {
+                materials.preload();
+                const objLoader = new OBJLoader();
+                objLoader.setMaterials(materials);
+                objLoader.load(pathOBJ, (object) => {
 
-                object.traverse((child) => {
-                    if (child instanceof THREE.Mesh) {
-                        child.material = this.materialObjetos;
-                    }
+                    object.traverse((child) => {
+                        if (child instanceof THREE.Mesh) {
+                            child.material = this.materialObjetos;
+                        }
+                    });
+
+                    object.scale.set(factorEscala, factorEscala, factorEscala);
+                    this.add(object);
                 });
-
-                object.scale.set(factorEscala, factorEscala, factorEscala);
-                this.add(object);
             });
-        });
+        }
     }
 
     crearObjetos() {
@@ -120,6 +112,7 @@ class Orbe extends THREE.Object3D {
                 this.bala.rotateX(THREE.MathUtils.degToRad(45));
                 this.bala.rotateZ(THREE.MathUtils.degToRad(45));
                 this.bala.scale.set(0.75,0.75,0.75);
+                
                 this.add(this.bala);
                 break;
             case TipoOrbe.DAÑO_AUMENTADO:
@@ -134,7 +127,7 @@ class Orbe extends THREE.Object3D {
                     roughness: 0.5
                 });
 
-                var texture = textureLoader.load('../../imgs/arena.avif');
+                var texture = textureLoader.load('../imgs/arena.avif');
 
                 this.materialArena = new THREE.MeshStandardMaterial({
                     color: 0xf5deb3,
@@ -178,14 +171,16 @@ class Orbe extends THREE.Object3D {
                 this.add(barrote3);
                 this.add(tapaArriba);
                 this.add(tabaAbajo);
+
                 this.add(reloj);
 
+                this.translateY(-0.5);
             break;
 
             case TipoOrbe.TAMAÑO_AUMENTADO:
                 this.color = 0xa212a2;
                 
-                var texture = textureLoader.load('../../imgs/pocima.avif');
+                var texture = textureLoader.load('../imgs/pocima.avif');
 
                 this.materialPocima = new THREE.MeshStandardMaterial({
                     color: 0xff00ff,
@@ -195,7 +190,7 @@ class Orbe extends THREE.Object3D {
                     map : texture
                 });
 
-                var texture = textureLoader.load('../../imgs/corcho.jpg');
+                var texture = textureLoader.load('../imgs/corcho.jpg');
 
                 this.materialCorcho = new THREE.MeshStandardMaterial({
                     color: 0xbd7d3d,
@@ -225,9 +220,13 @@ class Orbe extends THREE.Object3D {
                 this.add(corcho);
 
                 this.add(bottle);
+
+                this.translateY(-0.5);
                 break;
             case TipoOrbe.VELOCIDAD_AUMENTADA:
                 this.color = 0x81d8d0;
+
+                this.translateY(-0.3);
                 break;
             
             case TipoOrbe.REPARAR:
@@ -245,6 +244,10 @@ class Orbe extends THREE.Object3D {
         this.add(this.esfera);
     }
 
+    getTipo(){
+        return this.tipo;
+    }
+
     createLight() {
         this.light = new THREE.PointLight(this.color, 8,2);
         this.light.position.set(0, 0, 0);
@@ -252,10 +255,13 @@ class Orbe extends THREE.Object3D {
     }
     
     update() {
-        this.position.y += this.floteSpeed * this.floteDirection;
+        this.position.y += this.floteSpeed*this.floteDirection;
 
-        if (this.position.y >= this.distanciaUp + this.positionYInicial || this.position.y <= this.positionYInicial-this.distanciaUp) {
+        if (this.desplazamiento >= this.distanciaUp) {
             this.floteDirection *= -1;
+            this.desplazamiento=0;
         }
+
+        this.desplazamiento+=this.floteSpeed;
     }
 } export { Orbe, TipoOrbe };

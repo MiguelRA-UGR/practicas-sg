@@ -2,7 +2,6 @@ import * as THREE from "../../libs/three.module.js";
 import { CSG } from "../../libs/CSG-v2.js";
 import { MTLLoader } from "../../libs/MTLLoader.js";
 import { OBJLoader } from "../../libs/OBJLoader.js";
-import { FBXLoader } from "../../libs/FBXLoader.js";
 
 import { Motor } from "../motor/Motor.js";
 import { Minigun } from "../minigun/Minigun.js";
@@ -10,8 +9,6 @@ import { Minigun } from "../minigun/Minigun.js";
 class Coche extends THREE.Object3D {
   constructor(gui, titleGui) {
     super();
-
-    this.createGUI(gui);
     this.crearMateriales();
     this.crearBase();
     this.cargarModelos();
@@ -794,20 +791,6 @@ class Coche extends THREE.Object3D {
     this.base.add(this.chasisLargo2);
   }
 
-  createGUI(gui) {
-    const self = this;
-    this.guiControls = new (function () {
-      this.focoEncendido = true;
-    })();
-
-    gui
-      .add(this.guiControls, "focoEncendido")
-      .name("Foco encendido")
-      .onChange(function (value) {
-        self.luzfoco.visible = value;
-        self.luzfoco2.visible = value;
-      });
-  }
 
   cargarModelos() {
     const self = this;

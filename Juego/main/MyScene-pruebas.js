@@ -23,9 +23,9 @@ class MyScene extends THREE.Scene {
 
     this.initKeyboardEvents();
 
-    this.cocheSpeed = 0; // Velocidad del coche
-    this.direction = new THREE.Vector3(); // Dirección del coche
-    this.axis = new THREE.Vector3(0, 1, 0); // Eje de rotación para girar el coche
+    this.cocheSpeed = 0;
+    this.direction = new THREE.Vector3();
+    this.axis = new THREE.Vector3(0, 1, 0);
 
 
     this.modelo = new Coche(this.gui, "Coche");
