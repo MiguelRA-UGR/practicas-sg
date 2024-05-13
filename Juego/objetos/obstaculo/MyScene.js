@@ -2,7 +2,7 @@ import * as THREE from '../../libs/three.module.js'
 import { GUI } from '../../libs/dat.gui.module.js'
 import { TrackballControls } from '../../libs/TrackballControls.js'
 import { Stats } from '../../libs/stats.module.js'
-import { Orbe,TipoOrbe } from './Orbe.js'
+import { Obstaculo,TipoObstaculo } from './Obstaculo.js'
 
 class MyScene extends THREE.Scene {
   constructor(myCanvas) {
@@ -14,11 +14,10 @@ class MyScene extends THREE.Scene {
     this.add(this.axis);
     this.createLights();
     this.createCamera();
-    this.orbe = new Orbe();
-
-    this.add(this.orbe);
 
     this.createGround ();
+
+    this.hayObstaculo=false;
   }
   
   initStats() {
@@ -59,7 +58,7 @@ class MyScene extends THREE.Scene {
       lightPower: 500.0,
       ambientIntensity: 0.5,
       axisOnOff: true,
-      tipoOrbe: TipoOrbe.CADENCIA // Valor por defecto
+      tipoObstaculo: TipoObstaculo.ORUGA // Valor por defecto
     }
     var folder = gui.addFolder('Luz y Ejes');
     folder.add(this.guiControls, 'lightPower', 0, 1000, 20)
@@ -71,18 +70,19 @@ class MyScene extends THREE.Scene {
     folder.add(this.guiControls, 'axisOnOff')
       .name('Mostrar ejes : ')
       .onChange((value) => this.setAxisVisible(value));
-    var folder2 = gui.addFolder('Tipo de orbe')
-    folder2.add(this.guiControls, 'tipoOrbe', Object.values(TipoOrbe))
-      .name('Cambiar tipo de Orbe')
-      .onChange((value) => this.changeOrbeType(value));
+    var folder2 = gui.addFolder('Tipo de obstaculo')
+    folder2.add(this.guiControls, 'tipoObstaculo', Object.values(TipoObstaculo))
+      .name('Cambiar tipo de Obstaculo')
+      .onChange((value) => this.changeObstaculoType(value));
     return gui;
   }
 
-  changeOrbeType(tipo) {
-    this.remove(this.orbe);
-    this.orbe = new Orbe(tipo);
+  changeObstaculoType(tipo) {
+    this.remove(this.obstaculo);
+    this.obstaculo = new Obstaculo(tipo);
     
-    this.add(this.orbe);
+    this.hayObstaculo=true;
+    this.add(this.obstaculo);
 }
   
   createLights() {
@@ -131,7 +131,12 @@ class MyScene extends THREE.Scene {
   update() {
     if (this.stats) this.stats.update();
     this.cameraControl.update();
-    this.orbe.update();
+
+    if(this.hayObstaculo){
+      this.obstaculo.update();
+    }
+
+    
     this.renderer.render(this, this.getCamera());
     requestAnimationFrame(() => this.update())
   }

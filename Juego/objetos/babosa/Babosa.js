@@ -4,7 +4,7 @@ import { MTLLoader } from '../../libs/MTLLoader.js';
 import { OBJLoader } from '../../libs/OBJLoader.js';
 
 class Babosa extends THREE.Object3D {
-    constructor(gui, titleGui) {
+    constructor() {
         super();
         
 		this.crearMateriales();

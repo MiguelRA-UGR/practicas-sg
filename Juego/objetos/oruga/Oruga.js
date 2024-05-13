@@ -38,9 +38,11 @@ class Oruga extends THREE.Object3D {
 		this.seccion.add(this.seccion5);
 		this.seccion.add(this.seccion6);
 		this.seccion.add(this.seccion7);
-
-
         this.add(this.cuerpo);
+
+		this.seccion.rotateX(THREE.MathUtils.degToRad(-3));
+		this.position.set(0,1.1,3);
+		
     };
 
 	crearSeccion(){

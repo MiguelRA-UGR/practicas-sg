@@ -263,5 +263,6 @@ class Orbe extends THREE.Object3D {
         }
 
         this.desplazamiento+=this.floteSpeed;
+        this.rotateY(0.01);
     }
 } export { Orbe, TipoOrbe };

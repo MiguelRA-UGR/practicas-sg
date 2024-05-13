@@ -28,20 +28,20 @@ class MyScene extends THREE.Scene {
     //Control de Juego
     this.finJuego =false;
     this.puntuacion=0;
-    this.vueltas=0;
+    this.vueltas=-1;
     this.almacenadoInicio=false;
     this.bonicacionEnCurso=false;
     this.iniciadaBonificacion=false;
     this.colisiondetectada=false;
-    this.puntoInicio = new THREE.Vector3();
     this.bonificacionActiva = "Ninguna";
+    this.numOrbes = 1;
 
     //Bonificadores
-    this.bonificadorCadencia=1;
-    this.bonificadorVelocidad=1;
-    this.bonificadorTamaño=1;
-    this.bonificadorVueltas=1;
-    this.bonificadorDanio=1;
+    this.bonificadorCadencia=1.0;
+    this.bonificadorVelocidad=1.0;
+    this.bonificadorTamaño=1.0;
+    this.bonificadorVueltas=0.9;
+    this.bonificadorDanio=1.0;
 
     //Tiempos
     this.TiempoRestante = 120000; //2 minutos
@@ -50,6 +50,7 @@ class MyScene extends THREE.Scene {
     this.inicioBonificacion = new Date();
     this.tiempoTranscurridoBonif=0;
     this.tiempoTranscurrido=0;
+    this.momentoMeta = new Date();
 
     //Modelos
     this.modelo = new Coche(this.gui, "Coche");
@@ -59,7 +60,6 @@ class MyScene extends THREE.Scene {
     this.hitBoxCoche = new THREE.Box3();
     var hitBoxHelper = new THREE.Box3Helper( this.hitBoxCoche , 0x000000 );
     this.add(hitBoxHelper);
-
     this.createThirdPersonCamera();
 
     this.createOrbes();
@@ -73,6 +73,8 @@ class MyScene extends THREE.Scene {
 
   aplicarBonificacion( tipo){
 
+    console.log("Bonificacion obtenida: " + tipo)
+
     this.bonificacionActiva=tipo;
     this.iniciadaBonificacion=true;
     switch(tipo){
@@ -85,8 +87,8 @@ class MyScene extends THREE.Scene {
         this.TiempoRestante+=5000;
         break;
       case TipoOrbe.VELOCIDAD_AUMENTADA:
-        // +25% velocidad durante 10 segundos
-        this.bonificadorVelocidad=1.25;
+        // +50% velocidad durante 10 segundos
+        this.bonificadorVelocidad=1.5;
         break;
       case TipoOrbe.TAMAÑO_AUMENTADO:
         // x2 de tamaño durante 10 segundos
@@ -105,13 +107,14 @@ class MyScene extends THREE.Scene {
   }
 
   reset(){
-    this.bonificadorCadencia=1;
-    this.bonificadorVelocidad=1;
-    this.bonificadorTamaño=1;
-    this.bonificadorDanio=1;
+    this.bonificadorCadencia=1.0;
+    this.bonificadorVelocidad=1.0;
+    this.bonificadorTamaño=1.0;
+    this.bonificadorDanio=1.0;
 
     this.tiempoTranscurridoBonif=0;
     this.iniciadaBonificacion=false;
+    this.bonificacionActiva="Ninguna";
   }
 
   createSkyBox(){
@@ -140,17 +143,15 @@ class MyScene extends THREE.Scene {
   }
 
   createOrbes() {
-    // Número de orbes que deseas generar
-    const numOrbes = 20;
   
-    const points = this.spline.getPoints(numOrbes);
+    const points = this.spline.getPoints(this.numOrbes);
     this.orbes = [];
     
-    for (let i = 0; i < numOrbes; i++) {
+    for (let i = 0; i < this.numOrbes; i++) {
       
       const orbe = new Orbe();
       orbe.position.x = points[i].x;
-      orbe.position.y = points[i].y + 23  ;
+      orbe.position.y = points[i].y + 30  ;
       orbe.position.z = points[i].z;
       this.orbes.push(orbe);
       this.add(orbe);
@@ -247,7 +248,20 @@ class MyScene extends THREE.Scene {
     this.circuitoGeom = new THREE.TubeGeometry(this.spline, 100, 20, 20);
     this.circuito = new THREE.Mesh(this.circuitoGeom, this.materialColmena);
 
-       this.add(this.circuito);
+    this.add(this.circuito);
+
+    var texture = new THREE.TextureLoader().load('../imgs/meta.jpg');
+    var materialMeta = new THREE.MeshBasicMaterial({map: texture});
+
+    this.metaGeom = new THREE.TorusGeometry(30,3,10,20);
+    this.meta = new THREE.Mesh(this.metaGeom, materialMeta);
+    this.circuito.add(this.meta);
+
+    this.meta.position.set(150,0,0);
+    this.meta.rotateX(THREE.MathUtils.degToRad(-65));
+
+    this.hitboxMeta = new THREE.Box3();
+    this.hitboxMeta.setFromObject(this.meta);
 
     geometryLine.setFromPoints(this.spline.getPoints(100));
     var material = new THREE.LineBasicMaterial({
@@ -317,6 +331,7 @@ class MyScene extends THREE.Scene {
     this.guiControls.vueltasRealizadas = "" + this.vueltas;
     this.guiControls.puntos = "" + this.puntuacion;
     this.guiControls.bonificacion = this.bonificacionActiva;
+    this.guiControls.velocidad = this.bonificadorVelocidad*this.bonificadorVueltas;
     
     this.gui.updateDisplay();
 }
@@ -330,13 +345,16 @@ class MyScene extends THREE.Scene {
       tiempoRestante: "" + (this.TiempoRestante / 1000) + " s",
       vueltasRealizadas: "" + this.vueltas,
       puntos: "" + this.puntuacion,
-      bonificacion: "Ninguna"
+      bonificacion: "Ninguna",
+      velocidad: 0,
+
     };
 
     gui.add(this.guiControls, "tiempoRestante").name("Tiempo Restante");
     gui.add(this.guiControls, "vueltasRealizadas").name("Vueltas Realizadas");
     gui.add(this.guiControls, "puntos").name("Puntos");
     gui.add(this.guiControls, "bonificacion").name("Bonificacion Activa");
+    gui.add(this.guiControls, "velocidad").name("Multiplicador V");
     var folder = gui.addFolder("Luz y Ejes");
     folder
       .add(this.guiControls, "lightPower", 0, 1000, 20)
@@ -405,6 +423,9 @@ class MyScene extends THREE.Scene {
   update() {
     if (this.stats) this.stats.update();
     
+    const momentoactual = new Date();
+    this.tiempoTranscurrido = momentoactual.getTime() - this.inicio.getTime();
+
     if (this.cameraIndex === 1) {
       this.cameraControl.update();
       this.modelo.add(this.thirdPersonCamera);
@@ -436,8 +457,18 @@ class MyScene extends THREE.Scene {
       //Detección de colisiones
       this.hitBoxCoche.setFromObject(this.modelo);
 
+      if(this.hitBoxCoche.intersectsBox(this.hitboxMeta) && !this.colisionMeta){
+        this.colisionMeta=true;
+        this.momentoMeta = new Date();
+        console.log("Colision");
+        this.completarVuelta();
+      }
 
-      for (let i = 0; i < 20; i++ && !this.colision_detectada) {
+      if((momentoactual.getTime() - this.momentoMeta.getTime()) >= 3000){
+        this.colisionMeta=false;
+      }
+
+      for (let i = 0; i < this.numOrbes; i++ && !this.colision_detectada) {
         this.orbes[i].update();
         
         var cajaOrbe = new THREE.Box3();
@@ -445,8 +476,9 @@ class MyScene extends THREE.Scene {
   
         if(this.hitBoxCoche.intersectsBox(cajaOrbe)){
           this.colision_detectada=true;
-          //this.aplicarBonificacion(this.orbes[i].getTipo());
-          //this.remove(this.orbes[i]);
+          this.remove(this.orbes[i]);
+          this.aplicarBonificacion(this.orbes[i].getTipo());
+          
         }
       }
       
@@ -461,17 +493,6 @@ class MyScene extends THREE.Scene {
     var tangente = this.spline.getTangentAt(this.paso.t);
     this.posicionAnimacion.add(tangente);
     this.modelo.lookAt(this.posicionAnimacion);
-
-    if(!this.almacenadoInicio){
-      this.puntoInicio=this.modelo.position;
-      this.almacenadoInicio=true;
-    }else{
-      if(this.puntoInicio==this.modelo.position){
-        //this.completarVuelta();
-      }
-    }
-    const momentoactual = new Date();
-    this.tiempoTranscurrido = momentoactual.getTime() - this.inicio.getTime();
 
     if( this.tiempoTranscurrido >= this.TiempoRestante){
       this.finJuego=true;
@@ -488,6 +509,7 @@ class MyScene extends THREE.Scene {
     //Si se cumple el tiempo de la bonificacion
     if(this.bonicacionEnCurso && this.tiempoTranscurridoBonif >= this.tiempoEfecto){
       this.bonicacionEnCurso=false;
+      this.bonificacionActiva="Ninguna"
       this.reset();
     }
 
