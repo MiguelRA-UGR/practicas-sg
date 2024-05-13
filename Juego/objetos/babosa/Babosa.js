@@ -98,7 +98,8 @@ class Babosa extends THREE.Object3D {
 
 	crearMateriales(){
 		var textureLoader = new THREE.TextureLoader();
-        var texture1 = textureLoader.load('../../imgs/suciedad.avif');
+        // var texture1 = textureLoader.load('../../imgs/suciedad.avif');
+		var texture1 = textureLoader.load('../imgs/suciedad.avif');
 
 		this.materialBabosa = new THREE.MeshStandardMaterial({
 			color: 0x91a14b,

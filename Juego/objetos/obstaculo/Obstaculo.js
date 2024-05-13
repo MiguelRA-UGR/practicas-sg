@@ -34,9 +34,9 @@ class Obstaculo extends THREE.Object3D {
                 this.modelo = new Oruga()
                 break;
         }
-        this.add(this.modelo);
+        this.modelo.rotateY(THREE.MathUtils.degToRad(-90));
 
-        //
+        this.add(this.modelo);
     }
 
     getTipo(){

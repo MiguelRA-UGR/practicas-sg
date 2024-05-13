@@ -90,8 +90,10 @@ class Oruga extends THREE.Object3D {
 
 	crearMateriales(){
 		var textureLoader = new THREE.TextureLoader();
-        var texture1 = textureLoader.load('../../imgs/oruga.png');
-		var texture2 = textureLoader.load('../../imgs/pataOruga.png');
+        // var texture1 = textureLoader.load('../../imgs/oruga.png');
+		// var texture2 = textureLoader.load('../../imgs/pataOruga.png');
+		var texture1 = textureLoader.load('../imgs/oruga.png');
+		var texture2 = textureLoader.load('../imgs/pataOruga.png');
 
         this.materialTextura = new THREE.MeshPhongMaterial({
 			map: texture1,

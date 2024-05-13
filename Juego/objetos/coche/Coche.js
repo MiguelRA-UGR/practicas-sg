@@ -30,6 +30,8 @@ class Coche extends THREE.Object3D {
     this.minigun.rotateX(THREE.MathUtils.degToRad(90));
     this.add(this.minigun);
 
+    this.motor.motorEncendido=true;
+
     this.add(this.base);
 
     this.translateY(0.53);
@@ -796,7 +798,7 @@ class Coche extends THREE.Object3D {
     const self = this;
 
     const mtlLoader = new MTLLoader();
-    var mtlPath = "../models/rueda1/disk.mtl";
+    var mtlPath = "../models/rueda/disk.mtl";
 
     mtlLoader.load(mtlPath, function (materials) {
       materials.preload();
@@ -805,7 +807,7 @@ class Coche extends THREE.Object3D {
 
       objLoader.setMaterials(materials);
 
-      const objPath = "../models/rueda1/disk.obj";
+      const objPath = "../models/rueda/disk.obj";
 
       objLoader.load(objPath, function (rueda) {
         rueda.scale.set(0.2, 0.2, 0.3);
@@ -817,12 +819,11 @@ class Coche extends THREE.Object3D {
         const rueda3 = rueda.clone();
         const rueda4 = rueda.clone();
 
-        rueda2.scale.set(0.2, 0.2, 0.3);
-        rueda2.rotateY(THREE.MathUtils.degToRad(180));
+        rueda2.scale.set(0.2, 0.2, -0.3);
         rueda3.scale.set(0.3, 0.3, 0.3);
-        rueda4.scale.set(0.3, 0.3, 0.3);
-        rueda4.rotateY(THREE.MathUtils.degToRad(180));
+        rueda4.scale.set(0.3, 0.3, -0.3);
 
+        //Rueda de repuesto
         // const rueda5 = rueda.clone();
         // rueda5.scale.set(0.2, 0.2, 0.2);
         // rueda5.rotateX(THREE.MathUtils.degToRad(-90));
@@ -833,10 +834,10 @@ class Coche extends THREE.Object3D {
         //rueda3.position.set(-0.8, 0.35, 1.7);
         //rueda4.position.set(-0.8, 0.35, -1.7);
 
-        rueda.position.set(0, 0.03, 0.4);
-        rueda2.position.set(0, 0.03, -0.4);
-        rueda3.position.set(0, 0.05, 0.4);
-        rueda4.position.set(0, 0.05, -0.4);
+        rueda.position.set(0, 0, 0.4);
+        rueda2.position.set(0, 0, -0.4);
+        rueda3.position.set(0, 0, 0.4);
+        rueda4.position.set(0, 0, -0.4);
 
         self.base.add(rueda);
         self.base.add(rueda2);
@@ -872,11 +873,13 @@ class Coche extends THREE.Object3D {
   }
 
   update() {
-
-    this.ejerueda1.rotateZ(THREE.MathUtils.degToRad(-10));
-    this.ejerueda2.rotateZ(THREE.MathUtils.degToRad(-10));
-    this.ejerueda3.rotateZ(THREE.MathUtils.degToRad(-10));
-    this.ejerueda4.rotateZ(THREE.MathUtils.degToRad(-10));
+  
+    if(this.motor.motorEncendido){
+      this.ejerueda1.rotateZ(THREE.MathUtils.degToRad(-10));
+      this.ejerueda2.rotateZ(THREE.MathUtils.degToRad(-10));
+      this.ejerueda3.rotateZ(THREE.MathUtils.degToRad(-10));
+      this.ejerueda4.rotateZ(THREE.MathUtils.degToRad(-10));
+    }
 
     this.motor.update();
     this.minigun.update();
