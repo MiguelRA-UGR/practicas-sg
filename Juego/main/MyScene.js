@@ -7,6 +7,7 @@ import { TWEEN } from '../libs/Tween.js'
 import { Coche } from '../objetos/coche/Coche.js'
 import { Orbe, TipoOrbe } from '../objetos/orbe/Orbe.js'
 import { Obstaculo, TipoObstaculo } from '../objetos/obstaculo/Obstaculo.js'
+import { Escorvispa, TipoEscorvispa } from '../objetos/escorvispa/Escorvispa.js'
 
 class MyScene extends THREE.Scene {
   constructor(myCanvas) {
@@ -33,11 +34,12 @@ class MyScene extends THREE.Scene {
     this.almacenadoInicio=false;
     this.bonicacionEnCurso=false;
     this.iniciadaBonificacion=false;
-    this.colisiondetectada=false;
+    this.colision_detectada=false;
+    this.colision_obstaculo=false;
     this.bonificacionActiva = "Ninguna";
     this.numOrbes = 48;
     this.tiposdeOrbe=6;
-    this.numObstaculos = 10;
+    this.numObstaculos = 20;
 
     //Bonificadores
     this.bonificadorCadencia=1.0;
@@ -45,6 +47,11 @@ class MyScene extends THREE.Scene {
     this.bonificadorTamaño=1.0;
     this.bonificadorVueltas=0.9;
     this.bonificadorDanio=1.0;
+
+    //Penalizacion
+    this.penalizacionVelocidad=1.0;
+    this.penalizacionVelocidadLateral=1.0;
+    this.penalizacionCadencia=1.0;
 
     //Tiempos
     this.TiempoRestante = 120000; //2 minutos
@@ -104,9 +111,27 @@ class MyScene extends THREE.Scene {
         break;
       case TipoOrbe.REPARAR:
         // Eliminar efecto malo
-        this.efectoEnCurso=false;
-        this.bonificacionActiva="Ninguna";
+        this.reparar();
         break;
+    }
+  }
+
+  aplicarPenalizacion(tipo){
+    console.log("Has chocado con " + tipo)
+    switch(tipo){
+      case TipoObstaculo.BABOSA:
+        this.efectoActivo = "Lentitud";
+        this.penalizacionVelocidad=0.5;
+      break;
+      case TipoObstaculo.ORUGA:
+        this.efectoActivo = "Lentitud lateral";
+        this.penalizacionVelocidadLateral=0.25;
+      break;
+      case TipoObstaculo.ARAÑA:
+        this.efectoActivo = "Lentitud";
+        this.penalizacionCadencia=0.5;
+      break;
+
     }
   }
 
@@ -116,9 +141,20 @@ class MyScene extends THREE.Scene {
     this.bonificadorTamaño=1.0;
     this.bonificadorDanio=1.0;
 
+    this.penalizacionCadencia=1.0;
+    this.penalizacionVelocidad=1.0;
+    this.penalizacionVelocidadLateral=1.0;
+
     this.tiempoTranscurridoBonif=0;
     this.iniciadaBonificacion=false;
     this.bonificacionActiva="Ninguna";
+  }
+
+  reparar(){
+    this.penalizacionCadencia=1.0;
+    this.penalizacionVelocidad=1.0;
+    this.penalizacionVelocidadLateral=1.0;
+    this.efectoActivo="Ninguno";
   }
 
   createSkyBox(){
@@ -398,6 +434,7 @@ class MyScene extends THREE.Scene {
     this.guiControls.vueltasRealizadas = "" + this.vueltas;
     this.guiControls.puntos = "" + this.puntuacion;
     this.guiControls.bonificacion = this.bonificacionActiva;
+    this.guiControls.efecto = this.efectoActivo;
     this.guiControls.velocidad = this.bonificadorVelocidad*this.bonificadorVueltas;
     
     this.gui.updateDisplay();
@@ -413,6 +450,7 @@ class MyScene extends THREE.Scene {
       vueltasRealizadas: "" + this.vueltas,
       puntos: "" + this.puntuacion,
       bonificacion: "Ninguna",
+      efecto: "Ninguno",
       velocidad: ""
     };
 
@@ -420,6 +458,7 @@ class MyScene extends THREE.Scene {
     gui.add(this.guiControls, "vueltasRealizadas").name("Vueltas Realizadas");
     gui.add(this.guiControls, "puntos").name("Puntos");
     gui.add(this.guiControls, "bonificacion").name("Bonificacion Activa");
+    gui.add(this.guiControls, "efecto").name("Efecto activo:");
     gui.add(this.guiControls, 'velocidad').name("Multiplicador V");
     var folder = gui.addFolder("Luz y Ejes");
     folder
@@ -504,12 +543,12 @@ class MyScene extends THREE.Scene {
     if(!this.finJuego){
        //Movimiento por el tubo
       if(this.adelante) {
-        this.paso.t += this.velocidadCoche*this.bonificadorVelocidad*this.bonificadorVueltas;
+        this.paso.t += this.velocidadCoche*this.bonificadorVelocidad*this.bonificadorVueltas*this.penalizacionVelocidad;
         this.paso.t %= 1
       } 
 
       if(this.izquierda) {
-        this.paso.a += this.velocidadLateral
+        this.paso.a += this.velocidadLateral*this.penalizacionVelocidadLateral;
         this.paso.a %= 2*Math.PI
       }
 
@@ -526,7 +565,6 @@ class MyScene extends THREE.Scene {
       if(this.hitBoxCoche.intersectsBox(this.hitboxMeta) && !this.colisionMeta){
         this.colisionMeta=true;
         this.momentoMeta = new Date();
-        console.log("Colision");
         this.completarVuelta();
       }
 
@@ -543,16 +581,16 @@ class MyScene extends THREE.Scene {
 
         orbe.rotateZ(-this.velocidadOrbes);
 
-        orbe.translateY(this.circuitoGeom.parameters.radius + 0.07)
+        orbe.translateY(this.circuitoGeom.parameters.radius + 1)
         //orbe.update();
         
         var cajaOrbe = new THREE.Box3();
         cajaOrbe.setFromObject(this.orbes[i]);
   
-        if(this.hitBoxCoche.intersectsBox(cajaOrbe)){
+        if(!this.colision_detectada && this.hitBoxCoche.intersectsBox(cajaOrbe)){
           this.colision_detectada=true;
-          //this.remove(this.orbes[i]);
-          //this.aplicarBonificacion(this.orbes[i].getTipo());
+
+          this.aplicarBonificacion(this.orbes[i].getTipo());
           
         }
       }
@@ -563,8 +601,6 @@ class MyScene extends THREE.Scene {
         const posicionObstaculo = this.spline.getPointAt(i / this.numObstaculos);
         obstaculo.position.copy(posicionObstaculo);
 
-        //console.log(obstaculo.getTipo())
-
         switch(obstaculo.tipo){
           case TipoObstaculo.BABOSA: speed=0.01; break
           case TipoObstaculo.ORUGA: speed=0.04; break
@@ -573,6 +609,14 @@ class MyScene extends THREE.Scene {
 
         obstaculo.rotateZ(speed);
         obstaculo.translateY(this.circuitoGeom.parameters.radius)
+
+        var cajaObstaculo = new THREE.Box3();
+        cajaObstaculo.setFromObject(this.obstaculos[i]);
+
+        if(this.hitBoxCoche.intersectsBox(cajaObstaculo)){
+          this.aplicarPenalizacion(this.obstaculos[i].tipo);
+          
+        }
         
         obstaculo.update();
       }
@@ -601,13 +645,19 @@ class MyScene extends THREE.Scene {
 
     this.tiempoTranscurridoBonif = momentoactual.getTime() - this.inicioBonificacion.getTime();
 
+    if(this.bonicacionEnCurso && (this.bonificacionActiva==TipoOrbe.REPARAR || this.bonificacionActiva==TipoOrbe.TIEMPO_RALENTIZADO)){
+        this.tiempoTranscurridoBonif = 9800;
+        this.bonificacionActiva="Ninguna";
+    }
+
     //Si se cumple el tiempo de la bonificacion
     if(this.bonicacionEnCurso && this.tiempoTranscurridoBonif >= this.tiempoEfecto){
       this.bonicacionEnCurso=false;
-      this.bonificacionActiva="Ninguna"
+      this.colision_detectada=false;
       this.reset();
     }
 
+  
     TWEEN.update();
     this.modelo.rotateZ(this.paso.a)
     this.modelo.translateY(this.circuitoGeom.parameters.radius+0.4)

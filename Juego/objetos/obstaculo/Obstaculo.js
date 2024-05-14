@@ -25,6 +25,8 @@ class Obstaculo extends THREE.Object3D {
             const tipos = Object.values(TipoObstaculo);
             tipo = tipos[Math.floor(Math.random() * tipos.length)];
         }
+
+        this.tipo=tipo;
         switch (tipo) {
             case TipoObstaculo.BABOSA:
                 this.modelo = new Babosa();
