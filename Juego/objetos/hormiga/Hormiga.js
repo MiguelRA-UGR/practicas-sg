@@ -143,6 +143,9 @@ class Hormiga extends THREE.Object3D {
 		this.cabeza.add(this.ojo1);
 		this.cabeza.add(this.ojo2);
 		this.add(this.cabeza);
+
+        this.scale.set(2,2,2);
+        this.translateY(1.5);
     }
 
     createCola(){
@@ -206,7 +209,29 @@ class Hormiga extends THREE.Object3D {
     }
 
 	update() {
+        const rotationSpeed = 0.05;
+    
+        const maxRotationAngle = THREE.MathUtils.degToRad(10);
+    
+        this.valormovimiento += rotationSpeed;
+        const rotationAngle = Math.sin(this.valormovimiento) * maxRotationAngle;
+        
+        this.tenaza1.rotateY(rotationAngle/20);
+        this.tenaza2.rotateY(rotationAngle/20);
 
+        this.antena1.rotateZ(rotationAngle/30);
+        this.antena2.rotateZ(rotationAngle/30);
+
+        this.cola.rotateY(-rotationAngle/20);
+        this.cola.translateX(rotationAngle/50);
+        this.pata1.rotation.z = -rotationAngle;
+        this.pata2.rotation.z = rotationAngle;
+        this.pata3.rotation.z = rotationAngle;
+
+        this.pata4.rotation.z = -rotationAngle - 135;
+        this.pata5.rotation.z = rotationAngle - 135;
+        this.pata6.rotation.z = rotationAngle - 135;
     }
+    
     
 } export { Hormiga };

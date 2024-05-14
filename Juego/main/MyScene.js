@@ -127,7 +127,7 @@ class MyScene extends THREE.Scene {
         this.efectoActivo = "Lentitud lateral";
         this.penalizacionVelocidadLateral=0.25;
       break;
-      case TipoObstaculo.ARAÑA:
+      case TipoObstaculo.HORMIGA:
         this.efectoActivo = "Lentitud";
         this.penalizacionCadencia=0.5;
       break;
@@ -603,6 +603,7 @@ class MyScene extends THREE.Scene {
 
         switch(obstaculo.tipo){
           case TipoObstaculo.BABOSA: speed=0.01; break
+          case TipoObstaculo.ORUGA: speed=0.02; break
           case TipoObstaculo.ORUGA: speed=0.04; break
           default: speed=0.01;
         }

@@ -5,13 +5,13 @@ import { OBJLoader } from '../../libs/OBJLoader.js';
 import { Babosa } from '../babosa/Babosa.js'
 import { Oruga } from '../oruga/Oruga.js'
 //import { Araña } from '../llave/Llave.js'
-//import { Cucaracha } from '../cucaracha/Cucaracha.js'
+import { Hormiga } from '../hormiga/Hormiga.js'
 
 const TipoObstaculo = {
     BABOSA: 'babosa',
     ORUGA: 'oruga',
     //ARAÑA: 'araña',
-    //CUCARACHA: 'cucaracha',
+    HORMIGA: 'hormiga',
 };
 
 class Obstaculo extends THREE.Object3D {
@@ -34,6 +34,9 @@ class Obstaculo extends THREE.Object3D {
                 break;
             case TipoObstaculo.ORUGA:
                 this.modelo = new Oruga()
+                break;
+            case TipoObstaculo.HORMIGA:
+                this.modelo = new Hormiga()
                 break;
         }
         this.modelo.rotateY(THREE.MathUtils.degToRad(-90));
