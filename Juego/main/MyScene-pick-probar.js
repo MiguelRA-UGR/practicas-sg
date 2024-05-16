@@ -502,19 +502,17 @@ class MyScene extends THREE.Scene {
 
       this.raycaster.setFromCamera(this.mouse, this.thirdPersonCamera);
 
-      var pickedObjects = this.raycaster.intersectObjects(this.pickableObjects, true);
+      var pickedObjects = this.raycaster.intersectObjects(this.pickableObjects);
+
       if (pickedObjects.length > 0 && this.cameraIndex == 1) {
-        console.log("pick")
-        this.voladores[0].pick()
-        var selectedObject = pickedObjects[0].object
-        if (selectedObject instanceof Escorvispa) {
-          
-          selectedObject.pick()
-          console.log(selectedObject.vida)
-      
-          if (selectedObject.vida === 0) 
-            this.remove(selectedObject)
-        }   
+        var selectedObject = pickedObjects[0].object.userData;
+
+        selectedObject.pick(this.bonificadorDanio)
+
+        if (selectedObject.vida <= 0){ 
+          this.remove(selectedObject);
+          this.puntuacion+=selectedObject.puntuacion;
+        }
       }
     });
   }
