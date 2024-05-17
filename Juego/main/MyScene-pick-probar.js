@@ -8,6 +8,7 @@ import { Coche } from '../objetos/coche/Coche.js'
 import { Orbe, TipoOrbe } from '../objetos/orbe/Orbe.js'
 import { Obstaculo, TipoObstaculo } from '../objetos/obstaculo/Obstaculo.js'
 import { Escorvispa, TipoEscorvispa } from '../objetos/escorvispa/Escorvispa-pick.js'
+import { Llave } from '../objetos/llave/Llave.js'
 
 class MyScene extends THREE.Scene {
   constructor(myCanvas) {
@@ -497,23 +498,39 @@ class MyScene extends THREE.Scene {
 
   initMouseEvents() {
     window.addEventListener("mousedown", (event) => {
-      this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-      this.mouse.y = 1 - 2 * (event.clientY / window.innerHeight);
 
-      this.raycaster.setFromCamera(this.mouse, this.thirdPersonCamera);
+      if (this.modelo.minigun.guiControls.rotandoPlato == true){
+        this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        this.mouse.y = 1 - 2 * (event.clientY / window.innerHeight);
 
-      var pickedObjects = this.raycaster.intersectObjects(this.pickableObjects);
+        this.raycaster.setFromCamera(this.mouse, this.thirdPersonCamera);
 
-      if (pickedObjects.length > 0 && this.cameraIndex == 1) {
-        var selectedObject = pickedObjects[0].object.userData;
+        var pickedObjects = this.raycaster.intersectObjects(this.pickableObjects);
 
-        selectedObject.pick(this.bonificadorDanio)
+        if (pickedObjects.length > 0 && this.cameraIndex == 1) {
+          var selectedObject = pickedObjects[0].object.userData;
 
-        if (selectedObject.vida <= 0){ 
-          this.remove(selectedObject);
-          this.puntuacion+=selectedObject.puntuacion;
+          selectedObject.pick(this.bonificadorDanio)
+          this.modelo.minigun.lookAt(selectedObject.position.x,selectedObject.position.y,selectedObject.position.z);
+
+          if (selectedObject.vida <= 0){ 
+            this.remove(selectedObject);
+            this.puntuacion+=selectedObject.puntuacion;
+          }
         }
       }
+    });
+
+    window.addEventListener("mousedown", (event) => {
+        if (event.button === 2) {
+            this.modelo.minigun.guiControls.rotandoPlato = true;
+        }
+    });
+
+    window.addEventListener("mouseup", (event) => {
+        if (event.button === 2) {
+            this.modelo.minigun.guiControls.rotandoPlato = false;
+        }
     });
   }
 
