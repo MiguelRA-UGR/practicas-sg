@@ -7,7 +7,7 @@ import { TWEEN } from '../libs/Tween.js'
 import { Coche } from '../objetos/coche/Coche.js'
 import { Orbe, TipoOrbe } from '../objetos/orbe/Orbe.js'
 import { Obstaculo, TipoObstaculo } from '../objetos/obstaculo/Obstaculo.js'
-import { Escorvispa, TipoEscorvispa } from '../objetos/escorvispa/Escorvispa.js'
+import { Escorvispa, TipoEscorvispa } from '../objetos/escorvispa/Escorvispa-pick.js'
 
 class MyScene extends THREE.Scene {
   constructor(myCanvas) {
@@ -37,9 +37,9 @@ class MyScene extends THREE.Scene {
     this.colision_detectada=false;
     this.colision_obstaculo=false;
     this.bonificacionActiva = "Ninguna";
-    this.numOrbes = 48;
+    this.numOrbes = 12;
     this.tiposdeOrbe=6;
-    this.numObstaculos = 20;
+    this.numObstaculos = 10;
 
     //Bonificadores
     this.bonificadorCadencia=1.0;
@@ -64,6 +64,7 @@ class MyScene extends THREE.Scene {
 
     //Modelos
     this.modelo = new Coche(this.gui, "Coche");
+    //this.modelo.minigun.rotateX(THREE.MathUtils.degToRad(90))
     this.add(this.modelo);
 
     //Hitbox
@@ -72,8 +73,14 @@ class MyScene extends THREE.Scene {
     this.add(hitBoxHelper);
     this.createThirdPersonCamera();
 
+    // Pick
+    this.mouse = new THREE.Vector2();
+    this.raycaster = new THREE.Raycaster();
+    this.pickableObjects = [];  
+
     this.createOrbes();
     this.createObstaculos();
+    //this.createVoladores();
   }
 
   completarVuelta(){
@@ -255,6 +262,158 @@ class MyScene extends THREE.Scene {
 
   }
 
+  createVoladores() {
+    this.voladores = []
+    this.recorridos = []
+    this.posiciones = []
+    const periodicidad = 1/(this.numVoladores+1)
+    this.vuelo = {t: 0}
+    // 2/3 de esbirros, 1/3 soldados y 1 reina
+    for (let i=0 ; i<this.numVoladores ; i++) {
+      var volador
+      if (i%3==0) volador = new Escorvispa(TipoEscorvispa.SOLDADO)
+      else volador = new Escorvispa(TipoEscorvispa.ESBIRRO)
+      var ubicacion = this.spline.getPointAt((i+1)*periodicidad)
+      var recorrido = this.createRecorrido(ubicacion, 0)
+      var posicion = recorrido.getPointAt(this.vuelo.t)
+      volador.position.copy(posicion)
+      var tangente = recorrido.getTangentAt(this.vuelo.t)
+      posicion.add(tangente)
+      volador.lookAt(posicion)
+      this.voladores.push(volador)
+      this.recorridos.push(recorrido)
+      this.posiciones.push(posicion)
+      this.pickableObjects.push(volador)
+      this.add(volador)
+    }
+
+    var reina = new Escorvispa(TipoEscorvispa.REINA)
+    var ubicacion = this.spline.getPointAt(this.numVoladores*periodicidad)
+    var recorrido = this.createRecorrido(ubicacion, 0)
+    var posicion = recorrido.getPointAt(this.vuelo.t)
+    reina.position.copy(posicion)
+    var tangente = recorrido.getTangentAt(this.vuelo.t)
+    posicion.add(tangente)
+    reina.lookAt(posicion)
+    this.voladores.push(reina)
+    this.recorridos.push(recorrido)
+    this.posiciones.push(posicion)
+    this.pickableObjects.push(reina)
+    this.add(reina)
+
+    // En los 4 lados
+    for (let i=0 ; i<this.numVoladores ; i++) {
+      var volador
+      if (i%3==0) volador = new Escorvispa(TipoEscorvispa.SOLDADO)
+      else volador = new Escorvispa(TipoEscorvispa.ESBIRRO)
+      var ubicacion = this.spline.getPointAt((i+1)*periodicidad)
+      var recorrido = this.createRecorrido(ubicacion, 90)
+      var posicion = recorrido.getPointAt(this.vuelo.t)
+      volador.position.copy(posicion)
+      var tangente = recorrido.getTangentAt(this.vuelo.t)
+      posicion.add(tangente)
+      volador.lookAt(posicion)
+      this.voladores.push(volador)
+      this.recorridos.push(recorrido)
+      this.posiciones.push(posicion)
+      this.pickableObjects.push(volador)
+      this.add(volador)
+    }
+
+    var reina = new Escorvispa(TipoEscorvispa.REINA)
+    var ubicacion = this.spline.getPointAt(this.numVoladores*periodicidad)
+    var recorrido = this.createRecorrido(ubicacion, 90)
+    var posicion = recorrido.getPointAt(this.vuelo.t)
+    reina.position.copy(posicion)
+    var tangente = recorrido.getTangentAt(this.vuelo.t)
+    posicion.add(tangente)
+    reina.lookAt(posicion)
+    this.voladores.push(reina)
+    this.recorridos.push(recorrido)
+    this.posiciones.push(posicion)
+    this.pickableObjects.push(reina)
+    this.add(reina)
+
+    for (let i=0 ; i<this.numVoladores ; i++) {
+      var volador
+      if (i%3==0) volador = new Escorvispa(TipoEscorvispa.SOLDADO)
+      else volador = new Escorvispa(TipoEscorvispa.ESBIRRO)
+      var ubicacion = this.spline.getPointAt((i+1)*periodicidad)
+      var recorrido = this.createRecorrido(ubicacion, 180)
+      var posicion = recorrido.getPointAt(this.vuelo.t)
+      volador.position.copy(posicion)
+      var tangente = recorrido.getTangentAt(this.vuelo.t)
+      posicion.add(tangente)
+      volador.lookAt(posicion)
+      this.voladores.push(volador)
+      this.recorridos.push(recorrido)
+      this.posiciones.push(posicion)
+      this.pickableObjects.push(volador)
+      this.add(volador)
+    }
+
+    var reina = new Escorvispa(TipoEscorvispa.REINA)
+    var ubicacion = this.spline.getPointAt(this.numVoladores*periodicidad)
+    var recorrido = this.createRecorrido(ubicacion, 180)
+    var posicion = recorrido.getPointAt(this.vuelo.t)
+    reina.position.copy(posicion)
+    var tangente = recorrido.getTangentAt(this.vuelo.t)
+    posicion.add(tangente)
+    reina.lookAt(posicion)
+    this.voladores.push(reina)
+    this.recorridos.push(recorrido)
+    this.posiciones.push(posicion)
+    this.pickableObjects.push(reina)
+    this.add(reina)
+
+    for (let i=0 ; i<this.numVoladores ; i++) {
+      var volador
+      if (i%3==0) volador = new Escorvispa(TipoEscorvispa.SOLDADO)
+      else volador = new Escorvispa(TipoEscorvispa.ESBIRRO)
+      var ubicacion = this.spline.getPointAt((i+1)*periodicidad)
+      var recorrido = this.createRecorrido(ubicacion, 270)
+      var posicion = recorrido.getPointAt(this.vuelo.t)
+      volador.position.copy(posicion)
+      var tangente = recorrido.getTangentAt(this.vuelo.t)
+      posicion.add(tangente)
+      volador.lookAt(posicion)
+      this.voladores.push(volador)
+      this.recorridos.push(recorrido)
+      this.posiciones.push(posicion)
+      this.pickableObjects.push(volador)
+      this.add(volador)
+    }
+
+    var reina = new Escorvispa(TipoEscorvispa.REINA)
+    var ubicacion = this.spline.getPointAt(this.numVoladores*periodicidad)
+    var recorrido = this.createRecorrido(ubicacion, 270)
+    var posicion = recorrido.getPointAt(this.vuelo.t)
+    reina.position.copy(posicion)
+    var tangente = recorrido.getTangentAt(this.vuelo.t)
+    posicion.add(tangente)
+    reina.lookAt(posicion)
+    this.voladores.push(reina)
+    this.recorridos.push(recorrido)
+    this.posiciones.push(posicion)
+    this.pickableObjects.push(reina)
+    this.add(reina)
+
+    /*
+    this.volador = new Escorvispa(TipoEscorvispa.ESBIRRO)
+    this.posicionRecorrido = this.spline.getPointAt(0.01);
+    this.recorrido = this.createRecorrido(this.posicionRecorrido)
+    this.vuelo = {t: 0.01}
+    this.posicionVolador = this.recorrido.getPointAt(this.vuelo.t)
+    this.volador.position.copy(this.posicionVolador);
+    var tangente = this.recorrido.getTangentAt(this.vuelo.t);
+    this.posicionVolador.add(tangente);
+    this.volador.lookAt(this.posicionVolador);
+    this.add(this.volador)
+    this.pickableObjects.push(this.volador)
+    */
+    
+  }
+
   getPathFromTorusKnot(torusKnot) {
     // La codificación de este método está basado
     //   en el código fuente de la página oficial de Three.js
@@ -323,6 +482,46 @@ class MyScene extends THREE.Scene {
     } else {
       this.cameraIndex = 0;
     }
+  }
+
+  initMouseEvents() {
+    window.addEventListener("mousedown", (event) => {
+
+      if (this.modelo.minigun.guiControls.rotandoPlato == true){
+        this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        this.mouse.y = 1 - 2 * (event.clientY / window.innerHeight);
+
+        this.raycaster.setFromCamera(this.mouse, this.thirdPersonCamera);
+
+        var pickedObjects = this.raycaster.intersectObjects(this.pickableObjects);
+
+        if (pickedObjects.length > 0 && this.cameraIndex == 1) {
+          var selectedObject = pickedObjects[0].object.userData;
+
+          selectedObject.pick(this.bonificadorDanio)
+          this.modelo.minigun.lookAt(selectedObject.position);
+          this.modelo.minigun.rotateX(THREE.MathUtils.degToRad(90));
+          this.modelo.minigun.rotateY(THREE.MathUtils.degToRad(-90));
+
+          if (selectedObject.vida <= 0){ 
+            this.remove(selectedObject);
+            this.puntuacion+=selectedObject.puntuacion;
+          }
+        }
+      }
+    });
+
+    window.addEventListener("mousedown", (event) => {
+        if (event.button === 2) {
+            this.modelo.minigun.guiControls.rotandoPlato = true;
+        }
+    });
+
+    window.addEventListener("mouseup", (event) => {
+        if (event.button === 2) {
+            this.modelo.minigun.guiControls.rotandoPlato = false;
+        }
+    });
   }
 
   createCircuito() {

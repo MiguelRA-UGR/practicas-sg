@@ -61,6 +61,7 @@ class MyScene extends THREE.Scene {
 
     //Modelos
     this.modelo = new Coche(this.gui, "Coche");
+    //this.modelo.minigun.rotateX(THREE.MathUtils.degToRad(90))
     this.add(this.modelo);
 
     //Hitbox
@@ -74,8 +75,8 @@ class MyScene extends THREE.Scene {
     this.raycaster = new THREE.Raycaster();
     this.pickableObjects = [];    
 
-    //this.createOrbes();
-    //this.createObstaculos();
+    this.createOrbes();
+    this.createObstaculos();
     this.createVoladores();
   }
 
@@ -512,6 +513,8 @@ class MyScene extends THREE.Scene {
 
           selectedObject.pick(this.bonificadorDanio)
           this.modelo.minigun.lookAt(selectedObject.position);
+          this.modelo.minigun.rotateX(THREE.MathUtils.degToRad(90));
+          this.modelo.minigun.rotateY(THREE.MathUtils.degToRad(-90));
 
           if (selectedObject.vida <= 0){ 
             this.remove(selectedObject);
@@ -778,7 +781,7 @@ class MyScene extends THREE.Scene {
       }
 
       this.modelo.update();
-/*
+
       //Detección de colisiones
       this.hitBoxCoche.setFromObject(this.modelo);
 
@@ -802,7 +805,7 @@ class MyScene extends THREE.Scene {
 
         orbe.rotateZ(-this.velocidadOrbes);
 
-        orbe.translateY(this.circuitoGeom.parameters.radius + 0.07)
+        orbe.translateY(this.circuitoGeom.parameters.radius + 0.1)
         //orbe.update();
         
         var cajaOrbe = new THREE.Box3();
@@ -811,7 +814,7 @@ class MyScene extends THREE.Scene {
         if(this.hitBoxCoche.intersectsBox(cajaOrbe)){
           this.colision_detectada=true;
           //this.remove(this.orbes[i]);
-          //this.aplicarBonificacion(this.orbes[i].getTipo());
+          this.aplicarBonificacion(this.orbes[i].getTipo());
           
         }
       }
@@ -821,8 +824,6 @@ class MyScene extends THREE.Scene {
         const obstaculo = this.obstaculos[i];
         const posicionObstaculo = this.spline.getPointAt(i / this.numObstaculos);
         obstaculo.position.copy(posicionObstaculo);
-
-        //console.log(obstaculo.getTipo())
 
         switch(obstaculo.tipo){
           case TipoObstaculo.BABOSA: speed=0.01; break
@@ -839,7 +840,7 @@ class MyScene extends THREE.Scene {
       if(this.bonificadorTamaño>1){
         this.modelo.scale.set(this.bonificadorTamaño,this.bonificadorTamaño,this.bonificadorTamaño);
         
-      }*/
+      }
     }
    
     this.posicionAnimacion = this.spline.getPointAt(this.paso.t);
