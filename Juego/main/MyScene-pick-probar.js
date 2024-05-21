@@ -510,6 +510,8 @@ class MyScene extends THREE.Scene {
         if (pickedObjects.length > 0 && this.cameraIndex == 1) {
           var selectedObject = pickedObjects[0].object.userData;
 
+          console.log(selectedObject);
+
           selectedObject.pick(this.bonificadorDanio)
           this.modelo.minigun.lookAt(selectedObject.position);
 
@@ -848,7 +850,7 @@ class MyScene extends THREE.Scene {
     this.posicionAnimacion.add(tangente);
     this.modelo.lookAt(this.posicionAnimacion);
 
-    this.vuelo.t += 0.001
+    this.vuelo.t += 0.0001
     this.vuelo.t %= 1
     for (let i=0 ; i<this.voladores.length ; i++) {
       this.posiciones[i] = this.recorridos[i].getPointAt(this.vuelo.t)

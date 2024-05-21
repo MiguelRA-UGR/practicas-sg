@@ -130,10 +130,12 @@ class Escorvispa extends THREE.Object3D {
         this.cola.rotateX(THREE.MathUtils.degToRad(-20));
     
         this.cola2 = this.cola.clone();
+        this.cola2.userData=this;
         this.cola2.position.set(0, 0, -0.4);
         this.cola2.rotateX(THREE.MathUtils.degToRad(-20));
-    
+        
         this.cola3 = this.cola2.clone();
+        this.cola3.userData=this;
         this.cola3.position.set(0, 0, -0.4);
     
         this.cola2.add(this.cola3);
@@ -174,6 +176,7 @@ class Escorvispa extends THREE.Object3D {
         this.brazo.scale.set(0.5,0.5,0.5);
 
         this.parte1 = this.brazo.clone();
+        this.parte1.userData=this;
         this.parte1.scale.set(1.2,1.2,1.2);
         this.parte1.rotateY(THREE.MathUtils.degToRad(-40));
         this.parte1.rotateX(THREE.MathUtils.degToRad(40));
@@ -198,9 +201,11 @@ class Escorvispa extends THREE.Object3D {
         var pinza1CSG = new CSG();
         pinza1CSG.subtract([this.partir, tajo]);
         this.pinza1 = pinza1CSG.toMesh();
+        this.pinza1.userData=this;
     
         this.pinza1.position.set(-0.1,0,0);
         this.pinza2 = this.pinza1.clone();
+        this.pinza2.userData=this;
         this.pinza2.rotateZ(THREE.MathUtils.degToRad(180));
         this.pinza2.position.set(0.1,0,0);
         this.pinza.add(this.pinza2);
@@ -212,6 +217,7 @@ class Escorvispa extends THREE.Object3D {
         
         // Segundo brazo
         this.brazo2 = this.brazo.clone();
+        this.brazo2.userData=this;
         this.brazo2.scale.z *= -1;
         this.brazo2.position.set(-0.25, 0, 0.20);
         this.brazo2.rotateY(THREE.MathUtils.degToRad(90));
@@ -223,7 +229,6 @@ class Escorvispa extends THREE.Object3D {
         //Pinchos
         this.pinchogeom = new THREE.ConeGeometry(0.1,0.3,20,20);
         this.pincho1 = new THREE.Mesh(this.pinchogeom, this.materialPelo);
-        this.pincho1.userData=this;
         this.pincho2 = this.pincho1.clone();
         this.pincho3 = this.pincho1.clone();
         this.pincho4 = this.pincho1.clone();
@@ -247,7 +252,9 @@ class Escorvispa extends THREE.Object3D {
 
 	createCabeza() {
         this.cabeza = new THREE.Mesh(this.cuerpoGeom, this.materialPrincipal);
+        this.cabeza.userData=this;
 		this.cabeza2 = this.cabeza.clone();
+        this.cabeza2.userData=this;
 		this.cabeza.scale.set(0.5,0.5,0.5);
 		this.cabeza.position.set(0,0,0.4);
 		this.cabeza.rotateX(THREE.MathUtils.degToRad(45));
@@ -261,6 +268,7 @@ class Escorvispa extends THREE.Object3D {
         this.ojo1.userData=this;
 		this.ojo1.scale.set(0.75,0.75,0.75);
 		this.ojo2 = this.ojo1.clone();
+        this.ojo2.userData=this;
 		
 		this.ojo1.position.set(-0.25,0.15,-0.1);
 		this.ojo1.rotateY(THREE.MathUtils.degToRad(30));
@@ -282,8 +290,10 @@ class Escorvispa extends THREE.Object3D {
 		var csg = new CSG();
 		csg.subtract([this.tenaza, boxMesh]);
 		this.tenaza1 = csg.toMesh();
+        this.tenaza1.userData=this;
 
 		this.tenaza2 = this.tenaza1.clone();
+        this.tenaza2.userData=this;
 		this.tenaza2.rotateZ(THREE.MathUtils.degToRad(180));
 
 		this.tenaza1.position.set(-0.1, 0, 0);
@@ -314,7 +324,6 @@ class Escorvispa extends THREE.Object3D {
 
         var antenageom = new THREE.ExtrudeGeometry(legShape, extrudeSettings);
         this.antena1 = new THREE.Mesh(antenageom, this.materialNegro);
-        this.antena1.userData=this;
         this.antena1.position.set(0.2,0.2,-0.3);
         this.antena2 = this.antena1.clone();
         this.antena2.position.set(-0.2,0.2,-0.3);
@@ -345,15 +354,18 @@ class Escorvispa extends THREE.Object3D {
         this.ala1.position.set(0, 0.15, 0.20);
 
         this.ala2 = this.ala1.clone();
+        this.ala2.userData=this;
         this.ala2.rotateY(THREE.MathUtils.degToRad(180));
         this.ala2.position.set(0, 0.15, 0.20);
 
         this.ala3 = this.ala1.clone();
+        this.ala3.userData=this;
         this.ala3.scale.set(0.8, 0.8, 0.8);
         this.ala3.rotateZ(THREE.MathUtils.degToRad(13))
         this.ala3.position.set(0, 0.15, 0);
 
         this.ala4 = this.ala3.clone();
+        this.ala4.userData=this;
         this.ala4.rotateY(THREE.MathUtils.degToRad(180));
         this.ala4.rotateZ(THREE.MathUtils.degToRad(26))
         this.ala4.position.set(0, 0.15, 0);
@@ -389,7 +401,6 @@ class Escorvispa extends THREE.Object3D {
         var leggeometry = new THREE.ExtrudeGeometry(legShape, extrudeSettings);
         leggeometry.scale(2, 2, 2);
         this.pata1 = new THREE.Mesh(leggeometry, this.materialNegro);
-        this.pata1.userData=this;
 
         this.pata2 = this.pata1.clone();
         this.pata3 = this.pata1.clone();
