@@ -38,6 +38,7 @@ class Escorvispa extends THREE.Object3D {
         this.cuerpoGeom.scale(1, 1.25,1 );
         this.cuerpoGeom.rotateX(THREE.MathUtils.degToRad(90))
         this.cuerpo = new THREE.Mesh(this.cuerpoGeom, this.materialPelo);
+        this.cuerpo.userData=this;
 
 		this.createAlas();
         this.createPatas();
@@ -45,15 +46,23 @@ class Escorvispa extends THREE.Object3D {
 		this.createCola();
         this.createPinzas();
 
+        this.vida = 2;
+        this.puntuacion = 10;
+
         if (this.tipo == TipoEscorvispa.REINA){
             this.añadirCorona();
             this.aguijon.scale.set(1.5,1.5,1.5);
             this.scale.set(2,2,2);
+            this.vida = 8
+            this.puntuacion = 100;
         }
-        if (this.tipo == TipoEscorvispa.SOLDADO){
+        else if (this.tipo == TipoEscorvispa.SOLDADO){
             this.scale.set(1.5,1.5,1.5);
+            this.puntuacion = 50;
+            this.vida = 4;
         }
-    
+        
+        this.scale.set(1.5,1.5,1.5);
         this.add(this.cuerpo);
     };
 
@@ -110,19 +119,24 @@ class Escorvispa extends THREE.Object3D {
 		
 		var texture = textureLoader.load('../imgs/ojo2.avif');
 		this.materialOjo = new THREE.MeshBasicMaterial({ map: texture });
+
+    this.materialPick = new THREE.MeshBasicMaterial({ color: 0xFF0000 })
 	}
 
     createCola() {
         this.cola = new THREE.Mesh(this.cuerpoGeom, this.materialPelo);
+        this.cola.userData=this;
         this.cola.scale.set(0.75, 0.75, 0.75);
         this.cola.position.set(0, 0, -0.4);
         this.cola.rotateX(THREE.MathUtils.degToRad(-20));
     
         this.cola2 = this.cola.clone();
+        this.cola2.userData=this;
         this.cola2.position.set(0, 0, -0.4);
         this.cola2.rotateX(THREE.MathUtils.degToRad(-20));
-    
+        
         this.cola3 = this.cola2.clone();
+        this.cola3.userData=this;
         this.cola3.position.set(0, 0, -0.4);
     
         this.cola2.add(this.cola3);
@@ -143,6 +157,7 @@ class Escorvispa extends THREE.Object3D {
     
         var aquijonGeom = new THREE.LatheGeometry(points);
         this.aguijon = new THREE.Mesh(aquijonGeom, this.materialNegro);
+        this.aguijon.userData=this;
 
         this.aguijon.rotateX(THREE.MathUtils.degToRad(-90));
         this.aguijon.position.set(0,0,-0.);
@@ -156,11 +171,13 @@ class Escorvispa extends THREE.Object3D {
     createPinzas() {
         // Primer brazo
         this.brazo = new THREE.Mesh(this.cuerpoGeom, this.materialPelo);
+        this.brazo.userData=this;
         this.brazo.rotateY(THREE.MathUtils.degToRad(50));
         this.brazo.position.set(0.25,0,0.20);
         this.brazo.scale.set(0.5,0.5,0.5);
 
         this.parte1 = this.brazo.clone();
+        this.parte1.userData=this;
         this.parte1.scale.set(1.2,1.2,1.2);
         this.parte1.rotateY(THREE.MathUtils.degToRad(-40));
         this.parte1.rotateX(THREE.MathUtils.degToRad(40));
@@ -168,11 +185,13 @@ class Escorvispa extends THREE.Object3D {
         this.brazo.add(this.parte1);
     
         this.pinza = new THREE.Mesh(this.cuerpoGeom, this.materialNegro);
+        this.pinza.userData=this;
         this.pinza.position.set(-0.2,0,0.4);
         this.pinza.scale.set(1.2,1.2,1.2);
         this.pinza.rotateY(THREE.MathUtils.degToRad(-60));
         
         this.partir = new THREE.Mesh(this.cuerpoGeom, this.materialPrincipal);
+        this.partir.userData=this;
         this.partir.position.set(0,0,0.3);
         this.partir.scale.set(0.75,0.75,0.75);
     
@@ -183,9 +202,11 @@ class Escorvispa extends THREE.Object3D {
         var pinza1CSG = new CSG();
         pinza1CSG.subtract([this.partir, tajo]);
         this.pinza1 = pinza1CSG.toMesh();
+        this.pinza1.userData=this;
     
         this.pinza1.position.set(-0.1,0,0);
         this.pinza2 = this.pinza1.clone();
+        this.pinza2.userData=this;
         this.pinza2.rotateZ(THREE.MathUtils.degToRad(180));
         this.pinza2.position.set(0.1,0,0);
         this.pinza.add(this.pinza2);
@@ -197,6 +218,7 @@ class Escorvispa extends THREE.Object3D {
         
         // Segundo brazo
         this.brazo2 = this.brazo.clone();
+        this.brazo2.userData=this;
         this.brazo2.scale.z *= -1;
         this.brazo2.position.set(-0.25, 0, 0.20);
         this.brazo2.rotateY(THREE.MathUtils.degToRad(90));
@@ -231,7 +253,9 @@ class Escorvispa extends THREE.Object3D {
 
 	createCabeza() {
         this.cabeza = new THREE.Mesh(this.cuerpoGeom, this.materialPrincipal);
+        this.cabeza.userData=this;
 		this.cabeza2 = this.cabeza.clone();
+        this.cabeza2.userData=this;
 		this.cabeza.scale.set(0.5,0.5,0.5);
 		this.cabeza.position.set(0,0,0.4);
 		this.cabeza.rotateX(THREE.MathUtils.degToRad(45));
@@ -242,8 +266,10 @@ class Escorvispa extends THREE.Object3D {
 		this.cabeza.add(this.cabeza2);
 
 		this.ojo1 = new THREE.Mesh(this.cuerpoGeom, this.materialOjo);
+        this.ojo1.userData=this;
 		this.ojo1.scale.set(0.75,0.75,0.75);
 		this.ojo2 = this.ojo1.clone();
+        this.ojo2.userData=this;
 		
 		this.ojo1.position.set(-0.25,0.15,-0.1);
 		this.ojo1.rotateY(THREE.MathUtils.degToRad(30));
@@ -254,6 +280,7 @@ class Escorvispa extends THREE.Object3D {
 
 		this.tenazaGeom = new THREE.TorusGeometry(0.25, 0.05, 20, 20);
 		this.tenaza = new THREE.Mesh(this.tenazaGeom, this.materialNegro);
+        this.tenaza.userData=this;
 		this.tenaza.scale.set(0.7,1,0.7);
 		this.tenaza.rotateX(THREE.MathUtils.degToRad(90));
 		this.tenaza.position.set(0,0,0.1);
@@ -264,8 +291,10 @@ class Escorvispa extends THREE.Object3D {
 		var csg = new CSG();
 		csg.subtract([this.tenaza, boxMesh]);
 		this.tenaza1 = csg.toMesh();
+        this.tenaza1.userData=this;
 
 		this.tenaza2 = this.tenaza1.clone();
+        this.tenaza2.userData=this;
 		this.tenaza2.rotateZ(THREE.MathUtils.degToRad(180));
 
 		this.tenaza1.position.set(-0.1, 0, 0);
@@ -321,19 +350,23 @@ class Escorvispa extends THREE.Object3D {
         const winggeometry = new THREE.ShapeGeometry(wingshape);
         
         this.ala1 = new THREE.Mesh(winggeometry, this.wingmaterial);
+        this.ala1.userData=this;
         this.ala1.rotateX(THREE.MathUtils.degToRad(90));
         this.ala1.position.set(0, 0.15, 0.20);
 
         this.ala2 = this.ala1.clone();
+        this.ala2.userData=this;
         this.ala2.rotateY(THREE.MathUtils.degToRad(180));
         this.ala2.position.set(0, 0.15, 0.20);
 
         this.ala3 = this.ala1.clone();
+        this.ala3.userData=this;
         this.ala3.scale.set(0.8, 0.8, 0.8);
         this.ala3.rotateZ(THREE.MathUtils.degToRad(13))
         this.ala3.position.set(0, 0.15, 0);
 
         this.ala4 = this.ala3.clone();
+        this.ala4.userData=this;
         this.ala4.rotateY(THREE.MathUtils.degToRad(180));
         this.ala4.rotateZ(THREE.MathUtils.degToRad(26))
         this.ala4.position.set(0, 0.15, 0);
@@ -369,12 +402,19 @@ class Escorvispa extends THREE.Object3D {
         var leggeometry = new THREE.ExtrudeGeometry(legShape, extrudeSettings);
         leggeometry.scale(2, 2, 2);
         this.pata1 = new THREE.Mesh(leggeometry, this.materialNegro);
+        this.pata1.userData=this;
+
 
         this.pata2 = this.pata1.clone();
+        this.pata2.userData=this;
         this.pata3 = this.pata1.clone();
+        this.pata3.userData=this;
         this.pata4 = this.pata1.clone();
+        this.pata4.userData=this;
         this.pata5 = this.pata1.clone();
+        this.pata5.userData=this;
         this.pata6 = this.pata1.clone();
+        this.pata6.userData=this;
 
         this.pata2.position.set(0, 0, 0.1);
         this.pata2.rotateY(THREE.MathUtils.degToRad(-20));
@@ -441,5 +481,29 @@ class Escorvispa extends THREE.Object3D {
         } 
 
     }
+
+    pick(danio) {
+      this.traverse((child) => {
+          if (child.material) {
+              child.originalMaterial = child.material
+              child.material = this.materialPick
+          }
+      });
+
+      setTimeout(() => {
+          this.restoreOriginalMaterials()
+      }, 250)
+
+      this.vida -= danio
+  }
+
+  restoreOriginalMaterials() {
+      this.traverse((child) => {
+          if (child.originalMaterial) {
+              child.material = child.originalMaterial
+              delete child.originalMaterial
+          }
+      });
+  }
     
 } export { Escorvispa,TipoEscorvispa };

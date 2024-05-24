@@ -9,6 +9,7 @@ class Minigun extends THREE.Object3D {
         
         this.createGUI(gui);
         this.crearMateriales();
+		this.initMouseEvents();
 
         //Variables para animación
         this.velocidadInicial = 0.000;
@@ -79,6 +80,20 @@ class Minigun extends THREE.Object3D {
 		this.add(this.principal);
 		this.add(this.cargador);
     };
+
+	initMouseEvents() {
+		window.addEventListener("mousedown", (event) => {
+			if (event.button === 2) {
+				this.guiControls.rotandoPlato = true;
+			}
+		});
+	
+		window.addEventListener("mouseup", (event) => {
+			if (event.button === 2) {
+				this.guiControls.rotandoPlato = false;
+			}
+		});
+	  }
 
 	crearMateriales(){
 		var textureLoader = new THREE.TextureLoader();

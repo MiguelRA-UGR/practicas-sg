@@ -11,7 +11,8 @@ const TipoOrbe = {
     DAÑO_AUMENTADO: 'dañoAumentado',
     TAMAÑO_AUMENTADO: 'tamañoAumentado',
     VELOCIDAD_AUMENTADA: 'velocidadAumentada',
-    TIEMPO_RALENTIZADO: 'tiempoRalentizado',
+    TIEMPO_AMPLIADO: 'tiempoAmpliado',
+    PUNTOS: 'puntos',
     REPARAR: 'reparar'
 };
 
@@ -106,7 +107,7 @@ class Orbe extends THREE.Object3D {
 
         switch (this.tipo) {
             case TipoOrbe.CADENCIA:
-                this.color = 0xff9300;
+                this.color = 0xffff00;
 
                 this.bala = new Bala();
                 this.bala.rotateX(THREE.MathUtils.degToRad(45));
@@ -117,9 +118,10 @@ class Orbe extends THREE.Object3D {
                 break;
             case TipoOrbe.DAÑO_AUMENTADO:
                 this.color = 0xf52a00;
+                this.rotateY(THREE.MathUtils.degToRad(90));
                 break;
 
-            case TipoOrbe.TIEMPO_RALENTIZADO:
+            case TipoOrbe.TIEMPO_AMPLIADO:
                 this.color = 0x3a9d23;
                 this.metalOro = new THREE.MeshStandardMaterial({
                     color: 0xe8ca3f,
@@ -226,17 +228,61 @@ class Orbe extends THREE.Object3D {
             case TipoOrbe.VELOCIDAD_AUMENTADA:
                 this.color = 0x81d8d0;
 
+                this.rotateY(THREE.MathUtils.degToRad(90));
                 this.translateY(-0.3);
                 break;
             
             case TipoOrbe.REPARAR:
-                this.color = 0xffff00;
+                this.color = 0xff9300;
 
                 this.llave = new Llave();
                 this.llave.rotateZ(THREE.MathUtils.degToRad(-30))
 
                 this.llave.scale.set(0.4,0.4,0.4);
                 this.add(this.llave);
+
+                break;
+
+            case TipoOrbe.PUNTOS:
+                this.color = 0xffff00;
+
+                var texture = textureLoader.load('../imgs/normal.png');
+
+                var materialMoneda = new THREE.MeshStandardMaterial({
+                    normalMap: texture,
+                    normalScale: new THREE.Vector2(1, 1),
+                    color: 0xe8ca3f,
+                    metalness: 0.5,
+                    roughness: 0.5
+                  });
+
+                this.monedaGeom = new  THREE.CylinderGeometry(0.5,0.5,0.1,30,30);
+                this.moneda = new THREE.Mesh(this.monedaGeom,materialMoneda); 
+                
+                const shape = new THREE.Shape();
+                shape.moveTo(0, 0);
+                shape.lineTo(1, 0);
+                shape.lineTo(1, 1);
+                shape.lineTo(0, 1);
+                shape.lineTo(0, 0);
+
+                var shapeGeom = new THREE.ShapeGeometry(shape);
+                texture = textureLoader.load('../imgs/x2.png');
+                var materialX2 = new THREE.MeshBasicMaterial({ map: texture, alphaTest:0.5 });
+                this.porDos = new THREE.Mesh(shapeGeom, materialX2);
+                
+                this.porDos.position.set(-0.2,-0.7,0.1);
+                this.porDos2 = this.porDos.clone()
+                this.porDos2.position.set(0.2,-0.7,-0.1);
+                this.porDos2.rotateY(THREE.MathUtils.degToRad(180));
+            
+                this.add(this.porDos);
+                this.add(this.porDos2);
+
+                this.moneda.rotateZ(THREE.MathUtils.degToRad(90));
+                this.moneda.rotateX(THREE.MathUtils.degToRad(90));
+
+                this.add(this.moneda);
 
                 break;
         }

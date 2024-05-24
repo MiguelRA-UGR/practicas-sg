@@ -7,7 +7,7 @@ import { TWEEN } from '../libs/Tween.js'
 import { Coche } from '../objetos/coche/Coche.js'
 import { Orbe, TipoOrbe } from '../objetos/orbe/Orbe.js'
 import { Obstaculo, TipoObstaculo } from '../objetos/obstaculo/Obstaculo.js'
-import { Escorvispa, TipoEscorvispa } from '../objetos/escorvispa/Escorvispa-pick.js'
+import { Escorvispa, TipoEscorvispa } from '../objetos/escorvispa/Escorvispa.js'
 import { Llave } from '../objetos/llave/Llave.js'
 
 class MyScene extends THREE.Scene {
@@ -233,15 +233,15 @@ class MyScene extends THREE.Scene {
     this.voladores = []
     this.recorridos = []
     this.posiciones = []
-    const periodicidad = 1/(this.numVoladores+1)
+    const periodicidad = 1/(this.numVoladores)
     this.vuelo = {t: 0}
     // 2/3 de esbirros, 1/3 soldados y 1 reina
-    for (let i=0 ; i<this.numVoladores ; i++) {
+    for (let i=0 ; i<this.numVoladores-1 ; i++) {
       var volador
       if (i%3==0) volador = new Escorvispa(TipoEscorvispa.SOLDADO)
       else volador = new Escorvispa(TipoEscorvispa.ESBIRRO)
       var ubicacion = this.spline.getPointAt((i+1)*periodicidad)
-      var recorrido = this.createRecorrido(ubicacion, 0)
+      var recorrido = this.createRecorrido(ubicacion, 0, (i+1)*periodicidad)
       var posicion = recorrido.getPointAt(this.vuelo.t)
       volador.position.copy(posicion)
       var tangente = recorrido.getTangentAt(this.vuelo.t)
@@ -256,7 +256,7 @@ class MyScene extends THREE.Scene {
 
     var reina = new Escorvispa(TipoEscorvispa.REINA)
     var ubicacion = this.spline.getPointAt(this.numVoladores*periodicidad)
-    var recorrido = this.createRecorrido(ubicacion, 0)
+    var recorrido = this.createRecorrido(ubicacion, 0, this.numVoladores*periodicidad)
     var posicion = recorrido.getPointAt(this.vuelo.t)
     reina.position.copy(posicion)
     var tangente = recorrido.getTangentAt(this.vuelo.t)
@@ -269,12 +269,12 @@ class MyScene extends THREE.Scene {
     this.add(reina)
 
     // En los 4 lados
-    for (let i=0 ; i<this.numVoladores ; i++) {
+    for (let i=0 ; i<this.numVoladores-1 ; i++) {
       var volador
       if (i%3==0) volador = new Escorvispa(TipoEscorvispa.SOLDADO)
       else volador = new Escorvispa(TipoEscorvispa.ESBIRRO)
       var ubicacion = this.spline.getPointAt((i+1)*periodicidad)
-      var recorrido = this.createRecorrido(ubicacion, 90)
+      var recorrido = this.createRecorrido(ubicacion, 90, (i+1)*periodicidad)
       var posicion = recorrido.getPointAt(this.vuelo.t)
       volador.position.copy(posicion)
       var tangente = recorrido.getTangentAt(this.vuelo.t)
@@ -289,7 +289,7 @@ class MyScene extends THREE.Scene {
 
     var reina = new Escorvispa(TipoEscorvispa.REINA)
     var ubicacion = this.spline.getPointAt(this.numVoladores*periodicidad)
-    var recorrido = this.createRecorrido(ubicacion, 90)
+    var recorrido = this.createRecorrido(ubicacion, 90, this.numVoladores*periodicidad)
     var posicion = recorrido.getPointAt(this.vuelo.t)
     reina.position.copy(posicion)
     var tangente = recorrido.getTangentAt(this.vuelo.t)
@@ -301,12 +301,12 @@ class MyScene extends THREE.Scene {
     this.pickableObjects.push(reina)
     this.add(reina)
 
-    for (let i=0 ; i<this.numVoladores ; i++) {
+    for (let i=0 ; i<this.numVoladores-1 ; i++) {
       var volador
       if (i%3==0) volador = new Escorvispa(TipoEscorvispa.SOLDADO)
       else volador = new Escorvispa(TipoEscorvispa.ESBIRRO)
       var ubicacion = this.spline.getPointAt((i+1)*periodicidad)
-      var recorrido = this.createRecorrido(ubicacion, 180)
+      var recorrido = this.createRecorrido(ubicacion, 180, (i+1)*periodicidad)
       var posicion = recorrido.getPointAt(this.vuelo.t)
       volador.position.copy(posicion)
       var tangente = recorrido.getTangentAt(this.vuelo.t)
@@ -321,7 +321,7 @@ class MyScene extends THREE.Scene {
 
     var reina = new Escorvispa(TipoEscorvispa.REINA)
     var ubicacion = this.spline.getPointAt(this.numVoladores*periodicidad)
-    var recorrido = this.createRecorrido(ubicacion, 180)
+    var recorrido = this.createRecorrido(ubicacion, 180, this.numVoladores*periodicidad)
     var posicion = recorrido.getPointAt(this.vuelo.t)
     reina.position.copy(posicion)
     var tangente = recorrido.getTangentAt(this.vuelo.t)
@@ -333,12 +333,12 @@ class MyScene extends THREE.Scene {
     this.pickableObjects.push(reina)
     this.add(reina)
 
-    for (let i=0 ; i<this.numVoladores ; i++) {
+    for (let i=0 ; i<this.numVoladores-1 ; i++) {
       var volador
       if (i%3==0) volador = new Escorvispa(TipoEscorvispa.SOLDADO)
       else volador = new Escorvispa(TipoEscorvispa.ESBIRRO)
       var ubicacion = this.spline.getPointAt((i+1)*periodicidad)
-      var recorrido = this.createRecorrido(ubicacion, 270)
+      var recorrido = this.createRecorrido(ubicacion, 270, (i+1)*periodicidad)
       var posicion = recorrido.getPointAt(this.vuelo.t)
       volador.position.copy(posicion)
       var tangente = recorrido.getTangentAt(this.vuelo.t)
@@ -353,7 +353,7 @@ class MyScene extends THREE.Scene {
 
     var reina = new Escorvispa(TipoEscorvispa.REINA)
     var ubicacion = this.spline.getPointAt(this.numVoladores*periodicidad)
-    var recorrido = this.createRecorrido(ubicacion, 270)
+    var recorrido = this.createRecorrido(ubicacion, 270, this.numVoladores*periodicidad)
     var posicion = recorrido.getPointAt(this.vuelo.t)
     reina.position.copy(posicion)
     var tangente = recorrido.getTangentAt(this.vuelo.t)
@@ -381,21 +381,23 @@ class MyScene extends THREE.Scene {
     
   }
 
-  createRecorrido(posicion, angulo) {
+  createRecorrido(posicion, angulo, punto) {
     // Generar aleatorio 1-4
     // Math.floor(Math.random() * 4) + 1;
     var recorridoGeom = new THREE.TorusKnotGeometry(6, 1, 30, 3, Math.floor(Math.random() * 4) + 1, Math.floor(Math.random() * 4) + 1);
     var torusKnotMesh = new THREE.Mesh(recorridoGeom, this.material);
     
     torusKnotMesh.position.copy(posicion);
+    //torusKnotMesh.rotateX(THREE.MathUtils.degToRad(90));
     
-    var tangente = this.spline.getTangentAt(0.01);
+    var tangente = this.spline.getTangentAt(punto);
     posicion.add(tangente);
     
     torusKnotMesh.lookAt(posicion)
-    //torusKnotMesh.rotateZ(THREE.MathUtils.degToRad(angulo))
-    torusKnotMesh.translateY(this.circuitoGeom.parameters.radius+recorridoGeom.parameters.radius*2)
-    //torusKnotMesh.rotateX(THREE.MathUtils.degToRad(angulo))
+    torusKnotMesh.rotateZ(THREE.MathUtils.degToRad(angulo))
+    
+    torusKnotMesh.translateY(this.circuitoGeom.parameters.radius+recorridoGeom.parameters.radius*3)
+    torusKnotMesh.rotateX(THREE.MathUtils.degToRad(90))
     
     
     //this.add (torusKnotMesh)

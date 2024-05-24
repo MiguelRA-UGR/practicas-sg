@@ -7,7 +7,7 @@ import { TWEEN } from '../libs/Tween.js'
 import { Coche } from '../objetos/coche/Coche.js'
 import { Orbe, TipoOrbe } from '../objetos/orbe/Orbe.js'
 import { Obstaculo, TipoObstaculo } from '../objetos/obstaculo/Obstaculo.js'
-import { Escorvispa, TipoEscorvispa } from '../objetos/escorvispa/Escorvispa-pick.js'
+import { Escorvispa, TipoEscorvispa } from '../objetos/escorvispa/Escorvispa.js'
 
 class MyScene extends THREE.Scene {
   constructor(myCanvas) {
@@ -21,40 +21,46 @@ class MyScene extends THREE.Scene {
     this.createSkyBox();
     this.cameraIndex = 1;
     this.initKeyboardEvents();
+    this.initMouseEvents();
 
     //Velocidades
-    this.velocidadCoche = 0.0004;
-    this.velocidadLateral = 0.01;
+    this.velocidadCoche = 0.00025;
+    this.velocidadLateral = 0.03;
     this.velocidadDisparo=0;
 
     //Control de Juego
     this.finJuego =false;
-    this.puntuacion=0;
-    this.vueltas=-1;
+    this.puntuacion=-0;
+    this.vueltas=1;
     this.almacenadoInicio=false;
     this.bonicacionEnCurso=false;
     this.iniciadaBonificacion=false;
     this.colision_detectada=false;
     this.colision_obstaculo=false;
     this.bonificacionActiva = "Ninguna";
-    this.numOrbes = 12;
+    this.numOrbes = 48;
     this.tiposdeOrbe=6;
-    this.numObstaculos = 10;
+    this.numObstaculos = 25;
+    this.numVoladores = 10;
 
     //Bonificadores
     this.bonificadorCadencia=1.0;
     this.bonificadorVelocidad=1.0;
-    this.bonificadorTamaño=1.0;
-    this.bonificadorVueltas=0.9;
+    this.bonificadorTamanio=1.0;
+    this.bonificadorVueltas=1.0;
     this.bonificadorDanio=1.0;
+    this.bonificadorPuntos=1.0;
 
     //Penalizacion
+    this.efectoActivo="Ninguno";
     this.penalizacionVelocidad=1.0;
     this.penalizacionVelocidadLateral=1.0;
     this.penalizacionCadencia=1.0;
+    this.valorLuz=500;
 
     //Tiempos
-    this.TiempoRestante = 120000; //2 minutos
+    this.TiempoRestante = 180000; //3 minutos
+    this.tiempoEspecial=2000
     this.tiempoEfecto=10000 //10s
     this.inicio = new Date(); //Momento de inicio
     this.inicioBonificacion = new Date();
@@ -67,10 +73,11 @@ class MyScene extends THREE.Scene {
     //this.modelo.minigun.rotateX(THREE.MathUtils.degToRad(90))
     this.add(this.modelo);
 
-    //Hitbox
+    // //Hitbox
     this.hitBoxCoche = new THREE.Box3();
-    var hitBoxHelper = new THREE.Box3Helper( this.hitBoxCoche , 0x000000 );
-    this.add(hitBoxHelper);
+    // var hitBoxHelper = new THREE.Box3Helper( this.hitBoxCoche , 0x000000 );
+    // this.add(hitBoxHelper);
+
     this.createThirdPersonCamera();
 
     // Pick
@@ -80,12 +87,13 @@ class MyScene extends THREE.Scene {
 
     this.createOrbes();
     this.createObstaculos();
-    //this.createVoladores();
+    this.createVoladores();
   }
 
   completarVuelta(){
     //10% más rápido cada vuelta;
     this.bonificadorVueltas+=0.1;
+    this.puntuacion += 100*this.bonificadorPuntos;
     this.vueltas+=1;
   }
 
@@ -100,9 +108,10 @@ class MyScene extends THREE.Scene {
         //+25% cadencia durante 10 segundos
         this.bonificadorCadencia=2;
         break;
-      case TipoOrbe.TIEMPO_RALENTIZADO:
-        // +5s
-        this.TiempoRestante+=5000;
+      case TipoOrbe.TIEMPO_AMPLIADO:
+        // +10s
+        this.TiempoRestante+=10000;
+        this.tiempoEfecto=this.tiempoEspecial;
         break;
       case TipoOrbe.VELOCIDAD_AUMENTADA:
         // +50% velocidad durante 10 segundos
@@ -118,7 +127,12 @@ class MyScene extends THREE.Scene {
         break;
       case TipoOrbe.REPARAR:
         // Eliminar efecto malo
+        this.tiempoEfecto=this.tiempoEspecial;
         this.reparar();
+        break;
+      case TipoOrbe.PUNTOS:
+        //Doble puntuacion
+        this.bonificadorPuntos=2;
         break;
     }
   }
@@ -131,26 +145,26 @@ class MyScene extends THREE.Scene {
         this.penalizacionVelocidad=0.5;
       break;
       case TipoObstaculo.ORUGA:
-        this.efectoActivo = "Lentitud lateral";
-        this.penalizacionVelocidadLateral=0.25;
+        this.efectoActivo = "Visibilidad reducida";
+        this.setAmbientIntensity(0);
+        //this.penalizacionVelocidadLateral=0.25;
       break;
       case TipoObstaculo.HORMIGA:
-        this.efectoActivo = "Lentitud";
-        this.penalizacionCadencia=0.5;
+        this.efectoActivo = "Lentitud lateral";
+        this.penalizacionVelocidadLateral=0.25;
       break;
 
     }
   }
 
   reset(){
-    this.bonificadorCadencia=1.0;
     this.bonificadorVelocidad=1.0;
     this.bonificadorTamaño=1.0;
-    this.bonificadorDanio=1.0;
+    this.modelo.scale.set(1,1,1);
 
-    this.penalizacionCadencia=1.0;
-    this.penalizacionVelocidad=1.0;
-    this.penalizacionVelocidadLateral=1.0;
+    this.bonificadorPuntos=1.0;
+    this.bonificadorDanio=1.0;
+    this.tiempoEfecto=10000;
 
     this.tiempoTranscurridoBonif=0;
     this.iniciadaBonificacion=false;
@@ -161,6 +175,7 @@ class MyScene extends THREE.Scene {
     this.penalizacionCadencia=1.0;
     this.penalizacionVelocidad=1.0;
     this.penalizacionVelocidadLateral=1.0;
+    this.setAmbientIntensity(1);
     this.efectoActivo="Ninguno";
   }
 
@@ -192,13 +207,12 @@ class MyScene extends THREE.Scene {
   createOrbes() {
     
     this.estaciones = this.numOrbes/6;
-    const points = this.spline.getPoints(this.estaciones);
     this.orbes = [];
     
     for (let i = 0; i < this.estaciones; i++) {
-      const orbe1 = new Orbe(TipoOrbe.CADENCIA);
+      const orbe1 = new Orbe(TipoOrbe.PUNTOS);
       const orbe2 = new Orbe(TipoOrbe.REPARAR);
-      const orbe3 = new Orbe(TipoOrbe.TIEMPO_RALENTIZADO);
+      const orbe3 = new Orbe(TipoOrbe.TIEMPO_AMPLIADO);
       const orbe4 = new Orbe(TipoOrbe.TAMAÑO_AUMENTADO);
       const orbe5 = new Orbe(TipoOrbe.VELOCIDAD_AUMENTADA);
       const orbe6 = new Orbe(TipoOrbe.DAÑO_AUMENTADO);
@@ -206,7 +220,7 @@ class MyScene extends THREE.Scene {
       const positionOrbe = this.spline.getPointAt(i / this.estaciones);
 
       const tangent = this.spline.getTangentAt(i / this.estaciones);
-
+      
       orbe1.position.copy(positionOrbe);
       orbe1.lookAt(positionOrbe.clone().add(tangent));
       orbe2.position.copy(positionOrbe);
@@ -226,7 +240,7 @@ class MyScene extends THREE.Scene {
       orbe4.rotateZ(THREE.MathUtils.degToRad(180));
       orbe5.rotateZ(THREE.MathUtils.degToRad(240));
       orbe6.rotateZ(THREE.MathUtils.degToRad(300));
-
+      
       this.orbes.push(orbe1);
       this.add(orbe1);
       this.orbes.push(orbe2);
@@ -244,7 +258,6 @@ class MyScene extends THREE.Scene {
 
 
   createObstaculos() {
-    const points = this.spline.getPoints(this.numObstaculos);
     this.obstaculos = [];
 
     for (let i = 0; i < this.numObstaculos; i++) {
@@ -266,15 +279,15 @@ class MyScene extends THREE.Scene {
     this.voladores = []
     this.recorridos = []
     this.posiciones = []
-    const periodicidad = 1/(this.numVoladores+1)
+    const periodicidad = 1/(this.numVoladores)
     this.vuelo = {t: 0}
     // 2/3 de esbirros, 1/3 soldados y 1 reina
-    for (let i=0 ; i<this.numVoladores ; i++) {
+    for (let i=0 ; i<this.numVoladores-1 ; i++) {
       var volador
       if (i%3==0) volador = new Escorvispa(TipoEscorvispa.SOLDADO)
       else volador = new Escorvispa(TipoEscorvispa.ESBIRRO)
       var ubicacion = this.spline.getPointAt((i+1)*periodicidad)
-      var recorrido = this.createRecorrido(ubicacion, 0)
+      var recorrido = this.createRecorrido(ubicacion, 0, (i+1)*periodicidad)
       var posicion = recorrido.getPointAt(this.vuelo.t)
       volador.position.copy(posicion)
       var tangente = recorrido.getTangentAt(this.vuelo.t)
@@ -289,7 +302,7 @@ class MyScene extends THREE.Scene {
 
     var reina = new Escorvispa(TipoEscorvispa.REINA)
     var ubicacion = this.spline.getPointAt(this.numVoladores*periodicidad)
-    var recorrido = this.createRecorrido(ubicacion, 0)
+    var recorrido = this.createRecorrido(ubicacion, 0, this.numVoladores*periodicidad)
     var posicion = recorrido.getPointAt(this.vuelo.t)
     reina.position.copy(posicion)
     var tangente = recorrido.getTangentAt(this.vuelo.t)
@@ -302,12 +315,12 @@ class MyScene extends THREE.Scene {
     this.add(reina)
 
     // En los 4 lados
-    for (let i=0 ; i<this.numVoladores ; i++) {
+    for (let i=0 ; i<this.numVoladores-1 ; i++) {
       var volador
       if (i%3==0) volador = new Escorvispa(TipoEscorvispa.SOLDADO)
       else volador = new Escorvispa(TipoEscorvispa.ESBIRRO)
       var ubicacion = this.spline.getPointAt((i+1)*periodicidad)
-      var recorrido = this.createRecorrido(ubicacion, 90)
+      var recorrido = this.createRecorrido(ubicacion, 90, (i+1)*periodicidad)
       var posicion = recorrido.getPointAt(this.vuelo.t)
       volador.position.copy(posicion)
       var tangente = recorrido.getTangentAt(this.vuelo.t)
@@ -322,7 +335,7 @@ class MyScene extends THREE.Scene {
 
     var reina = new Escorvispa(TipoEscorvispa.REINA)
     var ubicacion = this.spline.getPointAt(this.numVoladores*periodicidad)
-    var recorrido = this.createRecorrido(ubicacion, 90)
+    var recorrido = this.createRecorrido(ubicacion, 90, this.numVoladores*periodicidad)
     var posicion = recorrido.getPointAt(this.vuelo.t)
     reina.position.copy(posicion)
     var tangente = recorrido.getTangentAt(this.vuelo.t)
@@ -334,12 +347,12 @@ class MyScene extends THREE.Scene {
     this.pickableObjects.push(reina)
     this.add(reina)
 
-    for (let i=0 ; i<this.numVoladores ; i++) {
+    for (let i=0 ; i<this.numVoladores-1 ; i++) {
       var volador
       if (i%3==0) volador = new Escorvispa(TipoEscorvispa.SOLDADO)
       else volador = new Escorvispa(TipoEscorvispa.ESBIRRO)
       var ubicacion = this.spline.getPointAt((i+1)*periodicidad)
-      var recorrido = this.createRecorrido(ubicacion, 180)
+      var recorrido = this.createRecorrido(ubicacion, 180, (i+1)*periodicidad)
       var posicion = recorrido.getPointAt(this.vuelo.t)
       volador.position.copy(posicion)
       var tangente = recorrido.getTangentAt(this.vuelo.t)
@@ -354,7 +367,7 @@ class MyScene extends THREE.Scene {
 
     var reina = new Escorvispa(TipoEscorvispa.REINA)
     var ubicacion = this.spline.getPointAt(this.numVoladores*periodicidad)
-    var recorrido = this.createRecorrido(ubicacion, 180)
+    var recorrido = this.createRecorrido(ubicacion, 180, this.numVoladores*periodicidad)
     var posicion = recorrido.getPointAt(this.vuelo.t)
     reina.position.copy(posicion)
     var tangente = recorrido.getTangentAt(this.vuelo.t)
@@ -366,12 +379,12 @@ class MyScene extends THREE.Scene {
     this.pickableObjects.push(reina)
     this.add(reina)
 
-    for (let i=0 ; i<this.numVoladores ; i++) {
+    for (let i=0 ; i<this.numVoladores-1 ; i++) {
       var volador
       if (i%3==0) volador = new Escorvispa(TipoEscorvispa.SOLDADO)
       else volador = new Escorvispa(TipoEscorvispa.ESBIRRO)
       var ubicacion = this.spline.getPointAt((i+1)*periodicidad)
-      var recorrido = this.createRecorrido(ubicacion, 270)
+      var recorrido = this.createRecorrido(ubicacion, 270, (i+1)*periodicidad)
       var posicion = recorrido.getPointAt(this.vuelo.t)
       volador.position.copy(posicion)
       var tangente = recorrido.getTangentAt(this.vuelo.t)
@@ -386,7 +399,7 @@ class MyScene extends THREE.Scene {
 
     var reina = new Escorvispa(TipoEscorvispa.REINA)
     var ubicacion = this.spline.getPointAt(this.numVoladores*periodicidad)
-    var recorrido = this.createRecorrido(ubicacion, 270)
+    var recorrido = this.createRecorrido(ubicacion, 270, this.numVoladores*periodicidad)
     var posicion = recorrido.getPointAt(this.vuelo.t)
     reina.position.copy(posicion)
     var tangente = recorrido.getTangentAt(this.vuelo.t)
@@ -412,6 +425,47 @@ class MyScene extends THREE.Scene {
     this.pickableObjects.push(this.volador)
     */
     
+  }
+
+  createRecorrido(posicion, angulo, punto) {
+    // Generar aleatorio 1-4
+    // Math.floor(Math.random() * 4) + 1;
+    var recorridoGeom = new THREE.TorusKnotGeometry(6, 1, 30, 3, Math.floor(Math.random() * 4) + 1, Math.floor(Math.random() * 4) + 1);
+    var torusKnotMesh = new THREE.Mesh(recorridoGeom, this.material);
+    
+    torusKnotMesh.position.copy(posicion);
+    //torusKnotMesh.rotateX(THREE.MathUtils.degToRad(90));
+    
+    var tangente = this.spline.getTangentAt(punto);
+    posicion.add(tangente);
+    
+    torusKnotMesh.lookAt(posicion)
+    torusKnotMesh.rotateZ(THREE.MathUtils.degToRad(angulo))
+    
+    torusKnotMesh.translateY(this.circuitoGeom.parameters.radius+recorridoGeom.parameters.radius*3)
+    torusKnotMesh.rotateX(THREE.MathUtils.degToRad(90))
+    
+    
+    //this.add (torusKnotMesh)
+
+    // Actualizar la matriz del Mesh y aplicar la transformación a la geometría
+    torusKnotMesh.updateMatrix();
+    // recorridoGeom.applyMatrix4(torusKnotMesh.matrix);
+    var path = this.getPathFromTorusKnot(recorridoGeom);
+    var puntosTransformados = path.getPoints(100).map(point => {
+      return point.applyMatrix4(torusKnotMesh.matrix);
+    });
+    var recorridoPath = new THREE.CatmullRomCurve3(puntosTransformados, true)
+    var geometryLine = new THREE.BufferGeometry();
+    geometryLine.setFromPoints(puntosTransformados);
+    var material = new THREE.LineBasicMaterial({
+      color: 0xff0000,
+      linewidth: 2,
+    });
+    var visibleSpline = new THREE.Line(geometryLine, material);
+
+    this.add(visibleSpline);
+    return recorridoPath
   }
 
   getPathFromTorusKnot(torusKnot) {
@@ -505,7 +559,7 @@ class MyScene extends THREE.Scene {
 
           if (selectedObject.vida <= 0){ 
             this.remove(selectedObject);
-            this.puntuacion+=selectedObject.puntuacion;
+            this.puntuacion+=selectedObject.puntuacion*this.bonificadorPuntos;
           }
         }
       }
@@ -559,7 +613,7 @@ class MyScene extends THREE.Scene {
     this.meta = new THREE.Mesh(this.metaGeom, materialMeta);
     this.circuito.add(this.meta);
 
-    this.meta.position.set(150,0,0);
+    this.meta.position.set(150,-15,-10);
     this.meta.rotateX(THREE.MathUtils.degToRad(-65));
 
     this.hitboxMeta = new THREE.Box3();
@@ -611,7 +665,7 @@ class MyScene extends THREE.Scene {
 
     this.modelo.add(this.thirdPersonCamera);
 
-    this.thirdPersonCamera.position.set(0, 1.5, -10);
+    this.thirdPersonCamera.position.set(0, 3, -15);
     var puntoDeMiraRelativo = new THREE.Vector3(0, 0, 0.1);
     var target = new THREE.Vector3();
     this.thirdPersonCamera.getWorldPosition(target);
@@ -684,9 +738,9 @@ class MyScene extends THREE.Scene {
       this.guiControls.ambientIntensity
     );
     this.add(this.ambientLight);
-    this.pointLight = new THREE.PointLight(0xffffff);
+    this.pointLight = new THREE.SpotLight(0xffffff);
     this.pointLight.power = this.guiControls.lightPower;
-    this.pointLight.position.set(0, 5, 0);
+    this.pointLight.position.set(0, 0, 0);
     this.add(this.pointLight);
   }
 
@@ -703,7 +757,7 @@ class MyScene extends THREE.Scene {
   }
 
   createRenderer(myCanvas) {
-    var renderer = new THREE.WebGLRenderer();
+    var renderer = new THREE.WebGLRenderer({ alpha: true });
     renderer.setClearColor(new THREE.Color(0xffffff), 1.0);
     renderer.setSize(window.innerWidth, window.innerHeight);
     $(myCanvas).append(renderer.domElement);
@@ -752,7 +806,7 @@ class MyScene extends THREE.Scene {
       }
 
       if(this.derecha) {
-        this.paso.a -= this.velocidadLateral
+        this.paso.a -= this.velocidadLateral*this.penalizacionVelocidadLateral
         if (this.paso.a<0) this.paso.a+=2*Math.PI
       }
 
@@ -767,34 +821,31 @@ class MyScene extends THREE.Scene {
         this.completarVuelta();
       }
 
-      if((momentoactual.getTime() - this.momentoMeta.getTime()) >= 3000){
+      if((momentoactual.getTime() - this.momentoMeta.getTime()) >= 5000){
         this.colisionMeta=false;
       }
 
-      for (let i = 0; i < this.numOrbes; i++ && !this.colision_detectada) {
+      for (let i = 5; i < this.numOrbes; i++ && !this.colision_detectada) {
         this.velocidadOrbes=0.01;
         const orbe = this.orbes[i];
-
+        
         const posicionOrbe = this.spline.getPointAt(Math.floor(i / 6) / this.estaciones);
         orbe.position.copy(posicionOrbe);
 
         orbe.rotateZ(-this.velocidadOrbes);
-
         orbe.translateY(this.circuitoGeom.parameters.radius + 1)
-        //orbe.update();
-        
+
         var cajaOrbe = new THREE.Box3();
         cajaOrbe.setFromObject(this.orbes[i]);
   
         if(!this.colision_detectada && this.hitBoxCoche.intersectsBox(cajaOrbe)){
           this.colision_detectada=true;
 
-          this.aplicarBonificacion(this.orbes[i].getTipo());
-          
+          this.aplicarBonificacion(this.orbes[i].getTipo()); 
         }
       }
 
-      for (let i = 0; i < this.numObstaculos; i++) {
+      for (let i = 1; i < this.numObstaculos; i++) {
         var speed=0;
         const obstaculo = this.obstaculos[i];
         const posicionObstaculo = this.spline.getPointAt(i / this.numObstaculos);
@@ -813,7 +864,7 @@ class MyScene extends THREE.Scene {
         var cajaObstaculo = new THREE.Box3();
         cajaObstaculo.setFromObject(this.obstaculos[i]);
 
-        if(this.hitBoxCoche.intersectsBox(cajaObstaculo)){
+        if(this.efectoActivo == "Ninguno" && this.hitBoxCoche.intersectsBox(cajaObstaculo)){
           this.aplicarPenalizacion(this.obstaculos[i].tipo);
           
         }
@@ -833,6 +884,17 @@ class MyScene extends THREE.Scene {
     this.posicionAnimacion.add(tangente);
     this.modelo.lookAt(this.posicionAnimacion);
 
+    this.vuelo.t += 0.0005
+    this.vuelo.t %= 1
+    for (let i=0 ; i<this.voladores.length ; i++) {
+      this.posiciones[i] = this.recorridos[i].getPointAt(this.vuelo.t)
+      this.voladores[i].position.copy(this.posiciones[i]);
+      var tangente = this.recorridos[i].getTangentAt(this.vuelo.t);
+      this.posiciones[i].add(tangente);
+      this.voladores[i].lookAt(this.posiciones[i]);
+      this.voladores[i].update();
+    }
+
     if( this.tiempoTranscurrido >= this.TiempoRestante){
       this.finJuego=true;
     }
@@ -844,11 +906,6 @@ class MyScene extends THREE.Scene {
     }
 
     this.tiempoTranscurridoBonif = momentoactual.getTime() - this.inicioBonificacion.getTime();
-
-    if(this.bonicacionEnCurso && (this.bonificacionActiva==TipoOrbe.REPARAR || this.bonificacionActiva==TipoOrbe.TIEMPO_RALENTIZADO)){
-        this.tiempoTranscurridoBonif = 9800;
-        this.bonificacionActiva="Ninguna";
-    }
 
     //Si se cumple el tiempo de la bonificacion
     if(this.bonicacionEnCurso && this.tiempoTranscurridoBonif >= this.tiempoEfecto){
