@@ -38,9 +38,9 @@ class MyScene extends THREE.Scene {
     this.colision_detectada=false;
     this.colision_obstaculo=false;
     this.bonificacionActiva = "Ninguna";
-    this.numOrbes = 48;
+    this.numOrbes = 36;
     this.tiposdeOrbe=6;
-    this.numObstaculos = 25;
+    this.numObstaculos = 15;
     this.numVoladores = 10;
 
     //Bonificadores
@@ -542,11 +542,13 @@ class MyScene extends THREE.Scene {
     window.addEventListener("mousedown", (event) => {
 
       if (this.modelo.minigun.guiControls.rotandoPlato == true){
+        
         this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
         this.mouse.y = 1 - 2 * (event.clientY / window.innerHeight);
 
         this.raycaster.setFromCamera(this.mouse, this.thirdPersonCamera);
 
+        this.modelo.minigun.disparar();
         var pickedObjects = this.raycaster.intersectObjects(this.pickableObjects);
 
         if (pickedObjects.length > 0 && this.cameraIndex == 1) {
@@ -556,6 +558,7 @@ class MyScene extends THREE.Scene {
           this.modelo.minigun.lookAt(selectedObject.position);
           this.modelo.minigun.rotateX(THREE.MathUtils.degToRad(90));
           this.modelo.minigun.rotateY(THREE.MathUtils.degToRad(-90));
+          
 
           if (selectedObject.vida <= 0){ 
             this.remove(selectedObject);

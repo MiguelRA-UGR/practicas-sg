@@ -33,6 +33,8 @@ class Coche extends THREE.Object3D {
     this.motor.motorEncendido=true;
 
     this.add(this.base);
+    this.castShadow = true;
+    this.receiveShadow = true;
 
     this.translateY(0.53);
   }

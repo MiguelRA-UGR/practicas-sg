@@ -39,6 +39,8 @@ class Bala extends THREE.Object3D {
         this.casquillo.rotateX(THREE.MathUtils.degToRad(180));
         this.add(this.casquillo);
         this.add(this.punta);
+
+        //this.casquillo.visible = false;
     };
 
 	crearMateriales(){
@@ -50,7 +52,7 @@ class Bala extends THREE.Object3D {
         });
 
         this.materialPunta = new THREE.MeshStandardMaterial({
-            color: 0xff0000,
+            color: 0x808080,
             roughness: 0.2,
             metalness: 0.75,
             side: THREE.DoubleSide,

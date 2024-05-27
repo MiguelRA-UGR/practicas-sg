@@ -183,13 +183,17 @@ class Orbe extends THREE.Object3D {
                 this.color = 0xa212a2;
                 
                 var texture = textureLoader.load('../imgs/pocima.avif');
+                var texture1 = textureLoader.load('../imgs/liquid.jpg');
 
                 this.materialPocima = new THREE.MeshStandardMaterial({
                     color: 0xff00ff,
                     transparent: true,
                     opacity: 0.8,
                     side: THREE.DoubleSide,
-                    map : texture
+                    map : texture,
+                    normalMap: texture1,
+                    normalScale: new THREE.Vector2(1, 1),
+
                 });
 
                 var texture = textureLoader.load('../imgs/corcho.jpg');

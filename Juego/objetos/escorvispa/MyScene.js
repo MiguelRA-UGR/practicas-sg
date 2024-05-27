@@ -32,6 +32,32 @@ class MyScene extends THREE.Scene {
     
     // Un suelo 
     //this.createGround ();
+
+    //https://github.com/mrdoob/three.js/blob/dev/examples/webgl_shadowmap_viewer.html
+    let geometry = new THREE.BoxGeometry( 10, 0.15, 10 );
+    /*
+		let material = new THREE.MeshPhongMaterial( {
+      color: 0xa0adaf,
+      shininess: 150,
+      specular: 0x111111
+    } );
+    */
+    var textureLoader = new THREE.TextureLoader();
+    var texture = textureLoader.load("../imgs/colmena.jpg", function(texture) {
+      texture.wrapS = THREE.RepeatWrapping;
+      texture.wrapT = THREE.RepeatWrapping;
+      
+      texture.repeat.set(8, 2);
+    });
+  
+    this.materialColmena = new THREE.MeshStandardMaterial({ map: texture });
+
+    const ground = new THREE.Mesh( geometry, this.materialColmena );
+    ground.scale.multiplyScalar( 3 );
+    ground.position.y = -6
+    ground.castShadow = false;
+    ground.receiveShadow = true;
+    this.add( ground );
     
     // Por último creamos el modelo.
     // El modelo puede incluir su parte de la interfaz gráfica de usuario. Le pasamos la referencia a 
@@ -170,6 +196,19 @@ class MyScene extends THREE.Scene {
     this.pointLight.power = this.guiControls.lightPower;
     this.pointLight.position.set( 2, 3, 1 );
     this.add (this.pointLight);
+
+    //https://github.com/mrdoob/three.js/blob/dev/examples/webgl_shadowmap_viewer.html
+    let spotLight = new THREE.SpotLight( 0xffffff, 500);
+    spotLight.name = 'Spot Light';
+    spotLight.angle = Math.PI / 5;
+    spotLight.penumbra = 0.3;
+    spotLight.position.set( 0, 20, 0 );
+    spotLight.castShadow = true;
+    spotLight.shadow.camera.near = 0.5;
+    spotLight.shadow.camera.far = 30;
+    spotLight.shadow.mapSize.width = 512;
+    spotLight.shadow.mapSize.height = 512;
+    this.add( spotLight );
   }
   
   setLightPower (valor) {
@@ -195,6 +234,9 @@ class MyScene extends THREE.Scene {
     
     // Se establece el tamaño, se aprovecha la totalidad de la ventana del navegador
     renderer.setSize(window.innerWidth, window.innerHeight);
+
+    renderer.shadowMap.enabled = true;
+		renderer.shadowMap.type = THREE.PCFShadowMap;
     
     // La visualización se muestra en el lienzo recibido
     $(myCanvas).append(renderer.domElement);

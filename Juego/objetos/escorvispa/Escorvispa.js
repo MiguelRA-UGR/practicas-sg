@@ -38,6 +38,8 @@ class Escorvispa extends THREE.Object3D {
         this.cuerpoGeom.scale(1, 1.25,1 );
         this.cuerpoGeom.rotateX(THREE.MathUtils.degToRad(90))
         this.cuerpo = new THREE.Mesh(this.cuerpoGeom, this.materialPelo);
+        this.cuerpo.castShadow = true
+        this.cuerpo.receiveShadow = true
         this.cuerpo.userData=this;
 
 		this.createAlas();
@@ -81,6 +83,17 @@ class Escorvispa extends THREE.Object3D {
 	crearMateriales(){
 		var textureLoader = new THREE.TextureLoader();
         var texture1 = textureLoader.load('../imgs/rayas.avif');
+        var texture2 = textureLoader.load('../imgs/pelo.jpg');
+
+        this.materialPelo1 = new THREE.MeshStandardMaterial({
+			color: 0x91a14b,
+            map:texture1,
+			
+			side: THREE.DoubleSide,
+			transparent: true, 
+			opacity: 0.8
+			    
+		});
 
         switch (this.tipo){
             case TipoEscorvispa.ESBIRRO:
@@ -126,17 +139,23 @@ class Escorvispa extends THREE.Object3D {
     createCola() {
         this.cola = new THREE.Mesh(this.cuerpoGeom, this.materialPelo);
         this.cola.userData=this;
+        this.cola.castShadow = true
+        this.cola.receiveShadow = true
         this.cola.scale.set(0.75, 0.75, 0.75);
         this.cola.position.set(0, 0, -0.4);
         this.cola.rotateX(THREE.MathUtils.degToRad(-20));
     
         this.cola2 = this.cola.clone();
         this.cola2.userData=this;
+        this.cola2.castShadow = true
+        this.cola2.receiveShadow = true
         this.cola2.position.set(0, 0, -0.4);
         this.cola2.rotateX(THREE.MathUtils.degToRad(-20));
         
         this.cola3 = this.cola2.clone();
         this.cola3.userData=this;
+        this.cola3.castShadow = true
+        this.cola3.receiveShadow = true
         this.cola3.position.set(0, 0, -0.4);
     
         this.cola2.add(this.cola3);
@@ -158,6 +177,8 @@ class Escorvispa extends THREE.Object3D {
         var aquijonGeom = new THREE.LatheGeometry(points);
         this.aguijon = new THREE.Mesh(aquijonGeom, this.materialNegro);
         this.aguijon.userData=this;
+        this.aguijon.castShadow = true
+        this.aguijon.receiveShadow = true
 
         this.aguijon.rotateX(THREE.MathUtils.degToRad(-90));
         this.aguijon.position.set(0,0,-0.);
@@ -172,12 +193,16 @@ class Escorvispa extends THREE.Object3D {
         // Primer brazo
         this.brazo = new THREE.Mesh(this.cuerpoGeom, this.materialPelo);
         this.brazo.userData=this;
+        this.brazo.castShadow = true
+        this.brazo.receiveShadow = true
         this.brazo.rotateY(THREE.MathUtils.degToRad(50));
         this.brazo.position.set(0.25,0,0.20);
         this.brazo.scale.set(0.5,0.5,0.5);
 
         this.parte1 = this.brazo.clone();
         this.parte1.userData=this;
+        this.parte1.castShadow = true
+        this.parte1.receiveShadow = true
         this.parte1.scale.set(1.2,1.2,1.2);
         this.parte1.rotateY(THREE.MathUtils.degToRad(-40));
         this.parte1.rotateX(THREE.MathUtils.degToRad(40));
@@ -186,12 +211,16 @@ class Escorvispa extends THREE.Object3D {
     
         this.pinza = new THREE.Mesh(this.cuerpoGeom, this.materialNegro);
         this.pinza.userData=this;
+        this.pinza.castShadow = true
+        this.pinza.receiveShadow = true
         this.pinza.position.set(-0.2,0,0.4);
         this.pinza.scale.set(1.2,1.2,1.2);
         this.pinza.rotateY(THREE.MathUtils.degToRad(-60));
         
         this.partir = new THREE.Mesh(this.cuerpoGeom, this.materialPrincipal);
         this.partir.userData=this;
+        this.partir.castShadow = true
+        this.partir.receiveShadow = true
         this.partir.position.set(0,0,0.3);
         this.partir.scale.set(0.75,0.75,0.75);
     
@@ -203,10 +232,14 @@ class Escorvispa extends THREE.Object3D {
         pinza1CSG.subtract([this.partir, tajo]);
         this.pinza1 = pinza1CSG.toMesh();
         this.pinza1.userData=this;
+        this.pinza1.castShadow = true
+        this.pinza1.receiveShadow = true
     
         this.pinza1.position.set(-0.1,0,0);
         this.pinza2 = this.pinza1.clone();
         this.pinza2.userData=this;
+        this.pinza2.castShadow = true
+        this.pinza2.receiveShadow = true
         this.pinza2.rotateZ(THREE.MathUtils.degToRad(180));
         this.pinza2.position.set(0.1,0,0);
         this.pinza.add(this.pinza2);
@@ -219,6 +252,8 @@ class Escorvispa extends THREE.Object3D {
         // Segundo brazo
         this.brazo2 = this.brazo.clone();
         this.brazo2.userData=this;
+        this.brazo2.castShadow = true
+        this.brazo2.receiveShadow = true
         this.brazo2.scale.z *= -1;
         this.brazo2.position.set(-0.25, 0, 0.20);
         this.brazo2.rotateY(THREE.MathUtils.degToRad(90));
@@ -230,9 +265,17 @@ class Escorvispa extends THREE.Object3D {
         //Pinchos
         this.pinchogeom = new THREE.ConeGeometry(0.1,0.3,20,20);
         this.pincho1 = new THREE.Mesh(this.pinchogeom, this.materialPelo);
+        this.pincho1.castShadow = true
+        this.pincho1.receiveShadow = true
         this.pincho2 = this.pincho1.clone();
+        this.pincho2.castShadow = true
+        this.pincho2.receiveShadow = true
         this.pincho3 = this.pincho1.clone();
+        this.pincho3.castShadow = true
+        this.pincho3.receiveShadow = true
         this.pincho4 = this.pincho1.clone();
+        this.pincho4.castShadow = true
+        this.pincho4.receiveShadow = true
         
         this.pincho1.position.set(0.1,0.2,0.05);
         this.pincho1.rotateZ(THREE.MathUtils.degToRad(-10));
@@ -254,8 +297,12 @@ class Escorvispa extends THREE.Object3D {
 	createCabeza() {
         this.cabeza = new THREE.Mesh(this.cuerpoGeom, this.materialPrincipal);
         this.cabeza.userData=this;
+        this.cabeza.castShadow = true
+        this.cabeza.receiveShadow = true
 		this.cabeza2 = this.cabeza.clone();
         this.cabeza2.userData=this;
+        this.cabeza2.castShadow = true
+        this.cabeza2.receiveShadow = true
 		this.cabeza.scale.set(0.5,0.5,0.5);
 		this.cabeza.position.set(0,0,0.4);
 		this.cabeza.rotateX(THREE.MathUtils.degToRad(45));
@@ -267,9 +314,13 @@ class Escorvispa extends THREE.Object3D {
 
 		this.ojo1 = new THREE.Mesh(this.cuerpoGeom, this.materialOjo);
         this.ojo1.userData=this;
+        this.ojo1.castShadow = true
+        this.ojo1.receiveShadow = true
 		this.ojo1.scale.set(0.75,0.75,0.75);
 		this.ojo2 = this.ojo1.clone();
         this.ojo2.userData=this;
+        this.ojo2.castShadow = true
+        this.ojo2.receiveShadow = true
 		
 		this.ojo1.position.set(-0.25,0.15,-0.1);
 		this.ojo1.rotateY(THREE.MathUtils.degToRad(30));
@@ -281,6 +332,8 @@ class Escorvispa extends THREE.Object3D {
 		this.tenazaGeom = new THREE.TorusGeometry(0.25, 0.05, 20, 20);
 		this.tenaza = new THREE.Mesh(this.tenazaGeom, this.materialNegro);
         this.tenaza.userData=this;
+        this.tenaza.castShadow = true
+        this.tenaza.receiveShadow = true
 		this.tenaza.scale.set(0.7,1,0.7);
 		this.tenaza.rotateX(THREE.MathUtils.degToRad(90));
 		this.tenaza.position.set(0,0,0.1);
@@ -292,9 +345,13 @@ class Escorvispa extends THREE.Object3D {
 		csg.subtract([this.tenaza, boxMesh]);
 		this.tenaza1 = csg.toMesh();
         this.tenaza1.userData=this;
+        this.tenaza1.castShadow = true
+        this.tenaza1.receiveShadow = true
 
 		this.tenaza2 = this.tenaza1.clone();
         this.tenaza2.userData=this;
+        this.tenaza2.castShadow = true
+        this.tenaza2.receiveShadow = true
 		this.tenaza2.rotateZ(THREE.MathUtils.degToRad(180));
 
 		this.tenaza1.position.set(-0.1, 0, 0);
@@ -326,9 +383,13 @@ class Escorvispa extends THREE.Object3D {
         var antenageom = new THREE.ExtrudeGeometry(legShape, extrudeSettings);
         this.antena1 = new THREE.Mesh(antenageom, this.materialNegro);
         this.antena1.position.set(0.2,0.2,-0.3);
+        this.antena1.castShadow = true
+        this.antena1.receiveShadow = true
         this.antena2 = this.antena1.clone();
         this.antena2.position.set(-0.2,0.2,-0.3);
         this.antena2.rotateY(THREE.MathUtils.degToRad(180))
+        this.antena2.castShadow = true
+        this.antena2.receiveShadow = true
 
         this.cabeza.add(this.antena1);
         this.cabeza.add(this.antena2);
@@ -351,22 +412,30 @@ class Escorvispa extends THREE.Object3D {
         
         this.ala1 = new THREE.Mesh(winggeometry, this.wingmaterial);
         this.ala1.userData=this;
+        this.ala1.castShadow = true
+        this.ala1.receiveShadow = true
         this.ala1.rotateX(THREE.MathUtils.degToRad(90));
         this.ala1.position.set(0, 0.15, 0.20);
 
         this.ala2 = this.ala1.clone();
         this.ala2.userData=this;
+        this.ala2.castShadow = true
+        this.ala2.receiveShadow = true
         this.ala2.rotateY(THREE.MathUtils.degToRad(180));
         this.ala2.position.set(0, 0.15, 0.20);
 
         this.ala3 = this.ala1.clone();
         this.ala3.userData=this;
+        this.ala3.castShadow = true
+        this.ala3.receiveShadow = true
         this.ala3.scale.set(0.8, 0.8, 0.8);
         this.ala3.rotateZ(THREE.MathUtils.degToRad(13))
         this.ala3.position.set(0, 0.15, 0);
 
         this.ala4 = this.ala3.clone();
         this.ala4.userData=this;
+        this.ala4.castShadow = true
+        this.ala4.receiveShadow = true
         this.ala4.rotateY(THREE.MathUtils.degToRad(180));
         this.ala4.rotateZ(THREE.MathUtils.degToRad(26))
         this.ala4.position.set(0, 0.15, 0);
@@ -403,18 +472,30 @@ class Escorvispa extends THREE.Object3D {
         leggeometry.scale(2, 2, 2);
         this.pata1 = new THREE.Mesh(leggeometry, this.materialNegro);
         this.pata1.userData=this;
+        this.pata1.castShadow = true
+        this.pata1.receiveShadow = true
 
 
         this.pata2 = this.pata1.clone();
         this.pata2.userData=this;
+        this.pata2.castShadow = true
+        this.pata2.receiveShadow = true
         this.pata3 = this.pata1.clone();
         this.pata3.userData=this;
+        this.pata3.castShadow = true
+        this.pata3.receiveShadow = true
         this.pata4 = this.pata1.clone();
         this.pata4.userData=this;
+        this.pata4.castShadow = true
+        this.pata4.receiveShadow = true
         this.pata5 = this.pata1.clone();
         this.pata5.userData=this;
+        this.pata5.castShadow = true
+        this.pata5.receiveShadow = true
         this.pata6 = this.pata1.clone();
         this.pata6.userData=this;
+        this.pata6.castShadow = true
+        this.pata6.receiveShadow = true
 
         this.pata2.position.set(0, 0, 0.1);
         this.pata2.rotateY(THREE.MathUtils.degToRad(-20));
