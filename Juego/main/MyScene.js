@@ -772,7 +772,7 @@ class MyScene extends THREE.Scene {
     this.spotLight.angle = Math.PI / 5;
     this.spotLight.penumbra = 0.5;
     this.spotLight.position.set(0, 3, 0);
-    this.spotLight.intensity = 1000
+    this.spotLight.intensity = 0
   }
 
   setLightPower(valor) {
