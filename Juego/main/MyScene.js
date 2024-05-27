@@ -72,6 +72,8 @@ class MyScene extends THREE.Scene {
     this.modelo = new Coche(this.gui, "Coche");
     //this.modelo.minigun.rotateX(THREE.MathUtils.degToRad(90))
     this.add(this.modelo);
+    this.spotLight.target = this.modelo; // un Object3D que representa un coche
+    this.modelo.add(this.spotLight)
 
     // //Hitbox
     this.hitBoxCoche = new THREE.Box3();
@@ -103,36 +105,44 @@ class MyScene extends THREE.Scene {
 
     this.bonificacionActiva=tipo;
     this.iniciadaBonificacion=true;
+    this.spotLight.intensity=1000
     switch(tipo){
       case TipoOrbe.CADENCIA:
         //+25% cadencia durante 10 segundos
         this.bonificadorCadencia=2;
+        this.spotLight.color.set(0x00008b)
         break;
       case TipoOrbe.TIEMPO_AMPLIADO:
         // +10s
         this.TiempoRestante+=10000;
         this.tiempoEfecto=this.tiempoEspecial;
+        this.spotLight.color.set(0x3a9d23)
         break;
       case TipoOrbe.VELOCIDAD_AUMENTADA:
         // +50% velocidad durante 10 segundos
         this.bonificadorVelocidad=1.5;
+        this.spotLight.color.set(0x81d8d0)
         break;
       case TipoOrbe.TAMAÑO_AUMENTADO:
         // x2 de tamaño durante 10 segundos
         this.bonificadorTamaño=2;
+        this.spotLight.color.set(0xa212a2)
         break;
       case TipoOrbe.DAÑO_AUMENTADO:
         // X2 de daño
         this.bonificadorDanio=2;
+        this.spotLight.color.set(0xf52a00)
         break;
       case TipoOrbe.REPARAR:
         // Eliminar efecto malo
         this.tiempoEfecto=this.tiempoEspecial;
         this.reparar();
+        this.spotLight.color.set(0xff9300)
         break;
       case TipoOrbe.PUNTOS:
         //Doble puntuacion
         this.bonificadorPuntos=2;
+        this.spotLight.color.set(0xffff00)
         break;
     }
   }
@@ -169,6 +179,8 @@ class MyScene extends THREE.Scene {
     this.tiempoTranscurridoBonif=0;
     this.iniciadaBonificacion=false;
     this.bonificacionActiva="Ninguna";
+
+    this.spotLight.intensity=0
   }
 
   reparar(){
@@ -753,6 +765,14 @@ class MyScene extends THREE.Scene {
     this.pointLight.power = this.guiControls.lightPower;
     this.pointLight.position.set(0, 0, 0);
     this.add(this.pointLight);
+
+    // Crea una luz spotlight con parámetros personalizados
+    this.spotLight = new THREE.SpotLight(0xffff00);
+    this.spotLight.power = 1000;
+    this.spotLight.angle = Math.PI / 5;
+    this.spotLight.penumbra = 0.5;
+    this.spotLight.position.set(0, 3, 0);
+    this.spotLight.intensity = 1000
   }
 
   setLightPower(valor) {

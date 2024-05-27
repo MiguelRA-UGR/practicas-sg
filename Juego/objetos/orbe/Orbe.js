@@ -107,7 +107,7 @@ class Orbe extends THREE.Object3D {
 
         switch (this.tipo) {
             case TipoOrbe.CADENCIA:
-                this.color = 0xffff00;
+                this.color = 0x00008b;
 
                 this.bala = new Bala();
                 this.bala.rotateX(THREE.MathUtils.degToRad(45));
