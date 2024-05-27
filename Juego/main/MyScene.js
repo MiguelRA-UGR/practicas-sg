@@ -442,7 +442,7 @@ class MyScene extends THREE.Scene {
     torusKnotMesh.lookAt(posicion)
     torusKnotMesh.rotateZ(THREE.MathUtils.degToRad(angulo))
     
-    torusKnotMesh.translateY(this.circuitoGeom.parameters.radius+recorridoGeom.parameters.radius*3)
+    torusKnotMesh.translateY(this.circuitoGeom.parameters.radius+recorridoGeom.parameters.radius*2.5)
     torusKnotMesh.rotateX(THREE.MathUtils.degToRad(90))
     
     
@@ -464,7 +464,7 @@ class MyScene extends THREE.Scene {
     });
     var visibleSpline = new THREE.Line(geometryLine, material);
 
-    this.add(visibleSpline);
+    //this.add(visibleSpline);
     return recorridoPath
   }
 
@@ -580,7 +580,13 @@ class MyScene extends THREE.Scene {
 
   createCircuito() {
     var textureLoader = new THREE.TextureLoader();
-    var texture = textureLoader.load("../imgs/colmena.jpg");
+    var texture = textureLoader.load("../imgs/colmena.jpg", function(texture) {
+      texture.wrapS = THREE.RepeatWrapping;
+      texture.wrapT = THREE.RepeatWrapping;
+      
+      texture.repeat.set(8, 2);
+    });
+  
     this.materialColmena = new THREE.MeshStandardMaterial({ map: texture });
 
     var material = new THREE.MeshStandardMaterial({
@@ -603,6 +609,8 @@ class MyScene extends THREE.Scene {
     this.circuitoGeom = new THREE.TubeGeometry(this.spline, 100, 20, 20);
     this.circuito = new THREE.Mesh(this.circuitoGeom, this.materialColmena);
     //this.circuito.material = materialAlambre;
+    this.circuito.castShadow = false;
+    this.circuito.receiveShadow = true;
 
     this.add(this.circuito);
 
@@ -760,6 +768,8 @@ class MyScene extends THREE.Scene {
     var renderer = new THREE.WebGLRenderer({ alpha: true });
     renderer.setClearColor(new THREE.Color(0xffffff), 1.0);
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+		renderer.shadowMap.type = THREE.PCFShadowMap;
     $(myCanvas).append(renderer.domElement);
     return renderer;
   }
