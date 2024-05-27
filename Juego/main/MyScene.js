@@ -105,7 +105,7 @@ class MyScene extends THREE.Scene {
 
     this.bonificacionActiva=tipo;
     this.iniciadaBonificacion=true;
-    this.spotLight.intensity=1000
+    this.spotLight.intensity=50
     switch(tipo){
       case TipoOrbe.CADENCIA:
         //+25% cadencia durante 10 segundos
