@@ -82,6 +82,8 @@ class MyScene extends THREE.Scene {
     this.obstaculo = new Obstaculo(tipo);
     
     this.hayObstaculo=true;
+
+    this.obstaculo.rotateY(THREE.MathUtils.degToRad(90));
     this.add(this.obstaculo);
 }
   

@@ -46,6 +46,9 @@ class Escorvispa extends THREE.Object3D {
         this.createPatas();
 		this.createCabeza();
 		this.createCola();
+
+        //this.cuerpo.visible=false;
+
         this.createPinzas();
 
         this.vida = 2;
@@ -85,16 +88,6 @@ class Escorvispa extends THREE.Object3D {
         var texture1 = textureLoader.load('../imgs/rayas.avif');
         var texture2 = textureLoader.load('../imgs/pelo.jpg');
 
-        this.materialPelo1 = new THREE.MeshStandardMaterial({
-			color: 0x91a14b,
-            map:texture1,
-			
-			side: THREE.DoubleSide,
-			transparent: true, 
-			opacity: 0.8
-			    
-		});
-
         switch (this.tipo){
             case TipoEscorvispa.ESBIRRO:
                 this.colorPrincipal = 0xffe400;
@@ -127,9 +120,22 @@ class Escorvispa extends THREE.Object3D {
             shininess: 100,
         });
 
-		this.wingmaterial = new THREE.MeshBasicMaterial({ color: 0x80DAEB, transparent: true, opacity: 0.5, side: THREE.DoubleSide });
+        var normal = textureLoader.load("../imgs/wingNormal.png", function(normal) {
+            normal.wrapS = THREE.RepeatWrapping;
+            normal.wrapT = THREE.RepeatWrapping;
+            
+            normal.repeat.set(0.5, 1);
+          });
 
-		
+		this.materialAla = new THREE.MeshPhongMaterial({ 
+            color: 0x80DAEB, 
+            transparent: true, 
+            opacity: 0.5, 
+            side: THREE.DoubleSide,
+            normalMap: normal,
+            normalScale: new THREE.Vector2(1, 1), 
+        });
+
 		var texture = textureLoader.load('../imgs/ojo2.avif');
 		this.materialOjo = new THREE.MeshBasicMaterial({ map: texture });
 
@@ -410,7 +416,7 @@ class Escorvispa extends THREE.Object3D {
         const wingshape = new THREE.Shape(points);
         const winggeometry = new THREE.ShapeGeometry(wingshape);
         
-        this.ala1 = new THREE.Mesh(winggeometry, this.wingmaterial);
+        this.ala1 = new THREE.Mesh(winggeometry, this.materialAla);
         this.ala1.userData=this;
         this.ala1.castShadow = true
         this.ala1.receiveShadow = true
@@ -516,7 +522,7 @@ class Escorvispa extends THREE.Object3D {
     }
 
 	update() {
-        //Animacion Alas
+        // //Animacion Alas
         if(this.batirarriba) {
             this.valorbatida += this.velocidadbatida;
         } else {

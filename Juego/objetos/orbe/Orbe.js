@@ -118,6 +118,7 @@ class Orbe extends THREE.Object3D {
                 break;
             case TipoOrbe.DAÑO_AUMENTADO:
                 this.color = 0xf52a00;
+                
                 this.rotateY(THREE.MathUtils.degToRad(90));
                 break;
 
