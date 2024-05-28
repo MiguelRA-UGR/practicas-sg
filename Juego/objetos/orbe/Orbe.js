@@ -198,10 +198,13 @@ class Orbe extends THREE.Object3D {
                 });
 
                 var texture = textureLoader.load('../imgs/corcho.jpg');
+                var texture1 = textureLoader.load('../imgs/poros.jpg');
 
                 this.materialCorcho = new THREE.MeshStandardMaterial({
                     color: 0xbd7d3d,
-                    map : texture
+                    map : texture,
+                    normalMap: texture1,
+                    normalScale: new THREE.Vector2(1, 1),
                 });
                 
                 this.botellaShape = new THREE.Shape();
