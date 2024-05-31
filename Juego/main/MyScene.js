@@ -67,6 +67,7 @@ class MyScene extends THREE.Scene {
     this.tiempoTranscurridoBonif=0;
     this.tiempoTranscurrido=0;
     this.momentoMeta = new Date();
+    this.pause = false
 
     //Modelos
     this.modelo = new Coche(this.gui, "Coche");
@@ -537,6 +538,9 @@ class MyScene extends THREE.Scene {
           console.log("Cámara cambiada");
           this.toggleCamera();
           break;
+        case "KeyP":
+          this.pause = !this.pause
+          break;
       }
     });
 
@@ -832,149 +836,153 @@ class MyScene extends THREE.Scene {
   }
 
   update() {
-    if (this.stats) this.stats.update();
+      if (this.stats) this.stats.update();
     
-    const momentoactual = new Date();
-    this.tiempoTranscurrido = momentoactual.getTime() - this.inicio.getTime();
+    if (!this.pause) {
+      const momentoactual = new Date();
+      this.tiempoTranscurrido = momentoactual.getTime() - this.inicio.getTime();
 
-    if (this.cameraIndex === 1) {
-      this.cameraControl.update();
-      this.modelo.add(this.thirdPersonCamera);
-      this.renderer.render(this, this.thirdPersonCamera);
-    } else {
-      this.cameraControl.update();
-      this.renderer.render(this, this.camera);
-    }
-
-    if(!this.finJuego){
-       //Movimiento por el tubo
-      if(this.adelante) {
-        this.paso.t += this.velocidadCoche*this.bonificadorVelocidad*this.bonificadorVueltas*this.penalizacionVelocidad;
-        this.paso.t %= 1
-      } 
-
-      if(this.derecha) {
-        this.paso.a += this.velocidadLateral*this.penalizacionVelocidadLateral;
-        this.paso.a %= 2*Math.PI
+      if (this.cameraIndex === 1) {
+        this.cameraControl.update();
+        this.modelo.add(this.thirdPersonCamera);
+        this.renderer.render(this, this.thirdPersonCamera);
+      } else {
+        this.cameraControl.update();
+        this.renderer.render(this, this.camera);
       }
 
-      if(this.izquierda) {
-        this.paso.a -= this.velocidadLateral*this.penalizacionVelocidadLateral
-        if (this.paso.a<0) this.paso.a+=2*Math.PI
-      }
+      if(!this.finJuego){
+        //Movimiento por el tubo
+        if(this.adelante) {
+          this.paso.t += this.velocidadCoche*this.bonificadorVelocidad*this.bonificadorVueltas*this.penalizacionVelocidad;
+          this.paso.t %= 1
+        } 
 
-      this.modelo.update();
+        if(this.derecha) {
+          this.paso.a += this.velocidadLateral*this.penalizacionVelocidadLateral;
+          this.paso.a %= 2*Math.PI
+        }
 
-      //Detección de colisiones
-      this.hitBoxCoche.setFromObject(this.modelo);
+        if(this.izquierda) {
+          this.paso.a -= this.velocidadLateral*this.penalizacionVelocidadLateral
+          if (this.paso.a<0) this.paso.a+=2*Math.PI
+        }
 
-      if(this.hitBoxCoche.intersectsBox(this.hitboxMeta) && !this.colisionMeta){
-        this.colisionMeta=true;
-        this.momentoMeta = new Date();
-        this.completarVuelta();
-      }
+        this.modelo.update();
 
-      if((momentoactual.getTime() - this.momentoMeta.getTime()) >= 5000){
-        this.colisionMeta=false;
-      }
+        //Detección de colisiones
+        this.hitBoxCoche.setFromObject(this.modelo);
 
-      for (let i = 5; i < this.numOrbes; i++ && !this.colision_detectada) {
-        this.velocidadOrbes=0.01;
-        const orbe = this.orbes[i];
+        if(this.hitBoxCoche.intersectsBox(this.hitboxMeta) && !this.colisionMeta){
+          this.colisionMeta=true;
+          this.momentoMeta = new Date();
+          this.completarVuelta();
+        }
+
+        if((momentoactual.getTime() - this.momentoMeta.getTime()) >= 5000){
+          this.colisionMeta=false;
+        }
+
+        for (let i = 5; i < this.numOrbes; i++ && !this.colision_detectada) {
+          this.velocidadOrbes=0.01;
+          const orbe = this.orbes[i];
+          
+          const posicionOrbe = this.spline.getPointAt(Math.floor(i / 6) / this.estaciones);
+          orbe.position.copy(posicionOrbe);
+
+          orbe.rotateZ(-this.velocidadOrbes);
+          orbe.translateY(this.circuitoGeom.parameters.radius + 1)
+
+          var cajaOrbe = new THREE.Box3();
+          cajaOrbe.setFromObject(this.orbes[i]);
+    
+          if(!this.colision_detectada && this.hitBoxCoche.intersectsBox(cajaOrbe)){
+            this.colision_detectada=true;
+
+            this.aplicarBonificacion(this.orbes[i].getTipo()); 
+          }
+        }
+
+        for (let i = 1; i < this.numObstaculos; i++) {
+          var speed=0;
+          const obstaculo = this.obstaculos[i];
+          const posicionObstaculo = this.spline.getPointAt(i / this.numObstaculos);
+          obstaculo.position.copy(posicionObstaculo);
+
+          switch(obstaculo.tipo){
+            case TipoObstaculo.BABOSA: speed=0.01; break
+            case TipoObstaculo.ORUGA: speed=0.02; break
+            case TipoObstaculo.ORUGA: speed=0.04; break
+            default: speed=0.01;
+          }
+
+          obstaculo.rotateZ(speed);
+          obstaculo.translateY(this.circuitoGeom.parameters.radius)
+
+          var cajaObstaculo = new THREE.Box3();
+          cajaObstaculo.setFromObject(this.obstaculos[i]);
+
+          if(this.efectoActivo == "Ninguno" && this.hitBoxCoche.intersectsBox(cajaObstaculo)){
+            this.aplicarPenalizacion(this.obstaculos[i].tipo);
+            
+          }
+          
+          obstaculo.update();
+        }
         
-        const posicionOrbe = this.spline.getPointAt(Math.floor(i / 6) / this.estaciones);
-        orbe.position.copy(posicionOrbe);
-
-        orbe.rotateZ(-this.velocidadOrbes);
-        orbe.translateY(this.circuitoGeom.parameters.radius + 1)
-
-        var cajaOrbe = new THREE.Box3();
-        cajaOrbe.setFromObject(this.orbes[i]);
-  
-        if(!this.colision_detectada && this.hitBoxCoche.intersectsBox(cajaOrbe)){
-          this.colision_detectada=true;
-
-          this.aplicarBonificacion(this.orbes[i].getTipo()); 
-        }
-      }
-
-      for (let i = 1; i < this.numObstaculos; i++) {
-        var speed=0;
-        const obstaculo = this.obstaculos[i];
-        const posicionObstaculo = this.spline.getPointAt(i / this.numObstaculos);
-        obstaculo.position.copy(posicionObstaculo);
-
-        switch(obstaculo.tipo){
-          case TipoObstaculo.BABOSA: speed=0.01; break
-          case TipoObstaculo.ORUGA: speed=0.02; break
-          case TipoObstaculo.ORUGA: speed=0.04; break
-          default: speed=0.01;
-        }
-
-        obstaculo.rotateZ(speed);
-        obstaculo.translateY(this.circuitoGeom.parameters.radius)
-
-        var cajaObstaculo = new THREE.Box3();
-        cajaObstaculo.setFromObject(this.obstaculos[i]);
-
-        if(this.efectoActivo == "Ninguno" && this.hitBoxCoche.intersectsBox(cajaObstaculo)){
-          this.aplicarPenalizacion(this.obstaculos[i].tipo);
+        if(this.bonificadorTamaño>1){
+          this.modelo.scale.set(this.bonificadorTamaño,this.bonificadorTamaño,this.bonificadorTamaño);
           
         }
-        
-        obstaculo.update();
+      }
+    
+      this.posicionAnimacion = this.spline.getPointAt(this.paso.t);
+      this.modelo.position.copy(this.posicionAnimacion);
+      var tangente = this.spline.getTangentAt(this.paso.t);
+      this.posicionAnimacion.add(tangente);
+      this.modelo.lookAt(this.posicionAnimacion);
+
+      this.vuelo.t += 0.0005
+      this.vuelo.t %= 1
+      for (let i=0 ; i<this.voladores.length ; i++) {
+        this.posiciones[i] = this.recorridos[i].getPointAt(this.vuelo.t)
+        this.voladores[i].position.copy(this.posiciones[i]);
+        var tangente = this.recorridos[i].getTangentAt(this.vuelo.t);
+        this.posiciones[i].add(tangente);
+        this.voladores[i].lookAt(this.posiciones[i]);
+        this.voladores[i].update();
+      }
+
+      if( this.tiempoTranscurrido >= this.TiempoRestante){
+        this.finJuego=true;
       }
       
-      if(this.bonificadorTamaño>1){
-        this.modelo.scale.set(this.bonificadorTamaño,this.bonificadorTamaño,this.bonificadorTamaño);
-        
+      if(this.iniciadaBonificacion){
+        this.inicioBonificacion= new Date();
+        this.iniciadaBonificacion=false;
+        this.bonicacionEnCurso=true;
       }
-    }
-   
-    this.posicionAnimacion = this.spline.getPointAt(this.paso.t);
-    this.modelo.position.copy(this.posicionAnimacion);
-    var tangente = this.spline.getTangentAt(this.paso.t);
-    this.posicionAnimacion.add(tangente);
-    this.modelo.lookAt(this.posicionAnimacion);
 
-    this.vuelo.t += 0.0005
-    this.vuelo.t %= 1
-    for (let i=0 ; i<this.voladores.length ; i++) {
-      this.posiciones[i] = this.recorridos[i].getPointAt(this.vuelo.t)
-      this.voladores[i].position.copy(this.posiciones[i]);
-      var tangente = this.recorridos[i].getTangentAt(this.vuelo.t);
-      this.posiciones[i].add(tangente);
-      this.voladores[i].lookAt(this.posiciones[i]);
-      this.voladores[i].update();
-    }
+      this.tiempoTranscurridoBonif = momentoactual.getTime() - this.inicioBonificacion.getTime();
 
-    if( this.tiempoTranscurrido >= this.TiempoRestante){
-      this.finJuego=true;
-    }
+      //Si se cumple el tiempo de la bonificacion
+      if(this.bonicacionEnCurso && this.tiempoTranscurridoBonif >= this.tiempoEfecto){
+        this.bonicacionEnCurso=false;
+        this.colision_detectada=false;
+        this.reset();
+      }
+
     
-    if(this.iniciadaBonificacion){
-      this.inicioBonificacion= new Date();
-      this.iniciadaBonificacion=false;
-      this.bonicacionEnCurso=true;
+      TWEEN.update();
+      this.modelo.rotateZ(this.paso.a)
+      this.modelo.translateY(this.circuitoGeom.parameters.radius+0.4)
+  
     }
 
-    this.tiempoTranscurridoBonif = momentoactual.getTime() - this.inicioBonificacion.getTime();
-
-    //Si se cumple el tiempo de la bonificacion
-    if(this.bonicacionEnCurso && this.tiempoTranscurridoBonif >= this.tiempoEfecto){
-      this.bonicacionEnCurso=false;
-      this.colision_detectada=false;
-      this.reset();
-    }
-
-  
-    TWEEN.update();
-    this.modelo.rotateZ(this.paso.a)
-    this.modelo.translateY(this.circuitoGeom.parameters.radius+0.4)
-  
     requestAnimationFrame(() => this.update());
     if(!this.finJuego)this.updateGUI();
   }
+    
 }
 
 $(function () {
