@@ -517,11 +517,21 @@ class MyScene extends THREE.Scene {
 
     window.addEventListener("keydown", (event) => {
       switch (event.code) {
-        case "ArrowLeft":
-          this.derecha = true;
+        case "ArrowLeft": 
+          this.flechaizq = true
+          this.izquierda = true
           break;
         case "ArrowRight":
-          this.izquierda = true;
+          this.flechadch = true
+          this.derecha = true
+          break;
+        case "KeyA":
+          this.teclaa = true
+          this.izquierda = true
+          break;
+        case "KeyD":
+          this.teclad = true;
+          this.derecha = true
           break;
         case "Space":
           console.log("Cámara cambiada");
@@ -533,11 +543,21 @@ class MyScene extends THREE.Scene {
     window.addEventListener("keyup", (event) => {
       switch (event.code) {
         case "ArrowLeft":
-          this.derecha = false;
+          this.flechaizq = false
+          if (!this.teclaa) this.izquierda = false
           break;
         case "ArrowRight":
-          this.izquierda = false;
+          this.flechadch = false
+          if (!this.teclad) this.derecha = false;
           break;
+          case "KeyA":
+            this.teclaa = false
+            if (!this.flechaizq) this.izquierda = false
+            break;
+          case "KeyD":
+            this.teclad = false
+            if (!this.flechadch) this.derecha = false;
+            break;
       }
     });
   }
@@ -833,12 +853,12 @@ class MyScene extends THREE.Scene {
         this.paso.t %= 1
       } 
 
-      if(this.izquierda) {
+      if(this.derecha) {
         this.paso.a += this.velocidadLateral*this.penalizacionVelocidadLateral;
         this.paso.a %= 2*Math.PI
       }
 
-      if(this.derecha) {
+      if(this.izquierda) {
         this.paso.a -= this.velocidadLateral*this.penalizacionVelocidadLateral
         if (this.paso.a<0) this.paso.a+=2*Math.PI
       }
