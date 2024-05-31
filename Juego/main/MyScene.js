@@ -977,6 +977,7 @@ class MyScene extends THREE.Scene {
       //Si se cumple el tiempo de la bonificacion
       if(this.bonicacionEnCurso && this.tiempoTranscurridoBonif >= this.tiempoEfecto){
         this.bonicacionEnCurso=false;
+        this.TiempoPausaBonif = 0
         this.colision_detectada=false;
         this.reset();
       }
