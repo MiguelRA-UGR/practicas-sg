@@ -20,6 +20,13 @@ class Minigun extends THREE.Object3D {
         // Lista de balas
         this.balas = [];
 
+        //Luz de disparo
+        this.light = new THREE.PointLight(0xffa500, 1, 10);
+		this.light.position.set(-0.5, 10, 0);
+        this.light.visible=false;
+        this.add(this.light);
+		this.lightDuration = 50;
+
         this.principalGeom = new THREE.CylinderGeometry(1, 1, 3, 20, 20);
         this.principal = new THREE.Mesh(this.principalGeom, this.planchaMetal);
 
@@ -118,10 +125,10 @@ class Minigun extends THREE.Object3D {
     }
 
 	disparar(activarBalas = false) {
-		const direction = new THREE.Vector3(-1, 0, 0);
-		direction.applyQuaternion(this.quaternion);
-	
+		
 		if (activarBalas) {
+            const direction = new THREE.Vector3(-1, 0, 0);
+		    direction.applyQuaternion(this.quaternion);
 			const bala = new Bala();
 			bala.scale.set(0.4,0.4,0.4);
 			bala.remove(bala.casquillo);
@@ -135,16 +142,12 @@ class Minigun extends THREE.Object3D {
 			this.add(bala);
 			this.balas.push(bala);
 		}
-	
-		const light = new THREE.PointLight(0xffa500, 1, 10);
-		light.position.set(-0.5, 10, 0);
-		this.add(light);
-	
-		const lightDuration = 50;
-	
+        
+        this.light.visible=true;
+		
 		setTimeout(() => {
-			this.remove(light);
-		}, lightDuration);
+			this.light.visible=false;
+		}, this.lightDuration);
 	}
 	
 

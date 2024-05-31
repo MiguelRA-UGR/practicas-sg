@@ -67,7 +67,7 @@ class MyScene extends THREE.Scene {
     this.tiempoTranscurridoBonif=0;
     this.tiempoTranscurrido=0;
     this.momentoMeta = new Date();
-    this.pause = false
+    this.pause = false;
     this.TiempoPausa = 0
     this.TiempoPausaBonif = 0
 
@@ -542,6 +542,15 @@ class MyScene extends THREE.Scene {
           break;
         case "KeyP":
           this.pause = !this.pause
+
+          if(this.pause){
+            document.getElementById('game-message').innerText = "PAUSA";
+            document.getElementById('game-message').style.color = "white";
+            document.getElementById('game-message').style.display = 'block';
+          }else{
+            document.getElementById('game-message').style.display = 'none';
+          }
+
           if (this.pause) this.TiempoPausaInicio = new Date()
           else {
             const momentoactual = new Date();
@@ -593,7 +602,8 @@ class MyScene extends THREE.Scene {
 
         this.raycaster.setFromCamera(this.mouse, this.thirdPersonCamera);
 
-        this.modelo.minigun.disparar();
+        this.modelo.disparar();
+
         var pickedObjects = this.raycaster.intersectObjects(this.pickableObjects);
 
         if (pickedObjects.length > 0 && this.cameraIndex == 1) {
@@ -964,6 +974,9 @@ class MyScene extends THREE.Scene {
 
       if( this.tiempoTranscurrido >= this.TiempoRestante){
         this.finJuego=true;
+        document.getElementById('game-message').innerText = "GAME OVER";
+        document.getElementById('game-message').style.color = "red";
+        document.getElementById('game-message').style.display = 'block';
       }
       
       if(this.iniciadaBonificacion){

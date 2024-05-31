@@ -39,6 +39,10 @@ class Coche extends THREE.Object3D {
     this.translateY(0.53);
   }
 
+  disparar(){
+    this.minigun.disparar(false);
+  }
+
   crearMateriales() {
     var textureLoader = new THREE.TextureLoader();
     var texture1 = textureLoader.load("../imgs/acero.jpg");
