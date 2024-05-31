@@ -68,6 +68,8 @@ class MyScene extends THREE.Scene {
     this.tiempoTranscurrido=0;
     this.momentoMeta = new Date();
     this.pause = false
+    this.TiempoPausa = 0
+    this.TiempoPausaBonif = 0
 
     //Modelos
     this.modelo = new Coche(this.gui, "Coche");
@@ -540,6 +542,13 @@ class MyScene extends THREE.Scene {
           break;
         case "KeyP":
           this.pause = !this.pause
+          if (this.pause) this.TiempoPausaInicio = new Date()
+          else {
+            const momentoactual = new Date();
+            this.TiempoPausa += momentoactual.getTime() - this.TiempoPausaInicio.getTime();
+            if (this.bonicacionEnCurso) this.TiempoPausaBonif += momentoactual.getTime() - this.TiempoPausaInicio.getTime();
+            else this.TiempoPausaBonif = 0
+          }
           break;
       }
     });
@@ -840,7 +849,7 @@ class MyScene extends THREE.Scene {
     
     if (!this.pause) {
       const momentoactual = new Date();
-      this.tiempoTranscurrido = momentoactual.getTime() - this.inicio.getTime();
+      this.tiempoTranscurrido = momentoactual.getTime() - this.inicio.getTime() - this.TiempoPausa;
 
       if (this.cameraIndex === 1) {
         this.cameraControl.update();
@@ -963,7 +972,7 @@ class MyScene extends THREE.Scene {
         this.bonicacionEnCurso=true;
       }
 
-      this.tiempoTranscurridoBonif = momentoactual.getTime() - this.inicioBonificacion.getTime();
+      this.tiempoTranscurridoBonif = momentoactual.getTime() - this.inicioBonificacion.getTime() - this.TiempoPausaBonif
 
       //Si se cumple el tiempo de la bonificacion
       if(this.bonicacionEnCurso && this.tiempoTranscurridoBonif >= this.tiempoEfecto){
