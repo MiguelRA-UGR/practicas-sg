@@ -3,7 +3,7 @@ import { CSG } from '../../libs/CSG-v2.js';
 import { MTLLoader } from '../../libs/MTLLoader.js';
 import { OBJLoader } from '../../libs/OBJLoader.js';
 
-import { Bala } from '../bala/Bala.js'
+import { Bala } from '../bala/Bala-fisica.js'
 
 class Minigun extends THREE.Object3D {
     constructor(gui, titleGui) {
@@ -130,9 +130,11 @@ class Minigun extends THREE.Object3D {
             const direction = new THREE.Vector3(-1, 0, 0);
 		    direction.applyQuaternion(this.quaternion);
 			const bala = new Bala();
+
 			bala.scale.set(0.4,0.4,0.4);
-			bala.remove(bala.casquillo);
-		
+            
+            bala.remove(bala.casquillo);
+
 			bala.position.set(-0.5, 7, 0);
 			bala.direction = direction.clone();
 			bala.distanceTravelled = 0;
