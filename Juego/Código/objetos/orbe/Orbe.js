@@ -99,10 +99,13 @@ class Orbe extends THREE.Object3D {
     crearObjetos() {
         var textureLoader = new THREE.TextureLoader();
 
-        this.materialBotella = new THREE.MeshStandardMaterial({
+        this.materialBotella = new THREE.MeshPhysicalMaterial({
             color: 0xffffff,
-            transparent: true,
-            opacity: 0.5
+            //transmission: 0.5,   
+            opacity: 0.3,
+            transparent: true, 
+            thickness: 1,
+            ior: 1.5,
         });
 
         switch (this.tipo) {

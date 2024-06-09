@@ -25,16 +25,6 @@ class MyPhisiScene extends Physijs.Scene {
     this.model.scale.set(0.3, 0.3, 0.3);
     this.model.position.set(0, 1, 0);
     this.add(this.model);
-
-    this.materialCasquillo = new THREE.MeshStandardMaterial({
-      color: 0xCDA434,
-      roughness: 0.2,
-      metalness: 0.75,
-      side: THREE.DoubleSide,
-    });
-
-    this.matFisico = Physijs.createMaterial ( this.materialCasquillo , 1.0 , 0.7) ;
-
   }
   createCamera() {
     this.camera = new THREE.PerspectiveCamera(
@@ -58,7 +48,7 @@ class MyPhisiScene extends Physijs.Scene {
   }
 
   createGround() {
-    var geometryGround = new THREE.BoxGeometry(100, 0.2, 100);
+    var geometryGround = new THREE.BoxGeometry(10, 0.2, 10);
 
     var texture = new THREE.TextureLoader().load("../imgs/wood.jpg");
     var materialGround = new THREE.MeshStandardMaterial({ map: texture });
@@ -92,10 +82,20 @@ class MyPhisiScene extends Physijs.Scene {
   }
 
   createCasquillo() {
-    const cilindroGeom = new THREE.CylinderGeometry(0.25, 0.25, 1, 10);
-    const casquillo = new Physijs.CylinderMesh(cilindroGeom, this.matFisico,100);
 
-    casquillo.scale.set(0.1, 0.1, 0.1);
+    this.materialCasquillo = new THREE.MeshPhysicalMaterial({
+      color: 0xCDA434,
+      roughness: 0.1,
+      metalness: 0.75,
+    });
+
+    this.matFisico = Physijs.createMaterial ( this.materialCasquillo , 1 ,1 ) ;
+
+    const cilindroGeom = new THREE.CylinderGeometry(0.25, 0.25, 1, 10);
+    const casquillo = new Physijs.CylinderMesh(cilindroGeom, this.matFisico,1);
+
+
+    casquillo.scale.set(0.2, 0.2, 0.2);
     casquillo.position.set(0, 1, -0.3);
     casquillo.rotateZ(THREE.MathUtils.degToRad(90));
     
@@ -112,7 +112,7 @@ class MyPhisiScene extends Physijs.Scene {
     
     setTimeout(() => {
       this.remove(casquillo);
-    }, 5000);
+    }, 2000);
 }
 
 
@@ -120,7 +120,7 @@ class MyPhisiScene extends Physijs.Scene {
     var gui = new GUI();
     this.guiControls = {
       lightPower: 100.0,
-      ambientIntensity: 0.35,
+      ambientIntensity: 0.5,
       axisOnOff: true,
     };
     var folder = gui.addFolder("Luz y Ejes");
