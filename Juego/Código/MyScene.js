@@ -1,6 +1,6 @@
 // Clases de la biblioteca
 import * as THREE from './libs/three.module.js';
-import { GUI } from './libs/dat.gui.module.js';
+import { GUI, color } from './libs/dat.gui.module.js';
 import { TrackballControls } from './libs/TrackballControls.js';
 
 // La clase fachada del modelo
@@ -13,6 +13,7 @@ class MyScene extends THREE.Scene {
     this.createLights();
     this.createCamera();
     this.createGround();
+    this.createSkyBox();
     this.axis = new THREE.AxesHelper(3);
     this.add(this.axis);
     
@@ -70,9 +71,13 @@ class MyScene extends THREE.Scene {
     this.ambientLight = new THREE.AmbientLight('white', this.guiControls.ambientIntensity);
     this.add(this.ambientLight);
     
-    this.spotLight = new THREE.SpotLight(0xffffff);
-    this.spotLight.position.set(0, 5, 0);
+    this.spotLight = new THREE.DirectionalLight(0xffffff,1);
+    this.spotLight.position.set(-5, 10, 0);
     this.spotLight.power = this.guiControls.lightPower;
+
+    // this.spotLight = new THREE.DirectionalLight(0xff8000,1);
+    // this.spotLight.position.set(-20, 20, 0);
+    // this.spotLight.power = this.guiControls.lightPower;
 
     this.spotLight.castShadow = true;
     
@@ -122,6 +127,35 @@ class MyScene extends THREE.Scene {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
   }
 
+  createSkyBox(){
+    //https://redstapler.co/create-3d-world-with-three-js-and-skybox-technique/
+    let materialArray = [];
+    let texture_ft = new THREE.TextureLoader().load( './imgs/skybox/rainbow_ft.png');
+    let texture_bk = new THREE.TextureLoader().load( './imgs/skybox/rainbow_bk.png');
+    let texture_up = new THREE.TextureLoader().load( './imgs/skybox/rainbow_up.png');
+    let texture_dn = new THREE.TextureLoader().load( './imgs/skybox/rainbow_dn.png');
+    let texture_rt = new THREE.TextureLoader().load( './imgs/skybox/rainbow_rt.png');
+    let texture_lf = new THREE.TextureLoader().load( './imgs/skybox/rainbow_lf.png');
+      
+    materialArray.push(new THREE.MeshBasicMaterial( { map: texture_ft }));
+    materialArray.push(new THREE.MeshBasicMaterial( { map: texture_bk }));
+    materialArray.push(new THREE.MeshBasicMaterial( { map: texture_up }));
+    materialArray.push(new THREE.MeshBasicMaterial( { map: texture_dn }));
+    materialArray.push(new THREE.MeshBasicMaterial( { map: texture_rt }));
+    materialArray.push(new THREE.MeshBasicMaterial( { map: texture_lf }));
+    
+    this.envMap = new THREE.CubeTextureLoader().load([
+      './imgs/skybox/rainbow_ft.png',
+      './imgs/skybox/rainbow_bk.png',
+      './imgs/skybox/rainbow_up.png',
+      './imgs/skybox/rainbow_dn.png',
+      './imgs/skybox/rainbow_rt.png',
+      './imgs/skybox/rainbow_lf.png'
+    ]);
+
+    this.background=this.envMap
+  }
+
   createSpheres() {
     const geometry = new THREE.SphereGeometry(0.5, 32, 32);
 
@@ -132,6 +166,55 @@ class MyScene extends THREE.Scene {
     lambertSphere.castShadow = true;
     lambertSphere.receiveShadow = true;
     this.add(lambertSphere);
+
+    //Material Alpha
+
+    const alphaTexture = new THREE.TextureLoader().load("./wire.png");
+    const materialAlpha = new THREE.MeshBasicMaterial({
+      map: alphaTexture,
+      side: THREE.DoubleSide,
+      alphaTest:0.5,
+    });
+
+    const tumbleweed = new THREE.Mesh(geometry, materialAlpha);
+    tumbleweed.position.set(-2, 0.5, 2);
+    tumbleweed.castShadow = true;
+    tumbleweed.receiveShadow = true;
+    this.add(tumbleweed);
+
+    //Material Emisivo
+    const matEmisivo = new THREE.MeshStandardMaterial({
+      emissive: 0xffffff,
+      emissiveIntensity: 1
+    });
+    const bolaLuz = new THREE.Mesh(geometry, matEmisivo);
+    bolaLuz.position.set(-2, 0.5, -2);
+    bolaLuz.castShadow = true;
+    bolaLuz.receiveShadow = true;
+    this.add(bolaLuz);
+
+    //Globo terráqueo
+    const mapTexture = new THREE.TextureLoader().load("./globo.png");
+    const matMapa = new THREE.MeshBasicMaterial({
+      map: mapTexture
+    });
+    const mapamundi = new THREE.Mesh(geometry, matMapa);
+    mapamundi.position.set(2, 0.5, 2);
+    mapamundi.castShadow = true;
+    mapamundi.receiveShadow = true;
+    this.add(mapamundi);
+    
+    const materialCromado = new THREE.MeshPhysicalMaterial({
+      metalness: 1.0,
+      roughness: 0.2,
+      color: 0xff0000,
+      envMap:this.envMap
+    });
+    const cromo = new THREE.Mesh(geometry, materialCromado);
+    cromo.position.set(2, 0.5, -2);
+    cromo.castShadow = true;
+    cromo.receiveShadow = true;
+    this.add(cromo);
 
     const esferaLejana = new THREE.Mesh(geometry, lambertMaterial);
     esferaLejana.position.set(-500, 0.5, -500);
@@ -155,13 +238,22 @@ class MyScene extends THREE.Scene {
     transparentSphere.receiveShadow = true;
     this.add(transparentSphere);
 
-    // Material Físico Glossy
-    const physicalMaterialGlossy = new THREE.MeshPhysicalMaterial({ color: 0x0000ff, roughness: 0.5, metalness: 0.9 });
-    const glossySphere = new THREE.Mesh(geometry, physicalMaterialGlossy);
-    glossySphere.position.set(2, 0.5, 0);
-    glossySphere.castShadow = true;
-    glossySphere.receiveShadow = true;
-    this.add(glossySphere);
+    // Naranja
+    const texture = new THREE.TextureLoader().load("./poros.jpg");
+    const naranjaMat = new THREE.MeshStandardMaterial({ color: 0xffa500, roughness:0.3,normalMap: texture, });
+    const talloNaranjaMat = new THREE.MeshStandardMaterial({ color: 0x006400, roughness:0.4 });
+    const naranja = new THREE.Mesh(geometry, naranjaMat);
+    
+    var talloGeom = new THREE.CylinderGeometry(0.05,0.1,0.1,8,8);
+    var talloNaranja = new THREE.Mesh(talloGeom,talloNaranjaMat )
+    
+    talloNaranja.position.set(0, 0.5, 0)
+    naranja.add(talloNaranja);
+
+    naranja.position.set(2, 0.5, 0);
+    naranja.castShadow = true;
+    naranja.receiveShadow = true;
+    this.add(naranja);
 
     // Material Físico Rugoso
     const physicalMaterialRough = new THREE.MeshPhysicalMaterial({ color: 0xff0000, roughness: 0.5, metalness: 0.1});
