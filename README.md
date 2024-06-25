@@ -1,6 +1,4 @@
 # Prácticas de Sistemas Gráficos (Curso 2023/24)
-Repositorio para las prácticas de la Asignatura **Sistemas Gráficos** del **Grado en Ingeniería Informática** de la Universidad de Granada
-
 ## Realizadas por:
 - Miguel Rodríguez Ayllón
 - Lorena Castellano Fernández
